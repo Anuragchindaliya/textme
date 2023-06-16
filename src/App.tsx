@@ -1,14 +1,11 @@
-import logo from "./logo.svg"
-import { Counter } from "./features/counter/Counter"
-import "./App.css"
-
-function App() {
+import React from 'react'
+import { BrowserRouter } from "react-router-dom"
+import Router from './Router'
+const App = () => {
   return (
-    <div className="bg-primary text-primary-foreground h-screen">
-      <h1 className="">
-        Hello world!
-      </h1>
-    </div>
+    <BrowserRouter>
+      <Router />
+    </BrowserRouter>
   )
 }
 

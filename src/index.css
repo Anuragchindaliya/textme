@@ -19,8 +19,13 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%; */
+    --primary: 240deg 3.23% 12.16%;
+    --primary-foreground: 0deg 100% 98.04% ;
+    /* hsl(240deg 3.23% 12.16%) */
+    /* hsl(60deg 100% 98.04% / 86%) */
+
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -72,6 +77,7 @@
 
 @layer base {
   * {
+    font-family: sans-serif;
     @apply border-border;
   }
   body {
