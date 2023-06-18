@@ -1,8 +1,6 @@
-
 import { Separator } from "@/components/ui/separator"
 import { SidebarNav } from "./components/sidebar-nav"
 import { Outlet } from "react-router-dom"
-
 
 const sidebarNavItems = [
   {
@@ -27,11 +25,11 @@ const sidebarNavItems = [
   },
 ]
 
-interface SettingsLayoutProps {
-  // children: React.ReactNode
-}
+// interface SettingsLayoutProps {
+// children: React.ReactNode
+// }
 
-export default function SettingsLayout({ }: SettingsLayoutProps) {
+export default function SettingsLayout() {
   return (
     <>
       <div className="md:hidden">
@@ -62,7 +60,9 @@ export default function SettingsLayout({ }: SettingsLayoutProps) {
           <aside className="-mx-4 lg:w-1/5">
             <SidebarNav items={sidebarNavItems} />
           </aside>
-          <div className="flex-1 lg:max-w-2xl"><Outlet /></div>
+          <div className="flex-1 lg:max-w-2xl">
+            <Outlet />
+          </div>
         </div>
       </div>
     </>

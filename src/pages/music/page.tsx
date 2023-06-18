@@ -1,4 +1,3 @@
-
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -13,8 +12,16 @@ import "./styles.css"
 import { PlusCircle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { useEffect } from "react"
 
 export default function MusicPage() {
+  useEffect(() => {
+    const att = "data-section"
+    document.body.setAttribute(att, "music")
+    return () => {
+      document.body.setAttribute(att, "")
+    }
+  }, [])
   return (
     <>
       <div className="md:hidden">

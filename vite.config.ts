@@ -4,8 +4,14 @@ import react from "@vitejs/plugin-react"
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  optimizeDeps: {
+    include: ["eslint-plugin-prettier"], // Include the ESLint Prettier plugin
+  },
   server: {
-    open: true,
+    // open: true,
+    hmr: {
+      overlay: false, // Disabling the overlay ensures ESLint errors are shown in the console
+    },
   },
   build: {
     outDir: "build",
@@ -16,6 +22,10 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: "src/setupTests",
     mockReset: true,
+    coverage: {
+      provider: "istanbul",
+      reporter: ["text", "json", "html"],
+    },
   },
   resolve: {
     alias: {

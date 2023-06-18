@@ -15,9 +15,9 @@ import {
 import { useNavigate } from "react-router-dom"
 
 export function UserNav() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const handleLogout = () => {
-    navigate("/");
+    navigate("/")
   }
   return (
     <DropdownMenu>

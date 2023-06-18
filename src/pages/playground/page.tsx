@@ -1,4 +1,3 @@
-
 import { History } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -25,10 +24,16 @@ import { TopPSelector } from "./components/top-p-selector"
 import { models, types } from "./data/models"
 import { presets } from "./data/presets"
 import "./styles.css"
-
-
+import { useEffect } from "react"
 
 export default function PlaygroundPage() {
+  useEffect(() => {
+    const att = "data-section"
+    document.body.setAttribute(att, "playground")
+    return () => {
+      document.body.setAttribute(att, "")
+    }
+  }, [])
   return (
     <>
       <div className="md:hidden">
