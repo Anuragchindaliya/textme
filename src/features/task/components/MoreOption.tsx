@@ -37,7 +37,7 @@ const labels = [
 ]
 
 export function ComboboxDropdownMenu() {
-  const [label, setLabel] = React.useState("feature")
+  // const [label, setLabel] = React.useState("feature")
   const [open, setOpen] = React.useState(false)
 
   return (
@@ -84,7 +84,7 @@ export function ComboboxDropdownMenu() {
                         <CommandItem
                           key={label}
                           onSelect={(value) => {
-                            setLabel(value)
+                            // setLabel(value)
                             setOpen(false)
                           }}
                         >

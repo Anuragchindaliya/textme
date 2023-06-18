@@ -1,7 +1,6 @@
 import { screen, render } from "@testing-library/react"
 import { describe } from "vitest"
 import Task from "./Task"
-
 describe("Task", () => {
   it("should render heading", () => {
     render(<Task />)
