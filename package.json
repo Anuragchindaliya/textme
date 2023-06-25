@@ -114,11 +114,6 @@
   },
   "prettier": "prettier-config-nick",
   "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix"
-    ],
-    "*.{ts,tsx,css,scss}": [
-      "prettier --write"
-    ]
+    "*.{ts,tsx,css,scss}": "prettier --write"
   }
 }
