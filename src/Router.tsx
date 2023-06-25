@@ -17,6 +17,7 @@ import MusicPage from "./pages/music/page"
 import { LoginPage } from "./pages/Login/page"
 import AuthenticationPage from "./pages/authentication/page"
 import PlaygroundPage from "./pages/playground/page"
+import Notes from "./pages/Notes/page"
 
 const Router = () => {
   return (
@@ -26,6 +27,7 @@ const Router = () => {
         <Route path={"/about"} element={<About />} />
         <Route path={"/login"} element={<LoginPage />} />
         <Route path={"/register"} element={<AuthenticationPage />} />
+        <Route path={"/notes"} element={<Notes />} />
       </Route>
       <Route element={<DashboardLayout />}>
         <Route path={"/dashboard"} element={<DashboardPage />} />

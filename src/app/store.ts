@@ -1,11 +1,21 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit"
-import counterReducer from "../features/counter/counterSlice"
+import rootReducer from "../features"
+import thunkMiddleware from "redux-thunk"
+import { textmeApi } from "./services"
+export const setupStore = (preloadedState = {}) => {
+  return configureStore({
+    reducer: rootReducer,
+    preloadedState,
+    middleware: (getDefaultMiddleware) => {
+      return getDefaultMiddleware().concat(
+        thunkMiddleware,
+        textmeApi.middleware,
+      )
+    },
+  })
+}
 
-export const store = configureStore({
-  reducer: {
-    counter: counterReducer,
-  },
-})
+export const store = setupStore()
 
 export type AppDispatch = typeof store.dispatch
 export type RootState = ReturnType<typeof store.getState>

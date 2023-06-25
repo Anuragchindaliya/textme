@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "format": "prettier --ignore-path .gitignore --write \"**/*.{ts,tsx,css,scss}\"",
+    "format": "prettier --ignore-path .gitignore --write '**/*.{ts,tsx,css,scss}'",
     "lint": "eslint --ignore-path .gitignore . --ext .js,.jsx,.ts,.tsx --fix",
     "type-check": "tsc",
     "prepare": "husky install"
@@ -38,7 +38,7 @@
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.4",
-    "@reduxjs/toolkit": "^1.8.1",
+    "@reduxjs/toolkit": "^1.9.5",
     "@tanstack/react-table": "^8.9.2",
     "@types/react-router-dom": "^5.3.3",
     "class-variance-authority": "^0.6.0",
@@ -53,7 +53,7 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.44.3",
-    "react-redux": "^8.0.1",
+    "react-redux": "^8.1.1",
     "react-router-dom": "^6.12.1",
     "recharts": "^2.7.1",
     "tailwind-merge": "^1.13.1",
@@ -113,8 +113,12 @@
     }
   },
   "prettier": "prettier-config-nick",
-  "lint-staged":{
-    "*.{ts,tsx}":["eslint --fix"],
-    "*.{ts,tsx,css,scss}":["prettier --write"]
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix"
+    ],
+    "*.{ts,tsx,css,scss}": [
+      "prettier --write"
+    ]
   }
 }
