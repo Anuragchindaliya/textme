@@ -22,12 +22,12 @@ import Notes from "./pages/Notes/page"
 const Router = () => {
   return (
     <Routes>
+      <Route path={"/notes"} element={<Notes />} />
       <Route element={<PublicLayout />}>
         <Route path={"/"} element={<Home />} />
         <Route path={"/about"} element={<About />} />
         <Route path={"/login"} element={<LoginPage />} />
         <Route path={"/register"} element={<AuthenticationPage />} />
-        <Route path={"/notes"} element={<Notes />} />
       </Route>
       <Route element={<DashboardLayout />}>
         <Route path={"/dashboard"} element={<DashboardPage />} />

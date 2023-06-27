@@ -32,12 +32,16 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 const noteFormSchema = z.object({
-  note: z.string(),
+  note: z.string().nonempty(),
 })
 type noteFormType = z.infer<typeof noteFormSchema>
 export default function Notes() {
   const [getNote, { isLoading }] = useGetNoteMutation()
-  const { register, handleSubmit } = useForm<noteFormType>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<noteFormType>({
     resolver: zodResolver(noteFormSchema),
   })
   const [noteContent, setNoteContent] = useState("")
@@ -46,6 +50,7 @@ export default function Notes() {
     setNoteContent(e.target.value)
   }
   const onNoteSubmit = async (formData: noteFormType) => {
+    console.log({ formData })
     const result = await getNote(formData.note).unwrap()
     if (result.statusCode === 200) {
       setNoteContent(result?.data?.content || "")
@@ -59,56 +64,50 @@ export default function Notes() {
     }
   }, [])
   return (
-    <>
-      <div className="md:hidden">
-        <img
-          src="/examples/playground-light.png"
-          width={1280}
-          height={916}
-          alt="Playground"
-          className="block dark:hidden"
-        />
-        <img
-          src="/examples/playground-dark.png"
-          width={1280}
-          height={916}
-          alt="Playground"
-          className="hidden dark:block"
-        />
-      </div>
-      <div className="hidden h-full flex-col md:flex">
-        <div className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
+    <div className="">
+      <div className="h-screen flex-col flex">
+        <div className="container  flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-20">
           {/* <h2 className="text-lg font-semibold">Playground</h2> */}
           {/* <PresetSelector presets={presets}  /> */}
-          <div className="ml-auto flex w-full space-x-2 sm:justify-end">
+          <div className="py-1 pt-3 ml-auto flex w-full space-x-2 sm:justify-end">
             <form
               className="flex w-full space-x-2 "
               onSubmit={handleSubmit(onNoteSubmit)}
             >
-              <Input
-                // name="note"
-                type="search"
-                placeholder="Search..."
-                className=" w-full"
-                {...register("note")}
-              />
+              <div className="w-full relative">
+                <Input
+                  // name="note"
+                  type="search"
+                  placeholder="Search..."
+                  className=" w-full"
+                  {...register("note")}
+                />
+                {errors?.note && (
+                  <p className="absolute top-full px-1 text-xs text-red-600">
+                    {errors?.note.message}
+                  </p>
+                )}
+              </div>
               <Button type="submit" variant="secondary">
                 Submit
               </Button>
             </form>
             {/* <PresetSave /> */}
-            <div className="hidden space-x-2 md:flex">
+            {/* <div className="hidden space-x-2 md:flex">
               <CodeViewer />
               <PresetShare />
             </div>
-            <PresetActions />
+            <PresetActions /> */}
           </div>
         </div>
         <Separator />
         <Tabs defaultValue="complete" className="flex-1">
           <div className="container h-full py-6">
-            <div className="grid h-full items-stretch gap-6 md:grid-cols-[1fr_200px]">
-              <div className="hidden flex-col space-y-4 sm:flex md:order-2">
+            <div
+              className="grid h-full items-stretch gap-6 "
+              // md:grid-cols-[1fr_200px]"
+            >
+              {/* <div className="hidden flex-col space-y-4 sm:flex md:order-2">
                 <div className="grid gap-2">
                   <HoverCard openDelay={200}>
                     <HoverCardTrigger asChild>
@@ -142,13 +141,16 @@ export default function Notes() {
                 <TemperatureSelector defaultValue={[0.56]} />
                 <MaxLengthSelector defaultValue={[256]} />
                 <TopPSelector defaultValue={[0.9]} />
-              </div>
+              </div> */}
               <div className="md:order-1">
-                <TabsContent value="complete" className="mt-0 border-0 p-0">
+                <TabsContent
+                  value="complete"
+                  className="mt-0 border-0 p-0 h-full"
+                >
                   <div className="flex h-full flex-col space-y-4">
                     <Textarea
                       placeholder="Write a tagline for an ice cream shop"
-                      className="min-h-[400px] flex-1 p-4 md:min-h-[700px] lg:min-h-[700px]"
+                      className=" flex-1 p-4 "
                       value={noteContent}
                       onChange={onNoteContentChange}
                     />
@@ -215,6 +217,6 @@ export default function Notes() {
           </div>
         </Tabs>
       </div>
-    </>
+    </div>
   )
 }
