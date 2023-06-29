@@ -13,7 +13,7 @@ import { PresetShare } from "./preset-share"
 import { useSearchParams } from "react-router-dom"
 import { Eraser } from "lucide-react"
 const noteFormSchema = z.object({
-  note: z.string().nonempty(),
+  note: z.string().nonempty("Enter title"),
 })
 type noteFormType = z.infer<typeof noteFormSchema>
 const NoteTitleInput = () => {
@@ -73,7 +73,7 @@ const NoteTitleInput = () => {
           {...register("note")}
         />
         {errors?.note && (
-          <p className="absolute -bottom-5 px-1 text-xs text-red-600">
+          <p className="absolute -bottom-[18px] px-1 text-xs text-red-600">
             {errors?.note.message}
           </p>
         )}
