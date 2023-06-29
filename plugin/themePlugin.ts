@@ -2,7 +2,7 @@ import plugin from "tailwindcss/plugin"
 import { fontFamily } from "tailwindcss/defaultTheme"
 
 export const themePlugin = plugin(
-  ({ addBase }) => {
+  ({ addBase, addUtilities }) => {
     const root = {
       "--background": "0 0% 100%",
       "--foreground": "222.2 47.4% 11.2%",
@@ -158,6 +158,11 @@ export const themePlugin = plugin(
       },
     }
     addBase({ ...baseTheme, ...playground, ...music, ...others })
+    addUtilities({
+      ".app-h-screen": {
+        height: ["100vh", "100dvh"],
+      },
+    })
   },
   {
     theme: {

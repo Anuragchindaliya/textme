@@ -2,13 +2,16 @@ import { render, screen } from "@testing-library/react"
 import { Provider } from "react-redux"
 import { store } from "./app/store"
 import App from "./App"
+import { TooltipProvider } from "./components/ui/Tooltip"
 
 test("renders Task Management heading", () => {
   render(
-    <Provider store={store}>
-      <App />
-    </Provider>,
+    <TooltipProvider>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </TooltipProvider>,
   )
 
-  expect(screen.getByText(/Task Management/i)).toBeInTheDocument()
+  expect(screen.getByRole("button", { name: "Refresh" })).toBeInTheDocument()
 })

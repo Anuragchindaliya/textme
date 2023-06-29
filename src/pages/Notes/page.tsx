@@ -97,7 +97,7 @@ export default function Notes() {
   }, [])
   return (
     <div className="">
-      <div className="h-screen flex-col flex">
+      <div className="app-h-screen flex-col flex">
         <div className="container  flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-24">
           {/* <h2 className="text-lg font-semibold">Playground</h2> */}
           {/* <PresetSelector presets={presets}  /> */}
