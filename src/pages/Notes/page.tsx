@@ -1,5 +1,5 @@
-import { History } from "lucide-react"
-
+import { useEffect, useState } from "react"
+import { History, RefreshCcw, SendIcon, Terminal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   HoverCard,
@@ -10,55 +10,86 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
-import { CodeViewer } from "./components/code-viewer"
-import { Icons } from "./components/icons"
-import { MaxLengthSelector } from "./components/maxlength-selector"
-import { ModelSelector } from "./components/model-selector"
-import { PresetActions } from "./components/preset-actions"
-import { PresetSave } from "./components/preset-save"
-import { PresetSelector } from "./components/preset-selector"
-import { PresetShare } from "./components/preset-share"
-import { TemperatureSelector } from "./components/temperature-selector"
-import { TopPSelector } from "./components/top-p-selector"
-import { models, types } from "./data/models"
-import { presets } from "./data/presets"
 import "./styles.css"
-import { useEffect, useState } from "react"
-import { Search } from "./components/search"
-import { Input } from "@/components/ui/input"
-import { useGetNoteMutation } from "@/features/note/noteAPI"
+import {
+  NoteContentForm,
+  noteContentFormSchema,
+  useGetNoteDataQuery,
+  useGetNoteMutation,
+  usePostNoteContentMutation,
+} from "@/features/note/noteAPI"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-const noteFormSchema = z.object({
-  note: z.string().nonempty(),
-})
-type noteFormType = z.infer<typeof noteFormSchema>
+import { ModeToggle } from "./components/mode-toggle"
+import NoteTitleInput from "./components/NoteTitleInput"
+import { formatDistance } from "date-fns"
+import { cn } from "@/lib/utils"
+import { useSearchParams } from "react-router-dom"
+
 export default function Notes() {
-  const [getNote, { isLoading }] = useGetNoteMutation()
+  // const [noteContent, setNoteContent] = useState("")
+  const noteData = useGetNoteMutation({ fixedCacheKey: "get-note-data" })
+  const [searchParams] = useSearchParams()
+
+  const noteTitle = searchParams.get("t")
+  const { data, refetch } = useGetNoteDataQuery(noteTitle || "", {
+    skip: !noteTitle,
+    refetchOnMountOrArgChange: true,
+  })
+
+  const [postNoteContent, { isLoading: isLoadingUpdate }] =
+    usePostNoteContentMutation()
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<noteFormType>({
-    resolver: zodResolver(noteFormSchema),
+    formState: { errors, dirtyFields },
+    setValue,
+    resetField,
+    watch,
+  } = useForm<NoteContentForm>({
+    resolver: zodResolver(noteContentFormSchema),
+    values: {
+      content: data?.data?.content || "",
+      title: data?.data?.title || "",
+    },
   })
-  const [noteContent, setNoteContent] = useState("")
+  const noteContent = watch("content")
 
-  const onNoteContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNoteContent(e.target.value)
-  }
-  const onNoteSubmit = async (formData: noteFormType) => {
-    console.log({ formData })
-    const result = await getNote(formData.note).unwrap()
+  const onNoteContentSubmit = async (formData: NoteContentForm) => {
+    const result = await postNoteContent(formData).unwrap()
     if (result.statusCode === 200) {
-      setNoteContent(result?.data?.content || "")
+      // setNoteContent(result?.data?.content || "")
     }
   }
+  // const onNoteResult = ({
+  //   content,
+  //   title,
+  // }: {
+  //   content: string
+  //   title: string
+  // }) => {
+  //   console.log({ content })
+  //   // setNoteContent(content)
+  //   setValue("content", content)
+  //   setValue("title", title)
+  // }
+  // const onNoteContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  //   setNoteContent(e.target.value)
+  // }
   useEffect(() => {
     const att = "data-section"
     document.body.setAttribute(att, "playground")
+
     return () => {
       document.body.setAttribute(att, "")
     }
@@ -66,13 +97,29 @@ export default function Notes() {
   return (
     <div className="">
       <div className="h-screen flex-col flex">
-        <div className="container  flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-20">
+        <div className="container  flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-24">
           {/* <h2 className="text-lg font-semibold">Playground</h2> */}
           {/* <PresetSelector presets={presets}  /> */}
-          <div className="py-1 pt-3 ml-auto flex w-full space-x-2 sm:justify-end">
-            <form
+
+          <div className="py-1 pt-3 flex flex-1 space-x-2 sm:justify-end w-full">
+            <Sheet>
+              <SheetTrigger className="w-7">
+                {/* <HamburgerMenuIcon className="w-full h-full" /> */}
+                <Terminal />
+              </SheetTrigger>
+              <SheetContent side={"left"}>
+                <SheetHeader>
+                  <SheetTitle>Code Share</SheetTitle>
+                  <SheetDescription></SheetDescription>
+                  <SheetFooter className="mt-auto block">
+                    <ModeToggle />
+                  </SheetFooter>
+                </SheetHeader>
+              </SheetContent>
+            </Sheet>
+            {/* <form
               className="flex w-full space-x-2 "
-              onSubmit={handleSubmit(onNoteSubmit)}
+              onSubmit={handleSubmit(onNoteContentSubmit)}
             >
               <div className="w-full relative">
                 <Input
@@ -83,15 +130,17 @@ export default function Notes() {
                   {...register("note")}
                 />
                 {errors?.note && (
-                  <p className="absolute top-full px-1 text-xs text-red-600">
+                  <p className="absolute -bottom-5 px-1 text-xs text-red-600">
                     {errors?.note.message}
                   </p>
                 )}
               </div>
-              <Button type="submit" variant="secondary">
-                Submit
+              <Button type="submit" variant="secondary" title="Submit">
+                <SendIcon className="block sm:hidden" />
+                <span className="hidden sm:block">Submit</span>
               </Button>
-            </form>
+            </form> */}
+            <NoteTitleInput />
             {/* <PresetSave /> */}
             {/* <div className="hidden space-x-2 md:flex">
               <CodeViewer />
@@ -142,7 +191,10 @@ export default function Notes() {
                 <MaxLengthSelector defaultValue={[256]} />
                 <TopPSelector defaultValue={[0.9]} />
               </div> */}
-              <div className="md:order-1">
+              <form
+                className="md:order-1"
+                onSubmit={handleSubmit(onNoteContentSubmit)}
+              >
                 <TabsContent
                   value="complete"
                   className="mt-0 border-0 p-0 h-full"
@@ -151,15 +203,76 @@ export default function Notes() {
                     <Textarea
                       placeholder="Write a tagline for an ice cream shop"
                       className=" flex-1 p-4 "
-                      value={noteContent}
-                      onChange={onNoteContentChange}
+                      // value={noteContent}
+                      // onChange={onNoteContentChange}
+                      {...register("content")}
                     />
                     <div className="flex items-center space-x-2">
-                      <Button>Submit</Button>
-                      <Button variant="secondary">
-                        <span className="sr-only">Show history</span>
-                        <History className="h-4 w-4" />
+                      <Button
+                        type="submit"
+                        disabled={!noteTitle || !dirtyFields.content}
+                      >
+                        Update
                       </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={!noteTitle}
+                        onClick={() => {
+                          resetField("content", {
+                            defaultValue: noteContent,
+                          })
+                          refetch()
+                        }}
+                      >
+                        <span className="sr-only">Refresh</span>
+                        <RefreshCcw
+                          className={cn("h-4 w-4", {
+                            "animate-spin":
+                              isLoadingUpdate || noteData[1].isLoading,
+                          })}
+                        />
+                      </Button>
+                      {errors?.content && (
+                        <p className=" px-1 text-red-600">
+                          {errors?.content.message}
+                        </p>
+                      )}
+                      {/* <Button
+                        type="button"
+                        variant="secondary"
+                        disabled={!noteTitle}
+                        className="!ml-auto"
+                      >
+                        <span className="sr-only">Show history</span>
+                        <History
+                          className={cn("h-4 w-4", {
+                            "animate-spin":
+                              isLoadingUpdate || noteData[1].isLoading,
+                          })}
+                        />
+                      </Button> */}
+
+                      {/* <p>
+                        {noteData[1].data?.data.created_at &&
+                          formatDistance(
+                            new Date(noteData[1].data?.data.created_at),
+                            new Date(),
+                            {
+                              addSuffix: true,
+                            },
+                          )}
+                      </p> */}
+                      {/* <div className="!ml-auto ">
+                        {noteData[1].data?.data.updated_at &&
+                          formatDistance(
+                            new Date(noteData[1].data?.data.updated_at),
+                            new Date(),
+                            {
+                              addSuffix: true,
+                            },
+                          )}
+                      </div> */}
                     </div>
                   </div>
                 </TabsContent>
@@ -212,7 +325,7 @@ export default function Notes() {
                     </div>
                   </div>
                 </TabsContent>
-              </div>
+              </form>
             </div>
           </div>
         </Tabs>

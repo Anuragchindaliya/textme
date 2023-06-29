@@ -12,9 +12,10 @@ export interface ApiStandardResponse {
 }
 const allBaseUrls = {
   local: "http://localhost:5000",
-  prod: "http://localhost:5000",
+  prod: "https://textmen-backend.onrender.com",
 }
-const baseUrl = allBaseUrls.local
+// const baseUrl = allBaseUrls.local
+const baseUrl = allBaseUrls.prod
 export const baseQuery = fetchBaseQuery({
   baseUrl,
   prepareHeaders: (headers, { getState }) => {

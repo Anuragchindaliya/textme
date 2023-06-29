@@ -1,4 +1,5 @@
 import { ApiStandardResponse, endpoints, textmeApi } from "@/app/services"
+import { z } from "zod"
 
 // // A mock function to mimic making an async request for data
 // export function fetchCount(amount = 1) {
@@ -29,6 +30,11 @@ const res = {
 interface getNoteRes extends ApiStandardResponse {
   data: NoteType
 }
+export const noteContentFormSchema = z.object({
+  title: z.string().nonempty(),
+  content: z.string().nonempty(),
+})
+export type NoteContentForm = z.infer<typeof noteContentFormSchema>
 
 export const notesApi = textmeApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -38,6 +44,23 @@ export const notesApi = textmeApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    getNoteData: builder.query<getNoteRes, string>({
+      query: (title) => ({
+        url: `${endpoints.NOTES}/${title}`,
+        method: "GET",
+      }),
+    }),
+    postNoteContent: builder.mutation<any, NoteContentForm>({
+      query: (body) => ({
+        url: endpoints.NOTES,
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 })
-export const { useGetNoteMutation } = notesApi
+export const {
+  useGetNoteMutation,
+  usePostNoteContentMutation,
+  useGetNoteDataQuery,
+} = notesApi
