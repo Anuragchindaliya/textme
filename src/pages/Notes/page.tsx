@@ -35,6 +35,7 @@ import NoteTitleInput from "./components/NoteTitleInput"
 import { formatDistance } from "date-fns"
 import { cn } from "@/lib/utils"
 import { useSearchParams } from "react-router-dom"
+import Sidebar from "./components/Sidebar"
 
 export default function Notes() {
   // const [noteContent, setNoteContent] = useState("")
@@ -102,21 +103,7 @@ export default function Notes() {
           {/* <PresetSelector presets={presets}  /> */}
 
           <div className="py-1 pt-3 flex flex-1 space-x-2 sm:justify-end w-full">
-            <Sheet>
-              <SheetTrigger className="w-7">
-                {/* <HamburgerMenuIcon className="w-full h-full" /> */}
-                <Terminal />
-              </SheetTrigger>
-              <SheetContent side={"left"}>
-                <SheetHeader>
-                  <SheetTitle>Code Share</SheetTitle>
-                  <SheetDescription></SheetDescription>
-                  <SheetFooter className="mt-auto block">
-                    <ModeToggle />
-                  </SheetFooter>
-                </SheetHeader>
-              </SheetContent>
-            </Sheet>
+            <Sidebar />
             {/* <form
               className="flex w-full space-x-2 "
               onSubmit={handleSubmit(onNoteContentSubmit)}

@@ -1,9 +1,13 @@
 import React from "react"
 import { TaskType } from "../task.types"
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd"
+import {
+  DragDropContext,
+  Draggable,
+  // Droppable
+} from "react-beautiful-dnd"
 import { StrictModeDroppable } from "../Note"
 import { ComboboxPopover } from "./StatusPopover"
-import { colorClassConfig } from "../utils"
+// import { colorClassConfig } from "../utils"
 import { ComboboxDropdownMenu } from "./MoreOption"
 
 interface TaskListProps {

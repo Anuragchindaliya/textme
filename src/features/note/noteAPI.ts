@@ -15,18 +15,18 @@ export type NoteType = {
   category_id: number
   updated_at: string
 }
-const res = {
-  statusCode: 200,
-  message: "Note fetched successfully",
-  data: {
-    id: 1,
-    title: "Note Title",
-    content: "Note Content",
-    created_at: "2023-06-24T06:50:08.000Z",
-    category_id: 1,
-    updated_at: "2023-06-24T06:52:23.000Z",
-  },
-}
+// const res = {
+//   statusCode: 200,
+//   message: "Note fetched successfully",
+//   data: {
+//     id: 1,
+//     title: "Note Title",
+//     content: "Note Content",
+//     created_at: "2023-06-24T06:50:08.000Z",
+//     category_id: 1,
+//     updated_at: "2023-06-24T06:52:23.000Z",
+//   },
+// }
 interface getNoteRes extends ApiStandardResponse {
   data: NoteType
 }

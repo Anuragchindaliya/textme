@@ -83,10 +83,13 @@ export function ComboboxDropdownMenu() {
                       {labels.map((label) => (
                         <CommandItem
                           key={label}
-                          onSelect={(value) => {
-                            // setLabel(value)
-                            setOpen(false)
-                          }}
+                          onSelect={() =>
+                            // value
+                            {
+                              // setLabel(value)
+                              setOpen(false)
+                            }
+                          }
                         >
                           {label}
                         </CommandItem>
