@@ -3,7 +3,7 @@ import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { ChevronLeft, LogInIcon } from "lucide-react"
 import { Link } from "react-router-dom"
-import { UserAuthForm } from "./components/user-auth-form"
+import { UserAuthForm } from "./components/loginForm"
 import { Icons } from "@/components/icons"
 
 export const LoginPage = () => {

@@ -2,10 +2,24 @@ import { Command } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
-import { UserAuthForm } from "./components/user-auth-form"
+import { UserAuthForm } from "../../features/auth/user-auth-form"
 import { Link } from "react-router-dom"
+import { useState } from "react"
+import OTPForm from "@/features/auth/OtpForm"
+import RegisterEmail from "@/features/auth/RegisterEmail"
+import SetPassword from "@/features/auth/SetPassword"
+
+export const registerScreens = {
+  OTP: "OTP",
+  PASSWORD: "PASSWORD",
+  REGISTER: "REGISTER",
+} as const
+export type RegisterScreenType = keyof typeof registerScreens
 
 export default function AuthenticationPage() {
+  const [isOtpScreen, setOtpScreen] = useState<RegisterScreenType>(
+    registerScreens.REGISTER,
+  )
   return (
     <>
       <div className="md:hidden">
@@ -58,32 +72,16 @@ export default function AuthenticationPage() {
         </div>
         <div className="lg:p-8">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-            <div className="flex flex-col space-y-2 text-center">
-              <h1 className="text-2xl font-semibold tracking-tight">
-                Create an account
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Enter your email below to create your account
-              </p>
-            </div>
-            <UserAuthForm />
-            <p className="px-8 text-center text-sm text-muted-foreground">
-              By clicking continue, you agree to our{" "}
-              <Link
-                to="/terms"
-                className="underline underline-offset-4 hover:text-primary"
-              >
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link
-                to="/privacy"
-                className="underline underline-offset-4 hover:text-primary"
-              >
-                Privacy Policy
-              </Link>
-              .
-            </p>
+            <h1 className="text-2xl  font-semibold tracking-tight">
+              Create an account
+            </h1>
+            {isOtpScreen === registerScreens.REGISTER && (
+              <RegisterEmail setOtpScreen={setOtpScreen} />
+            )}
+            {isOtpScreen === registerScreens.OTP && (
+              <OTPForm setOtpScreen={setOtpScreen} />
+            )}
+            {isOtpScreen === registerScreens.PASSWORD && <SetPassword />}
           </div>
         </div>
       </div>

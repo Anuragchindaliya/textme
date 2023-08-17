@@ -13,8 +13,8 @@ const allBaseUrls = {
   local: "http://localhost:5000",
   prod: "https://textmen-backend.onrender.com",
 }
-// const baseUrl = allBaseUrls.local
-const baseUrl = allBaseUrls.prod
+const baseUrl = allBaseUrls.local
+// const baseUrl = allBaseUrls.prod
 export const baseQuery = fetchBaseQuery({
   baseUrl,
   prepareHeaders: (
@@ -84,6 +84,10 @@ const endpointsUrl = {
   SHOPIFY: "shopifygraphql",
   WAND: "wand",
   NOTES: "notes",
+  SEND_OTP: "auth/send-otp",
+  VERIFY_OTP: "auth/verify-otp",
+  CREATE_ACCOUNT: "auth/create-account",
+  LOGIN: "auth/login",
 } as const
 
 type EndpointsType = typeof endpointsUrl

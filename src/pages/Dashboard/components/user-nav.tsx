@@ -13,10 +13,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useNavigate } from "react-router-dom"
+import { googleLogout } from "@react-oauth/google"
 
 export function UserNav() {
   const navigate = useNavigate()
   const handleLogout = () => {
+    googleLogout()
     navigate("/")
   }
   return (
