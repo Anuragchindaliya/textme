@@ -13,8 +13,8 @@ const allBaseUrls = {
   local: "http://localhost:5000",
   prod: "https://textmen-backend.onrender.com",
 }
-const baseUrl = allBaseUrls.local
-// const baseUrl = allBaseUrls.prod
+// const baseUrl = allBaseUrls.local
+const baseUrl = allBaseUrls.prod
 export const baseQuery = fetchBaseQuery({
   baseUrl,
   prepareHeaders: (
