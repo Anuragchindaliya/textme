@@ -27,9 +27,16 @@ export type NoteType = {
 //     updated_at: "2023-06-24T06:52:23.000Z",
 //   },
 // }
-interface getNoteRes extends ApiStandardResponse {
-  data: NoteType
-}
+// interface getNoteRes extends ApiStandardResponse {
+//   data: NoteType
+// }
+
+const sheetres = [{ id: "1", title: "anurag", content: "test content" }]
+type sheetRes = {
+  id: string
+  title: string
+  content: string
+}[]
 export const noteContentFormSchema = z.object({
   title: z.string().nonempty(),
   content: z.string().nonempty(),
@@ -38,29 +45,42 @@ export type NoteContentForm = z.infer<typeof noteContentFormSchema>
 
 export const notesApi = textmeApi.injectEndpoints({
   endpoints: (builder) => ({
-    getNote: builder.mutation<getNoteRes, string>({
+    // getNote: builder.mutation<sheetRes, string>({
+    //   query: (title) => ({
+    //     url: `${endpoints.SEARCH}?title=${title}`,
+    //     method: "GET",
+    //   }),
+    // }),
+    getNoteData: builder.query<sheetRes, string>({
       query: (title) => ({
-        url: `${endpoints.NOTES}/${title}`,
+        // url: `${endpoints.NOTES}/${title}`,
+        url: `${endpoints.SEARCH}?title=${title}`,
         method: "GET",
       }),
     }),
-    getNoteData: builder.query<getNoteRes, string>({
+    createNote: builder.query({
       query: (title) => ({
-        url: `${endpoints.NOTES}/${title}`,
-        method: "GET",
+        url: `https://sheetdb.io/api/v1/l73k7anfjfai9`,
+        method: "POST",
+        body:{
+          id:"INCREMENT",
+          title,
+        }
       }),
     }),
     postNoteContent: builder.mutation<any, NoteContentForm>({
       query: (body) => ({
-        url: endpoints.NOTES,
-        method: "POST",
-        body,
+        // url: endpoints.NOTES,
+        url: `${endpoints.NOTE_TITLE}/${body.title}`,
+        method: "PATCH",
+        body: { data: { content: body.content } },
       }),
     }),
   }),
 })
 export const {
-  useGetNoteMutation,
+  // useGetNoteMutation,
   usePostNoteContentMutation,
   useGetNoteDataQuery,
+  useCreateNoteQuery
 } = notesApi

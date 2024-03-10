@@ -24,8 +24,9 @@ import "./styles.css"
 import {
   NoteContentForm,
   noteContentFormSchema,
+  useCreateNoteQuery,
   useGetNoteDataQuery,
-  useGetNoteMutation,
+  // useGetNoteMutation,
   usePostNoteContentMutation,
 } from "@/features/note/noteAPI"
 import { useForm } from "react-hook-form"
@@ -36,10 +37,11 @@ import { formatDistance } from "date-fns"
 import { cn } from "@/lib/utils"
 import { useSearchParams } from "react-router-dom"
 import Sidebar from "./components/Sidebar"
+import { useToast } from "@/components/ui/use-toast"
 
 export default function Notes() {
   // const [noteContent, setNoteContent] = useState("")
-  const noteData = useGetNoteMutation({ fixedCacheKey: "get-note-data" })
+  // const noteData = useGetNoteMutation({ fixedCacheKey: "get-note-data" })
   const [searchParams] = useSearchParams()
 
   const noteTitle = searchParams.get("t")
@@ -47,9 +49,13 @@ export default function Notes() {
     skip: !noteTitle,
     refetchOnMountOrArgChange: true,
   })
+  const {isSuccess} = useCreateNoteQuery(noteTitle,{
+    skip:data?.length !== 0,
 
-  const [postNoteContent, { isLoading: isLoadingUpdate }] =
-    usePostNoteContentMutation()
+  })
+  const {toast}=useToast();
+
+  const [postNoteContent, { isLoading: isLoadingUpdate }] = usePostNoteContentMutation()
   const {
     register,
     handleSubmit,
@@ -60,18 +66,28 @@ export default function Notes() {
   } = useForm<NoteContentForm>({
     resolver: zodResolver(noteContentFormSchema),
     values: {
-      content: data?.data?.content || "",
-      title: data?.data?.title || "",
+      content: data?.[0]?.content || "",
+      title: noteTitle || "",
     },
   })
   const noteContent = watch("content")
-
+  console.log({errors});
   const onNoteContentSubmit = async (formData: NoteContentForm) => {
+    console.log("formData",formData.title);
     const result = await postNoteContent(formData).unwrap()
+    console.log({result})
     if (result.statusCode === 200) {
       // setNoteContent(result?.data?.content || "")
     }
   }
+  console.log
+  useEffect(()=>{
+    if(isSuccess){
+      toast({
+        title: "Note created",
+      })
+    }
+  },[isSuccess])
   // const onNoteResult = ({
   //   content,
   //   title,
@@ -216,7 +232,8 @@ export default function Notes() {
                         <RefreshCcw
                           className={cn("h-4 w-4", {
                             "animate-spin":
-                              isLoadingUpdate || noteData[1].isLoading,
+                              isLoadingUpdate 
+                              // || noteData[1].isLoading,
                           })}
                         />
                       </Button>

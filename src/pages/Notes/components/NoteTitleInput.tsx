@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
   useGetNoteDataQuery,
-  useGetNoteMutation,
+  // useGetNoteMutation,
 } from "@/features/note/noteAPI"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SendIcon } from "lucide-react"

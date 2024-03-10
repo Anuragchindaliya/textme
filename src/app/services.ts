@@ -9,9 +9,10 @@ export interface ApiStandardResponse {
   statusCode: number
   message: string
 }
+// https://sheetdb.io/api/v1/l73k7anfjfai9/search_or?title=anurag
 const allBaseUrls = {
   local: "http://localhost:5000",
-  prod: "https://textmen-backend.onrender.com",
+  prod: "https://sheetdb.io/api/v1/l73k7anfjfai9",
 }
 // const baseUrl = allBaseUrls.local
 const baseUrl = allBaseUrls.prod
@@ -83,11 +84,13 @@ const endpointsUrl = {
   PATIENT_SELFIES: "physcompareselfie",
   SHOPIFY: "shopifygraphql",
   WAND: "wand",
-  NOTES: "notes",
+  NOTES: "search_or",
   SEND_OTP: "auth/send-otp",
   VERIFY_OTP: "auth/verify-otp",
   CREATE_ACCOUNT: "auth/create-account",
   LOGIN: "auth/login",
+  SEARCH:"search_or",
+  NOTE_TITLE:"title"
 } as const
 
 type EndpointsType = typeof endpointsUrl

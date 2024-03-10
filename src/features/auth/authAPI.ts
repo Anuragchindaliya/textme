@@ -59,12 +59,12 @@ export const notesApi = textmeApi.injectEndpoints({
         body: { ...body },
       }),
     }),
-    getNoteData: builder.query<getNoteRes, string>({
-      query: (title) => ({
-        url: `${endpoints.NOTES}/${title}`,
-        method: "GET",
-      }),
-    }),
+    // getNoteData: builder.query<getNoteRes, string>({
+    //   query: (title) => ({
+    //     url: `${endpoints.NOTES}/${title}`,
+    //     method: "GET",
+    //   }),
+    // }),
     login: builder.mutation<LoginRes, UserLoginType>({
       query: (body) => ({
         url: endpoints.LOGIN,
@@ -79,5 +79,5 @@ export const {
   useVerifyOTPMutation,
   useCreateAccountMutation,
   useLoginMutation,
-  useGetNoteDataQuery,
+  // useGetNoteDataQuery,
 } = notesApi
