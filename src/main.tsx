@@ -10,7 +10,7 @@ import { TooltipProvider } from "./components/ui/Tooltip"
 import { Toaster } from "./components/ui/toaster"
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <GoogleOAuthProvider clientId="244577747421-d53sbnmu7b7nd3ps87h8glv3t2qspnd8.apps.googleusercontent.com">
-    <React.StrictMode>
+    {/* <React.StrictMode> */}
       <TooltipProvider>
         <ThemeProvider attribute="class">
           <Provider store={store}>
@@ -19,6 +19,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           </Provider>
         </ThemeProvider>
       </TooltipProvider>
-    </React.StrictMode>
+    {/* </React.StrictMode> */}
   </GoogleOAuthProvider>,
 )

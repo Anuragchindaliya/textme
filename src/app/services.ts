@@ -90,7 +90,8 @@ const endpointsUrl = {
   CREATE_ACCOUNT: "auth/create-account",
   LOGIN: "auth/login",
   SEARCH:"search_or",
-  NOTE_TITLE:"title"
+  NOTE_TITLE:"title",
+  EDITOR_FILENAME:"filename"
 } as const
 
 type EndpointsType = typeof endpointsUrl
