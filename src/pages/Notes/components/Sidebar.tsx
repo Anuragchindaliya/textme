@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import {
   Sheet,
   SheetTrigger,
@@ -8,15 +8,32 @@ import {
   SheetDescription,
   SheetFooter,
 } from "@/components/ui/sheet"
-import { Check, CheckSquare, LogIn, Share2, Terminal } from "lucide-react"
+import { Check, CheckSquare, Edit, LogIn, Share2, Terminal } from "lucide-react"
 import { ModeToggle } from "./mode-toggle"
-import { Link } from "react-router-dom"
+import {  NavLink } from "react-router-dom"
 import { ROUTES } from "@/Router"
 import { Button } from "@/components/ui/button"
 
+
 const Sidebar = () => {
   const [hasCopied, setHasCopied] = React.useState(false)
-
+const linksArr = useMemo(()=>[
+  {
+    title:"Tasks",
+    icon:CheckSquare,
+    link:ROUTES.TASK
+  },
+  {
+    title:"Editor",
+    icon:Edit,
+    link:ROUTES.EDITOR
+  },
+  {
+    title:"Login",
+    icon:LogIn,
+    link:ROUTES.LOGIN
+  },
+],[])
   React.useEffect(() => {
     setTimeout(() => {
       setHasCopied(false)
@@ -90,7 +107,20 @@ const Sidebar = () => {
                   </div>
                 </form> */}
               <ul className="space-y-2">
-                <li>
+                {linksArr.map((row,i)=>{
+                  const Icon = row.icon;
+                  return <li key={i}>
+                  <NavLink
+                    to={row.link}
+                    className={({isActive})=>(`flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group px-4 ${isActive?"bg-gray-800":""}`)}
+
+                  >
+                    <Icon />
+                    <span className="ml-3">{row.title}</span>
+                  </NavLink>
+                </li>
+                })}
+                {/* <li>
                   <Link
                     to={ROUTES.TASK}
                     className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -101,13 +131,22 @@ const Sidebar = () => {
                 </li>
                 <li>
                   <Link
+                    to={ROUTES.EDITOR}
+                    className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                  >
+                    <Edit />
+                    <span className="ml-3">Editor</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to={ROUTES.LOGIN}
                     className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                   >
                     <LogIn />
                     <span className="ml-3">Login</span>
                   </Link>
-                </li>
+                </li> */}
                 {/* <li>
                     <button
                       type="button"

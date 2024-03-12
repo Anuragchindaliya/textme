@@ -23,7 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useSearchParams } from "react-router-dom"
 import EditorFileInput from "./components/NoteTitleInput"
-import Sidebar from "./components/Sidebar"
+import Sidebar from "../Notes/components/Sidebar"
 
 export default function Editor() {
   // const [noteContent, setNoteContent] = useState("")

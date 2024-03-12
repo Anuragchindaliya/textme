@@ -31,7 +31,7 @@ export const ROUTES = {
   MUSIC: "/music",
   SETTINGS: "/settings",
   SETTINGS_ACCOUNT: "",
-  EDITOR:"editor"
+  EDITOR:"/editor"
 } as const
 const Router = () => {
   return (
