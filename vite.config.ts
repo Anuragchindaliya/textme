@@ -32,4 +32,7 @@ export default defineConfig({
       "@": "/src",
     },
   },
+  define: {
+    'process.env.IS_PREACT': JSON.stringify('true'),
+  },
 })

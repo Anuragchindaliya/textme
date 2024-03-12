@@ -13,6 +13,7 @@ import { ModeToggle } from "./mode-toggle"
 import {  NavLink } from "react-router-dom"
 import { ROUTES } from "@/Router"
 import { Button } from "@/components/ui/button"
+import { LucideMousePointerClick } from "lucide-react"
 
 
 const Sidebar = () => {
@@ -29,9 +30,14 @@ const linksArr = useMemo(()=>[
     link:ROUTES.EDITOR
   },
   {
+    title:"Draw",
+    icon:LucideMousePointerClick,
+    link:ROUTES.LOGIN
+  },
+  {
     title:"Login",
     icon:LogIn,
-    link:ROUTES.LOGIN
+    link:ROUTES.DRAW
   },
 ],[])
   React.useEffect(() => {

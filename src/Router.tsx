@@ -1,4 +1,3 @@
-import React from "react"
 import { Routes, Route } from "react-router-dom"
 import About from "./pages/About"
 import PublicLayout from "./pages/PublicLayout/PublicLayout"
@@ -18,8 +17,8 @@ import { LoginPage } from "./pages/Login/page"
 import AuthenticationPage from "./pages/authentication/page"
 import PlaygroundPage from "./pages/playground/page"
 import Notes from "./pages/Notes/page"
-import Sidebar from "./components/Sidebar"
 import Editor from "./pages/Editor/page"
+import Draw from "./pages/Draw/page"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
@@ -31,13 +30,15 @@ export const ROUTES = {
   MUSIC: "/music",
   SETTINGS: "/settings",
   SETTINGS_ACCOUNT: "",
-  EDITOR:"/editor"
+  EDITOR:"/editor",
+  DRAW:"/draw"
 } as const
 const Router = () => {
   return (
     <Routes>
       <Route path={ROUTES.NOTES} element={<Notes />} />
       <Route path={ROUTES.EDITOR} element={<Editor />} />
+      <Route path={ROUTES.DRAW} element={<Draw />} />
       {/* <Route path={"/sidebar"} element={<Sidebar />} /> */}
       <Route element={<PublicLayout />}>
         <Route path={ROUTES.TASK} element={<Home />} />
