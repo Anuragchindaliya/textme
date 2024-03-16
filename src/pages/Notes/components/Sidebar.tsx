@@ -8,7 +8,7 @@ import {
   SheetDescription,
   SheetFooter,
 } from "@/components/ui/sheet"
-import { Check, CheckSquare, Edit, LogIn, Share2, Terminal } from "lucide-react"
+import { CalendarCheck, Check, CheckSquare, Edit, LogIn, Share2, Terminal } from "lucide-react"
 import { ModeToggle } from "./mode-toggle"
 import {  NavLink } from "react-router-dom"
 import { ROUTES } from "@/Router"
@@ -32,12 +32,17 @@ const linksArr = useMemo(()=>[
   {
     title:"Draw",
     icon:LucideMousePointerClick,
-    link:ROUTES.LOGIN
+    link:ROUTES.DRAW
+  },
+  {
+    title:"Calendar",
+    icon:CalendarCheck,
+    link:ROUTES.CALENDAR
   },
   {
     title:"Login",
     icon:LogIn,
-    link:ROUTES.DRAW
+    link:ROUTES.LOGIN
   },
 ],[])
   React.useEffect(() => {
@@ -118,7 +123,7 @@ const linksArr = useMemo(()=>[
                   return <li key={i}>
                   <NavLink
                     to={row.link}
-                    className={({isActive})=>(`flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group px-4 ${isActive?"bg-gray-800":""}`)}
+                    className={({isActive})=>(`flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group px-4 ${isActive?"bg-gray-200 dark:bg-gray-800":""}`)}
 
                   >
                     <Icon />

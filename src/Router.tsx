@@ -19,6 +19,7 @@ import PlaygroundPage from "./pages/playground/page"
 import Notes from "./pages/Notes/page"
 import Editor from "./pages/Editor/page"
 import Draw from "./pages/Draw/page"
+import MyCalendar from "./pages/Calendar/page"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
@@ -31,7 +32,8 @@ export const ROUTES = {
   SETTINGS: "/settings",
   SETTINGS_ACCOUNT: "",
   EDITOR:"/editor",
-  DRAW:"/draw"
+  DRAW:"/draw",
+  CALENDAR:"/calendar"
 } as const
 const Router = () => {
   return (
@@ -39,6 +41,7 @@ const Router = () => {
       <Route path={ROUTES.NOTES} element={<Notes />} />
       <Route path={ROUTES.EDITOR} element={<Editor />} />
       <Route path={ROUTES.DRAW} element={<Draw />} />
+      <Route path={ROUTES.CALENDAR} element={<MyCalendar />} />
       {/* <Route path={"/sidebar"} element={<Sidebar />} /> */}
       <Route element={<PublicLayout />}>
         <Route path={ROUTES.TASK} element={<Home />} />
