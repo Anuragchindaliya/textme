@@ -22,7 +22,7 @@ export const editorContentFormSchema = z.object({
   content: z.string().nonempty(),
 })
 export type EditorContentForm = z.infer<typeof editorContentFormSchema>
-type CreateEventRes = {
+type CreateEventReq = {
   title: string
   content: string
   start: string
@@ -43,7 +43,7 @@ export const calendarApi = textmeApi.injectEndpoints({
       }),
       providesTags: ["AllEvents"],
     }),
-    createEvent: builder.mutation<{ created: number }, CreateEventRes>({
+    createEvent: builder.mutation<{ created: number }, CreateEventReq>({
       query: (body) => ({
         url: `https://sheetdb.io/api/v1/l73k7anfjfai9?sheet=calendar`,
         method: "POST",
@@ -51,6 +51,13 @@ export const calendarApi = textmeApi.injectEndpoints({
           id: "INCREMENT",
           ...body,
         },
+      }),
+      invalidatesTags: ["AllEvents"],
+    }),
+    deleteEvent: builder.mutation<{ deleted: number }, {id:string}>({
+      query: ({id}) => ({
+        url: `https://sheetdb.io/api/v1/l73k7anfjfai9/id/${id}?sheet=calendar`,
+        method: "DELETE",
       }),
       invalidatesTags: ["AllEvents"],
     }),
@@ -68,5 +75,6 @@ export const {
   useCreateEventMutation,
   useGetEventDataQuery,
   useGetAllEventsQuery,
+  useDeleteEventMutation
   // usePostEditorFileContentMutation
 } = calendarApi
