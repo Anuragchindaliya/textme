@@ -8,14 +8,12 @@ import {
   SheetDescription,
   SheetFooter,
 } from "@/components/ui/sheet"
-import { CalendarCheck, Check, CheckSquare, Edit, LogIn, Share2, Terminal } from "lucide-react"
+import { CalendarCheck, Check, CheckSquare, Edit, FileText, LogIn, Share2, Terminal } from "lucide-react"
 import { ModeToggle } from "./mode-toggle"
 import {  NavLink } from "react-router-dom"
 import { ROUTES } from "@/Router"
 import { Button } from "@/components/ui/button"
 import { LucideMousePointerClick } from "lucide-react"
-
-
 const Sidebar = () => {
   const [hasCopied, setHasCopied] = React.useState(false)
 const linksArr = useMemo(()=>[
@@ -38,6 +36,11 @@ const linksArr = useMemo(()=>[
     title:"Calendar",
     icon:CalendarCheck,
     link:ROUTES.CALENDAR
+  },
+  {
+    title:"Invoice Pdf",
+    icon:FileText,
+    link:ROUTES.PDF
   },
   {
     title:"Login",
