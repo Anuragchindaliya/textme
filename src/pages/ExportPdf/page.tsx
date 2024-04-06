@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react"
-import { Excalidraw, Footer } from "@excalidraw/excalidraw"
+import { useEffect, useState } from "react"
 import { useTheme } from "next-themes"
 import Sidebar from "../Notes/components/Sidebar"
-// import DrawInput from "./components/DrawInput"
 import { useSearchParams } from "react-router-dom"
 import {
   useCreateDrawFileQuery,
@@ -18,7 +16,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,

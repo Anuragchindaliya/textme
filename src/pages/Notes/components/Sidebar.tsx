@@ -5,7 +5,6 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetDescription,
   SheetFooter,
 } from "@/components/ui/sheet"
 import { CalendarCheck, Check, CheckSquare, Edit, FileText, LogIn, Share2, Terminal } from "lucide-react"

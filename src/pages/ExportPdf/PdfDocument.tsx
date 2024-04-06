@@ -61,21 +61,6 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
 });
-type InvoiceDataType = {
-  invoiceNumber: string;
-  date: string;
-  dueDate: string;
-  customer: {
-      name: string;
-      address: string;
-  };
-  items: {
-      description: string;
-      quantity: number;
-      price: number;
-  }[];
-  logo: string;
-}
 
 // Create the Invoice component
 const PdfDcoument = ({invoiceData}:{invoiceData:InvoiceSchemaType}) => (
