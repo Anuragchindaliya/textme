@@ -37,6 +37,7 @@ export const noteContentFormSchema = z.object({
 export type NoteContentForm = z.infer<typeof noteContentFormSchema>
 type verifyOTPReq = { email: string; otp: string }
 export const notesApi = textmeApi.injectEndpoints({
+  overrideExisting:true,
   endpoints: (builder) => ({
     sendOTP: builder.mutation<getNoteRes, getNoteReq>({
       query: (body) => ({

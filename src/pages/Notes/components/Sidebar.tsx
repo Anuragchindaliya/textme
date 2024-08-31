@@ -42,6 +42,11 @@ const linksArr = useMemo(()=>[
     link:ROUTES.PDF
   },
   {
+    title:"Goverment site",
+    icon:FileText,
+    link:ROUTES.GOV_LINK
+  },
+  {
     title:"Login",
     icon:LogIn,
     link:ROUTES.LOGIN
