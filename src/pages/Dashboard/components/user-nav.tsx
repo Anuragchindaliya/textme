@@ -14,10 +14,16 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useNavigate } from "react-router-dom"
 import { googleLogout } from "@react-oauth/google"
+import { useAppDispatch, useAppSelector } from "@/app/hooks"
+import { selectCurrentEmail, setEmail } from "@/features/auth/authSlice"
 
 export function UserNav() {
+  const email = useAppSelector(selectCurrentEmail);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate()
   const handleLogout = () => {
+    dispatch(setEmail({email:"",id:""}))
+    localStorage.removeItem("userInfo")
     googleLogout()
     navigate("/")
   }
@@ -36,7 +42,7 @@ export function UserNav() {
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">shadcn</p>
             <p className="text-xs leading-none text-muted-foreground">
-              m@example.com
+             {email}
             </p>
           </div>
         </DropdownMenuLabel>

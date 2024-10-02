@@ -1,3 +1,4 @@
+import { ROUTES } from "@/Router"
 import { cn } from "@/lib/utils"
 import { Link, NavLink } from "react-router-dom"
 
@@ -19,6 +20,16 @@ export function MainNav({
         }
       >
         Overview
+      </NavLink>
+      <NavLink
+        to={ROUTES.PRODUCTS}
+        className={({ isActive }) =>
+          cn("text-sm font-medium  transition-colors hover:text-primary", {
+            "text-muted-foreground": !isActive,
+          })
+        }
+      >
+        Products
       </NavLink>
       <NavLink
         to="/tasks"

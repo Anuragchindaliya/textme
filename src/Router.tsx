@@ -22,6 +22,8 @@ import Draw from "./pages/Draw/page"
 import MyCalendar from "./pages/Calendar/page"
 import ExportPdf from "./pages/ExportPdf/page"
 import GovLink from "./pages/GovLink/page"
+import Products from "./pages/Products/page"
+import Cart from "./pages/Cart/page"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
@@ -37,7 +39,9 @@ export const ROUTES = {
   DRAW:"/draw",
   CALENDAR:"/calendar",
   PDF:"/invoice-pdf",
-  GOV_LINK:"/gov-link"
+  GOV_LINK:"/gov-link",
+  PRODUCTS:"/products",
+  CART:"/cart"
 } as const
 const Router = () => {
   return (
@@ -50,6 +54,8 @@ const Router = () => {
       <Route path={ROUTES.PDF} element={<ExportPdf />} />
       {/* <Route path={"/sidebar"} element={<Sidebar />} /> */}
       <Route path={ROUTES.GOV_LINK} element={<GovLink />} />
+      <Route path={ROUTES.PRODUCTS} element={<Products />} />
+      <Route path={ROUTES.CART} element={<Cart />} />
       <Route element={<PublicLayout />}>
         <Route path={ROUTES.TASK} element={<Home />} />
         <Route path={ROUTES.ABOUT} element={<About />} />

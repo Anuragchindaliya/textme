@@ -12,11 +12,12 @@ export type NoteType = {
   updated_at: string
 }
 
-interface LoginRes extends ApiStandardResponse {
-  data: {
-    token: string
-  } & UserLoginType
-}
+type LoginRes = any[]
+// interface LoginRes extends ApiStandardResponse {
+//   data: {
+//     token: string
+//   } & UserLoginType
+// }
 
 interface getNoteRes extends ApiStandardResponse {
   email: string
@@ -68,9 +69,7 @@ export const notesApi = textmeApi.injectEndpoints({
     // }),
     login: builder.mutation<LoginRes, UserLoginType>({
       query: (body) => ({
-        url: endpoints.LOGIN,
-        method: "POST",
-        body,
+        url: `${endpoints.LOGIN_USER}&email=${body.email}&password=${body.password}`,
       }),
     }),
   }),

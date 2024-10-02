@@ -21,6 +21,8 @@ import {
 import { ROUTES } from "@/Router"
 import { useLoginMutation } from "@/features/auth/authAPI"
 import PasswordInput from "@/features/auth/components/PasswordInput"
+import { useAppDispatch } from "@/app/hooks"
+import { setEmail } from "@/features/auth/authSlice"
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>
 
@@ -68,6 +70,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       console.log("Login Failed")
     },
   })
+  const dispatch = useAppDispatch()
 
   const navigate = useNavigate()
   const [loginManual, { isLoading }] = useLoginMutation()
@@ -75,16 +78,30 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     // setIsLoading(true)
     console.log({ data })
     try {
-      const result = await loginManual(data).unwrap()
-      if (result.statusCode === 200) {
+      const result = await loginManual(data).unwrap();
+      console.log({result})
+      if(result.length && result[0]?.email){
+        const userInfo = {email:result[0].email,id:result[0].id}
+        dispatch(setEmail(userInfo))
+        localStorage.setItem("userInfo",JSON.stringify(userInfo))
         navigate(ROUTES.DASHBOARD)
         return
       } else {
-        return toast({
-          title: "Login failed",
-          description: result.message,
-        })
-      }
+          return toast({
+            title: "Login failed",
+            description: "Please check credentials",
+          })
+        }
+
+      // if (result.statusCode === 200) {
+      //   navigate(ROUTES.DASHBOARD)
+      //   return
+      // } else {
+      //   return toast({
+      //     title: "Login failed",
+      //     description: result.message,
+      //   })
+      // }
     } catch (error: any) {
       console.log({ error })
       return toast({

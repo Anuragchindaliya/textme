@@ -47,8 +47,7 @@ export function UserAuthForm({
   const dispatch = useAppDispatch()
 
   const onSubmit = async (formData: FormData) => {
-    console.log({ formData })
-    dispatch(setEmail({ email: formData.email }))
+    // dispatch(setEmail({ email: formData.email,id:formData.id }))
     try {
       const result = await sendOTP(formData).unwrap()
       if (result.statusCode === 200) {

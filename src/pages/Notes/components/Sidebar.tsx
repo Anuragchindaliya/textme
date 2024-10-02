@@ -7,12 +7,13 @@ import {
   SheetTitle,
   SheetFooter,
 } from "@/components/ui/sheet"
-import { CalendarCheck, Check, CheckSquare, Edit, FileText, LogIn, Share2, Terminal } from "lucide-react"
+import { CalendarCheck, Check, CheckSquare, Edit, FileText, LogIn, Share2, ShoppingCart, Terminal } from "lucide-react"
 import { ModeToggle } from "./mode-toggle"
 import {  NavLink } from "react-router-dom"
 import { ROUTES } from "@/Router"
 import { Button } from "@/components/ui/button"
 import { LucideMousePointerClick } from "lucide-react"
+import { Link } from "lucide-react"
 const Sidebar = () => {
   const [hasCopied, setHasCopied] = React.useState(false)
 const linksArr = useMemo(()=>[
@@ -43,8 +44,13 @@ const linksArr = useMemo(()=>[
   },
   {
     title:"Goverment site",
-    icon:FileText,
+    icon:Link,
     link:ROUTES.GOV_LINK
+  },
+  {
+    title:"Products",
+    icon:ShoppingCart,
+    link:ROUTES.PRODUCTS
   },
   {
     title:"Login",
