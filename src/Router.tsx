@@ -24,6 +24,7 @@ import ExportPdf from "./pages/ExportPdf/page"
 import GovLink from "./pages/GovLink/page"
 import Products from "./pages/Products/page"
 import Cart from "./pages/Cart/page"
+import Qrcode from "./pages/Qrcode/page"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
@@ -35,19 +36,21 @@ export const ROUTES = {
   MUSIC: "/music",
   SETTINGS: "/settings",
   SETTINGS_ACCOUNT: "",
-  EDITOR:"/editor",
-  DRAW:"/draw",
-  CALENDAR:"/calendar",
-  PDF:"/invoice-pdf",
-  GOV_LINK:"/gov-link",
-  PRODUCTS:"/products",
-  CART:"/cart"
+  EDITOR: "/editor",
+  DRAW: "/draw",
+  CALENDAR: "/calendar",
+  PDF: "/invoice-pdf",
+  GOV_LINK: "/gov-link",
+  PRODUCTS: "/products",
+  CART: "/cart",
+  QR_CODE: "/qrcode",
 } as const
 const Router = () => {
   return (
     <Routes>
       <Route path={ROUTES.NOTES} element={<Notes />} />
       <Route path={ROUTES.EDITOR} element={<Editor />} />
+      <Route path={ROUTES.QR_CODE} element={<Qrcode />} />
       <Route path={ROUTES.DRAW} element={<Draw />} />
       <Route path={ROUTES.CALENDAR} element={<MyCalendar />} />
       <Route path={ROUTES.PDF} element={<ExportPdf />} />

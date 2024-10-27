@@ -49,13 +49,13 @@ export default function Notes() {
     skip: !noteTitle,
     refetchOnMountOrArgChange: true,
   })
-  const {isSuccess} = useCreateNoteQuery(noteTitle,{
-    skip:data?.length !== 0,
-
+  const { isSuccess } = useCreateNoteQuery(noteTitle, {
+    skip: data?.length !== 0,
   })
-  const {toast}=useToast();
+  const { toast } = useToast()
 
-  const [postNoteContent, { isLoading: isLoadingUpdate }] = usePostNoteContentMutation()
+  const [postNoteContent, { isLoading: isLoadingUpdate }] =
+    usePostNoteContentMutation()
   const {
     register,
     handleSubmit,
@@ -71,23 +71,22 @@ export default function Notes() {
     },
   })
   const noteContent = watch("content")
-  console.log({errors});
+  console.log({ errors })
   const onNoteContentSubmit = async (formData: NoteContentForm) => {
-    console.log("formData",formData.title);
+    console.log("formData", formData.title)
     const result = await postNoteContent(formData).unwrap()
-    console.log({result})
+    console.log({ result })
     if (result.statusCode === 200) {
       // setNoteContent(result?.data?.content || "")
     }
   }
-  console.log
-  useEffect(()=>{
-    if(isSuccess){
+  useEffect(() => {
+    if (isSuccess) {
       toast({
         title: "Note created",
       })
     }
-  },[isSuccess])
+  }, [isSuccess])
   // const onNoteResult = ({
   //   content,
   //   title,
@@ -231,9 +230,8 @@ export default function Notes() {
                         <span className="sr-only">Refresh</span>
                         <RefreshCcw
                           className={cn("h-4 w-4", {
-                            "animate-spin":
-                              isLoadingUpdate 
-                              // || noteData[1].isLoading,
+                            "animate-spin": isLoadingUpdate,
+                            // || noteData[1].isLoading,
                           })}
                         />
                       </Button>

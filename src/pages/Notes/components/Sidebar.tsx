@@ -7,57 +7,76 @@ import {
   SheetTitle,
   SheetFooter,
 } from "@/components/ui/sheet"
-import { CalendarCheck, Check, CheckSquare, Edit, FileText, LogIn, Share2, ShoppingCart, Terminal } from "lucide-react"
+import {
+  CalendarCheck,
+  Check,
+  CheckSquare,
+  Edit,
+  FileText,
+  LogIn,
+  QrCode,
+  Share2,
+  ShoppingCart,
+  Terminal,
+} from "lucide-react"
 import { ModeToggle } from "./mode-toggle"
-import {  NavLink } from "react-router-dom"
+import { NavLink } from "react-router-dom"
 import { ROUTES } from "@/Router"
 import { Button } from "@/components/ui/button"
 import { LucideMousePointerClick } from "lucide-react"
 import { Link } from "lucide-react"
 const Sidebar = () => {
   const [hasCopied, setHasCopied] = React.useState(false)
-const linksArr = useMemo(()=>[
-  {
-    title:"Tasks",
-    icon:CheckSquare,
-    link:ROUTES.TASK
-  },
-  {
-    title:"Editor",
-    icon:Edit,
-    link:ROUTES.EDITOR
-  },
-  {
-    title:"Draw",
-    icon:LucideMousePointerClick,
-    link:ROUTES.DRAW
-  },
-  {
-    title:"Calendar",
-    icon:CalendarCheck,
-    link:ROUTES.CALENDAR
-  },
-  {
-    title:"Invoice Pdf",
-    icon:FileText,
-    link:ROUTES.PDF
-  },
-  {
-    title:"Goverment site",
-    icon:Link,
-    link:ROUTES.GOV_LINK
-  },
-  {
-    title:"Products",
-    icon:ShoppingCart,
-    link:ROUTES.PRODUCTS
-  },
-  {
-    title:"Login",
-    icon:LogIn,
-    link:ROUTES.LOGIN
-  },
-],[])
+  const linksArr = useMemo(
+    () => [
+      {
+        title: "Tasks",
+        icon: CheckSquare,
+        link: ROUTES.TASK,
+      },
+      {
+        title: "Editor",
+        icon: Edit,
+        link: ROUTES.EDITOR,
+      },
+      {
+        title: "Draw",
+        icon: LucideMousePointerClick,
+        link: ROUTES.DRAW,
+      },
+      {
+        title: "Calendar",
+        icon: CalendarCheck,
+        link: ROUTES.CALENDAR,
+      },
+      {
+        title: "Invoice Pdf",
+        icon: FileText,
+        link: ROUTES.PDF,
+      },
+      {
+        title: "Goverment site",
+        icon: Link,
+        link: ROUTES.GOV_LINK,
+      },
+      {
+        title: "Products",
+        icon: ShoppingCart,
+        link: ROUTES.PRODUCTS,
+      },
+      {
+        title: "QR Code",
+        icon: QrCode,
+        link: ROUTES.QR_CODE,
+      },
+      {
+        title: "Login",
+        icon: LogIn,
+        link: ROUTES.LOGIN,
+      },
+    ],
+    [],
+  )
   React.useEffect(() => {
     setTimeout(() => {
       setHasCopied(false)
@@ -131,18 +150,23 @@ const linksArr = useMemo(()=>[
                   </div>
                 </form> */}
               <ul className="space-y-2">
-                {linksArr.map((row,i)=>{
-                  const Icon = row.icon;
-                  return <li key={i}>
-                  <NavLink
-                    to={row.link}
-                    className={({isActive})=>(`flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group px-4 ${isActive?"bg-gray-200 dark:bg-gray-800":""}`)}
-
-                  >
-                    <Icon />
-                    <span className="ml-3">{row.title}</span>
-                  </NavLink>
-                </li>
+                {linksArr.map((row, i) => {
+                  const Icon = row.icon
+                  return (
+                    <li key={i}>
+                      <NavLink
+                        to={row.link}
+                        className={({ isActive }) =>
+                          `flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group px-4 ${
+                            isActive ? "bg-gray-200 dark:bg-gray-800" : ""
+                          }`
+                        }
+                      >
+                        <Icon />
+                        <span className="ml-3">{row.title}</span>
+                      </NavLink>
+                    </li>
+                  )
                 })}
                 {/* <li>
                   <Link
