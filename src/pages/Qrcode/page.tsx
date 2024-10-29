@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator"
 
 import Sidebar from "../Notes/components/Sidebar"
 import QRInput from "./components/QRInput"
+import { Input } from "@/components/ui/input"
 
 // import "./styles.css"
 const noteFormSchema = z.object({
@@ -21,6 +22,7 @@ const Qrcode = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [selectedFgColor, setSelectedFgColor] = useState("#000000")
   const [selectedBackColor, setSelectedBackColor] = useState("#ffffff")
+  const [imagePath, setImagePath] = useState("")
   const [searchParams, setSearchParams] = useSearchParams()
   const form = useForm<noteFormType>({
     resolver: zodResolver(noteFormSchema),
@@ -88,8 +90,8 @@ const Qrcode = () => {
         </div>
         <Separator />
         <div className="flex h-full ">
-          <div className="flex-1  flex justify-center items-center flex-col p-4">
-            <div>
+          <div className="flex-1  flex justify-center items-center flex-col p-">
+            <div className="flex flex-col gap-y-4 mb-4">
               <div className="flex items-center gap-3">
                 <label htmlFor="bgColor">Back Ground color</label>
                 <input
@@ -116,6 +118,22 @@ const Qrcode = () => {
                   }}
                 />
               </div>
+              <div className="flex items-center gap-3">
+                <label htmlFor="imagePath" className="whitespace-nowrap">
+                  Logo Link
+                </label>
+                <Input
+                  id="imagePath"
+                  type="url"
+                  title="Paste logo link"
+                  className=" "
+                  placeholder="Paste logo link"
+                  value={imagePath}
+                  onChange={(e) => {
+                    setImagePath(e.target.value)
+                  }}
+                />
+              </div>
             </div>
             <h2>
               Live text <u>{qrText}</u>
@@ -137,9 +155,7 @@ const Qrcode = () => {
                     //   src: "https://static.vecteezy.com/system/resources/previews/009/481/029/non_2x/geometric-icon-logo-geometric-abstract-element-free-vector.jpg",
                     // }}
                     imageSettings={{
-                      src: "https://static.vecteezy.com/system/resources/previews/015/576/699/large_2x/mountain-icon-logo-vector.jpg", // Replace with your logo URL
-                      x: undefined, // Automatic center positioning
-                      y: undefined, // Automatic center positioning
+                      src: imagePath, // Replace with your logo URL
                       height: 64, // Height of the logo
                       width: 64, // Width of the logo
                       excavate: true, // This option clears the area where the logo is placed so it's more readable
@@ -179,7 +195,7 @@ const Qrcode = () => {
               </div>
             )}
           </div>
-          <div className="flex-1  flex justify-center items-center flex-col p-4 border-l">
+          <div className="flex-1  flex justify-center items-center flex-col border-l">
             <h2>
               Submitted text <u>{submittedValue}</u>
             </h2>
