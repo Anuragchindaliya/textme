@@ -203,7 +203,7 @@ const Qrcode = () => {
           </div>
           <Separator />
           <div className="flex h-full  ">
-            <SidebarTrigger className="m-2 p-2 absolute hover:bg-white dark:hover:bg-gray-700 bg-gray-100 dark:bg-gray-900" />
+            <SidebarTrigger className="m-2 p-2 absolute hover:bg-white dark:hover:bg-gray-700 bg-gray-100 dark:bg-gray-900 z-10" />
             <div className="flex-[3] overflow-hidden bg-gray-100 dark:bg-gray-900">
               <animated.div
                 ref={wrapperRef}
@@ -284,7 +284,7 @@ const Qrcode = () => {
               </animated.div>
             </div>
             {qrText && (
-              <div className="flex-1 flex flex-col border-l">
+              <div className="flex-1 flex-col border-l hidden md:flex">
                 <div className="flex flex-col  mb-4 divide-y text-sm">
                   <div className="flex items-center gap-3 p-4">
                     <label htmlFor="bgColor" className="whitespace-nowrap">
