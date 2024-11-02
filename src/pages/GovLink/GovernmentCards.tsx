@@ -8,12 +8,14 @@ import { useEffect, useState } from "react"
 import Sidebar from "../Notes/components/Sidebar"
 const categoryConfig = {
   Document: {
-    bgColor: "bg-blue-100",
+    bgColor: "bg-blue-100 ",
     btnColor: "bg-blue-600",
+    textColor: "text-blue-700",
   },
   Job: {
     bgColor: "bg-orange-100",
     btnColor: "bg-orange-600",
+    textColor: "text-orange-700",
   },
 }
 const GovernmentCards = () => {
@@ -29,23 +31,29 @@ const GovernmentCards = () => {
     }
   }, [data])
   const filteredData = filterData.filter((item) => {
-    const macthesCategory = category == "All" || item.Category === category;
+    const macthesCategory = category == "All" || item.Category === category
 
-    return item.Name.toLowerCase().includes(debouncedQuery.toLowerCase()) && macthesCategory
+    return (
+      item.Name.toLowerCase().includes(debouncedQuery.toLowerCase()) &&
+      macthesCategory
+    )
   })
 
   return (
     <div className="container mx-auto p-4">
       <div className="flex">
-      <Sidebar />
-      <h1 className="text-2xl font-bold mb-4 text-center flex-1">
-        Government Websites
-      </h1>
+        <Sidebar />
+        <h1 className="text-2xl font-bold mb-4 text-center flex-1">
+          Government Websites
+        </h1>
       </div>
       <div className="flex max-w-lg mx-auto space-x-3">
-        <form className="  mb-4 flex-1 w-full" onSubmit={(e)=>{
-          e.preventDefault()
-        }}>
+        <form
+          className="  mb-4 flex-1 w-full"
+          onSubmit={(e) => {
+            e.preventDefault()
+          }}
+        >
           <label
             htmlFor="default-search"
             className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -75,7 +83,9 @@ const GovernmentCards = () => {
               type="search"
               id="default-search"
               className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder={`Search...       ${filteredData.length ? `${filteredData.length} record's`:"" }`}
+              placeholder={`Search...       ${
+                filteredData.length ? `${filteredData.length} record's` : ""
+              }`}
               onChange={(e) => {
                 setSearchText(e.currentTarget?.value)
               }}
@@ -133,7 +143,13 @@ const GovernmentCards = () => {
                     />
                   )}
                   <div className="z-2 relative">
-                    <h2 className="text-lg font-semibold mb-2">{site.Name}</h2>
+                    <h2
+                      className={`text-lg font-semibold mb-2 dark:text-black ${
+                        (categoryConfig as any)[site.Category].textColor
+                      }`}
+                    >
+                      {site.Name}
+                    </h2>
                     <p className="text-gray-700 mb-4 text-sm">
                       {site.Services}
                     </p>

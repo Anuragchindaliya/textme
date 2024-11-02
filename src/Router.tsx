@@ -25,6 +25,7 @@ import GovLink from "./pages/GovLink/page"
 import Products from "./pages/Products/page"
 import Cart from "./pages/Cart/page"
 import Qrcode from "./pages/Qrcode/page"
+import QRLayout from "./pages/Qrcode/QRLayout"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
