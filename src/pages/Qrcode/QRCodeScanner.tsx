@@ -12,12 +12,10 @@ type PermissionStatus = "idle" | "granted" | "denied"
 const QRCodeScanner: React.FC = () => {
   const [result, setResult] = useState<string | null>(null)
   const qrCodeRef = useRef<HTMLDivElement | null>(null)
-  const html5QrCode = useRef<Html5Qrcode | null>(null)
   const [scanner, setScanner] = useState<Html5Qrcode | null>(null)
   const [isScanning, setIsScanning] = useState(false)
   const [permissionStatus, setPermissionStatus] =
     useState<PermissionStatus>("idle")
-  console.log({ permissionStatus })
   useEffect(() => {
     // Function to check permission and start scanner if permitted
     const checkPermissions = async () => {
@@ -25,7 +23,6 @@ const QRCodeScanner: React.FC = () => {
         const permissionStatus = await navigator.permissions.query({
           name: "camera" as PermissionName,
         })
-        console.log(permissionStatus.state, "state")
         setPermissionStatus(permissionStatus.state as PermissionStatus)
 
         permissionStatus.onchange = () => {

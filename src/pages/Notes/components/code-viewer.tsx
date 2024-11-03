@@ -16,10 +16,10 @@ export function CodeViewer() {
           View code
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[625px]">
+      <DialogContent className="sm:max-w-[625px]" aria-describedby="View code">
         <DialogHeader>
           <DialogTitle>View code</DialogTitle>
-          <DialogDescription>
+          <DialogDescription aria-describedby="View code integration">
             You can use the following code to start integrating your current
             prompt and settings into your application.
           </DialogDescription>

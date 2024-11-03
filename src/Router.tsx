@@ -46,17 +46,15 @@ export const ROUTES = {
   PRODUCTS: "/products",
   CART: "/cart",
   QR_CODE: "/qrcode",
-  QR_SCAN: "scan",
+  QR_SCAN: "/scan",
 } as const
 const Router = () => {
   return (
     <Routes>
       <Route path={ROUTES.NOTES} element={<Notes />} />
       <Route path={ROUTES.EDITOR} element={<Editor />} />
-      <Route path={ROUTES.QR_CODE}>
-        <Route index element={<Qrcode />} />
-        <Route path={ROUTES.QR_SCAN} element={<QRCodeScanner />} />
-      </Route>
+      <Route path={ROUTES.QR_CODE} element={<Qrcode />} />
+      <Route path={ROUTES.QR_SCAN} element={<QRCodeScanner />} />
       <Route path={ROUTES.DRAW} element={<Draw />} />
       <Route path={ROUTES.CALENDAR} element={<MyCalendar />} />
       <Route path={ROUTES.PDF} element={<ExportPdf />} />

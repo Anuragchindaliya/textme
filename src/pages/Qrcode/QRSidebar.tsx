@@ -40,7 +40,7 @@ const data = {
     },
     {
       title: "Scan QR",
-      url: "/qrcode/scan",
+      url: "/scan",
       icon: Scan,
     },
     // {
