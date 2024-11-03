@@ -6,6 +6,8 @@ import { toast } from "react-toastify"
 import QRLayout from "./QRLayout"
 import { Menu } from "./Scan/components/menu"
 import { CopyButton } from "./Scan/components/CopyButton"
+import Sidebar from "../Notes/components/Sidebar"
+import { SidebarTrigger } from "@/components/AppSidebar"
 type PermissionStatus = "idle" | "granted" | "denied"
 const QRCodeScanner: React.FC = () => {
   const [result, setResult] = useState<string | null>(null)
@@ -176,9 +178,16 @@ const QRCodeScanner: React.FC = () => {
   return (
     <QRLayout>
       <div className="text-center h-full flex flex-col">
-        <Menu />
+        <div className="flex">
+          <div className="pl-4 py-2">
+            <Sidebar />
+          </div>
 
-        <div className=" flex bg-gray-700 h-[68vh] justify-center items-center">
+          <Menu />
+        </div>
+
+        <div className="relative  flex bg-gray-700 h-[68vh] justify-center items-center">
+          <SidebarTrigger className="absolute left-1 top-1" />
           <div className="absolute">
             {result && (
               <>
