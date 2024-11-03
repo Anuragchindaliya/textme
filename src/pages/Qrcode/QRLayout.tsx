@@ -5,7 +5,7 @@ export default function QRLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <QRSidebar />
-      <main className="w-full">{children}</main>
+      <main className="w-full h-full">{children}</main>
     </SidebarProvider>
   )
 }

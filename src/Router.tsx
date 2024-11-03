@@ -26,6 +26,7 @@ import Products from "./pages/Products/page"
 import Cart from "./pages/Cart/page"
 import Qrcode from "./pages/Qrcode/page"
 import QRLayout from "./pages/Qrcode/QRLayout"
+import QRCodeScanner from "./pages/Qrcode/QRCodeScanner"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
@@ -45,13 +46,17 @@ export const ROUTES = {
   PRODUCTS: "/products",
   CART: "/cart",
   QR_CODE: "/qrcode",
+  QR_SCAN: "scan",
 } as const
 const Router = () => {
   return (
     <Routes>
       <Route path={ROUTES.NOTES} element={<Notes />} />
       <Route path={ROUTES.EDITOR} element={<Editor />} />
-      <Route path={ROUTES.QR_CODE} element={<Qrcode />} />
+      <Route path={ROUTES.QR_CODE}>
+        <Route index element={<Qrcode />} />
+        <Route path={ROUTES.QR_SCAN} element={<QRCodeScanner />} />
+      </Route>
       <Route path={ROUTES.DRAW} element={<Draw />} />
       <Route path={ROUTES.CALENDAR} element={<MyCalendar />} />
       <Route path={ROUTES.PDF} element={<ExportPdf />} />
