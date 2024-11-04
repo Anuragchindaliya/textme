@@ -24,7 +24,11 @@ import {
 } from "@/components/AppSidebar"
 import { NavMain } from "./components/nav-main"
 import { FcGallery } from "react-icons/fc"
-
+import { ROUTES } from "@/Router"
+export const QR_ROUTES = {
+  QR_CODE: "/qrcode",
+  QR_SCAN: "/qrscan",
+}
 // This is sample data.
 const data = {
   user: {
@@ -35,12 +39,12 @@ const data = {
   navMain: [
     {
       title: "Generate QR",
-      url: "/qrcode",
+      url: QR_ROUTES.QR_CODE,
       icon: QrCode,
     },
     {
       title: "Scan QR",
-      url: "/scan",
+      url: QR_ROUTES.QR_SCAN,
       icon: Scan,
     },
     // {

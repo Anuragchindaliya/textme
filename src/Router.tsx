@@ -27,6 +27,7 @@ import Cart from "./pages/Cart/page"
 import Qrcode from "./pages/Qrcode/page"
 import QRLayout from "./pages/Qrcode/QRLayout"
 import QRCodeScanner from "./pages/Qrcode/QRCodeScanner"
+import { QR_ROUTES } from "./pages/Qrcode/QRSidebar"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
@@ -45,8 +46,8 @@ export const ROUTES = {
   GOV_LINK: "/gov-link",
   PRODUCTS: "/products",
   CART: "/cart",
-  QR_CODE: "/qrcode",
-  QR_SCAN: "/scan",
+  QR_CODE: QR_ROUTES.QR_CODE,
+  QR_SCAN: QR_ROUTES.QR_SCAN,
 } as const
 const Router = () => {
   return (
@@ -55,6 +56,8 @@ const Router = () => {
       <Route path={ROUTES.EDITOR} element={<Editor />} />
       <Route path={ROUTES.QR_CODE} element={<Qrcode />} />
       <Route path={ROUTES.QR_SCAN} element={<QRCodeScanner />} />
+      <Route path={"qr_generate"} element={<Qrcode />} />
+      <Route path={"qr_scan"} element={<QRCodeScanner />} />
       <Route path={ROUTES.DRAW} element={<Draw />} />
       <Route path={ROUTES.CALENDAR} element={<MyCalendar />} />
       <Route path={ROUTES.PDF} element={<ExportPdf />} />

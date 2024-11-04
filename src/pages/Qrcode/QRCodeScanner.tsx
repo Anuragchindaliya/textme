@@ -175,16 +175,15 @@ const QRCodeScanner: React.FC = () => {
   return (
     <QRLayout>
       <div className="text-center h-full flex flex-col">
-        <div>check</div>
-        {/* <div className="flex">
+        <div className="flex">
           <div className="pl-4 py-2">
             <Sidebar />
           </div>
 
           <Menu />
-        </div> */}
+        </div>
 
-        {/* <div className="relative  flex bg-gray-700 h-[68vh] justify-center items-center">
+        <div className="relative  flex bg-gray-700 h-[68vh] justify-center items-center">
           <SidebarTrigger className="absolute left-1 top-1" />
           <div className="absolute">
             {result && (
@@ -218,14 +217,16 @@ const QRCodeScanner: React.FC = () => {
             )}
           </div>
 
+          {/* {isScanning && ( */}
           <div
             id="qr-reader"
             className=" w-[500px] m-auto"
             ref={qrCodeRef}
           ></div>
-        </div> */}
+          {/* )} */}
+        </div>
 
-        {/* <div className="gap-4 flex mx-auto my-2">
+        <div className="gap-4 flex mx-auto my-2">
           {isScanning ? (
             <Button onClick={stopScanning} className="flex items-center gap-2">
               <CameraOff /> Stop Scaning
@@ -239,7 +240,7 @@ const QRCodeScanner: React.FC = () => {
               <Camera /> Start Scaning
             </Button>
           )}
-        </div> */}
+        </div>
       </div>
     </QRLayout>
   )
