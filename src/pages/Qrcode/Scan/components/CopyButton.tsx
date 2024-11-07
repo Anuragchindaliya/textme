@@ -12,13 +12,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { cva } from "class-variance-authority"
+import { cva, VariantProps } from "class-variance-authority"
 export interface NpmCommands {
   __npmCommand__?: string
   __yarnCommand__?: string
   __pnpmCommand__?: string
 }
-interface CopyButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
+interface CopyButtonProps
+  extends React.HTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
   value: string
   src?: string
   // event?: Event["name"]

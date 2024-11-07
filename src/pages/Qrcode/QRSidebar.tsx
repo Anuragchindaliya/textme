@@ -14,6 +14,7 @@ import {
   ScanIcon,
   Settings2,
   SquareAsteriskIcon,
+  Upload,
 } from "lucide-react"
 import {
   Sidebar,
@@ -28,6 +29,7 @@ import { ROUTES } from "@/Router"
 export const QR_ROUTES = {
   QR_CODE: "/qrcode",
   QR_SCAN: "/qrscan",
+  QR_UPLOAD: "/qrupload",
 }
 // This is sample data.
 const data = {
@@ -46,6 +48,11 @@ const data = {
       title: "Scan QR",
       url: QR_ROUTES.QR_SCAN,
       icon: Scan,
+    },
+    {
+      title: "Upload QR",
+      url: QR_ROUTES.QR_UPLOAD,
+      icon: Upload,
     },
     // {
     //   title: "Documentation",

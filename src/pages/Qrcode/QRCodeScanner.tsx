@@ -186,14 +186,14 @@ const QRCodeScanner: React.FC = () => {
         <div className="relative  flex bg-gray-700 h-[68vh] justify-center items-center">
           <SidebarTrigger className="absolute left-1 top-1" />
           <div className="absolute">
-            {result && (
+            {/* {result && (
               <>
                 <div className="m-5">
                   Scanned Result:
                   <div className="border rounded">{result}</div>
                 </div>
               </>
-            )}
+            )} */}
             {permissionStatus === "idle" && (
               <p>Requesting camera permissions...</p>
             )}
