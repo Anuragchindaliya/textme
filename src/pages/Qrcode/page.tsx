@@ -20,6 +20,8 @@ import { SidebarTrigger } from "@/components/AppSidebar"
 import { getContrastRatio, isColorTooDark } from "./utils"
 import { useGesture } from "@use-gesture/react"
 import { useSpring, animated } from "@react-spring/web"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Checkbox } from "@/components/ui/checkbox"
 
 // import "./styles.css"
 const noteFormSchema = z.object({
@@ -34,8 +36,17 @@ const Qrcode = () => {
   const canvasGradientRef = useRef<HTMLCanvasElement>(null)
   const [selectedFgColor, setSelectedFgColor] = useState("#000000")
   const [selectedBackColor, setSelectedBackColor] = useState("#ffffff")
+
+  const [logoBorderRadius, setLogoBorderRadius] = useState(0)
+  const [logoBgColor, setLogoBgColor] = useState("#ffffff")
+  const [overlayText, setOverlayText] = useState("")
   const [imagePath, setImagePath] = useState("")
+  const [imagePreview, setImagePreview] = useState("")
+
+  const [activeBorder, setActiveBorder] = useState(false)
+
   const [imageSize, setImageSize] = useState(64)
+  const [textColor, setTextColor] = useState("#000000")
   const [searchParams, setSearchParams] = useSearchParams()
   const form = useForm<noteFormType>({
     resolver: zodResolver(noteFormSchema),
@@ -127,6 +138,101 @@ const Qrcode = () => {
       setSelectedFgColor(selectedColor)
     }
   }
+  const handleLogoBgColor = (e: ChangeEvent<HTMLInputElement>) => {
+    const currentBgColor = e.target.value
+    const contrastRatio = getContrastRatio(currentBgColor, textColor)
+
+    if (contrastRatio < 3) {
+      alert(
+        "Contrast ratio is too low! Please select a color with higher contrast.",
+      )
+    } else {
+      setLogoBgColor(currentBgColor)
+
+      generateTextImage({
+        text: overlayText,
+        color: textColor,
+        size: imageSize,
+        logoBgColor: currentBgColor,
+        borderRadius: logoBorderRadius,
+      })
+    }
+  }
+  const handleTextColor = (e: ChangeEvent<HTMLInputElement>) => {
+    const currentColor = e.target.value
+    const contrastRatio = getContrastRatio(currentColor, logoBgColor)
+
+    if (contrastRatio < 3) {
+      alert(
+        "Contrast ratio is too low! Please select a color with higher contrast.",
+      )
+    } else {
+      setTextColor(currentColor)
+      generateTextImage({
+        text: overlayText,
+        color: currentColor,
+        size: imageSize,
+        logoBgColor,
+        borderRadius: logoBorderRadius,
+      })
+    }
+  }
+  const generateTextImage = ({
+    text,
+    color,
+    size,
+    logoBgColor,
+    borderRadius,
+  }: {
+    text: string
+    color: string
+    size: number
+    logoBgColor: string
+    borderRadius: number
+  }): void => {
+    const canvas = document.createElement("canvas")
+    // const size = imageSize // Adjusted size for the text image
+    canvas.width = size
+    canvas.height = size
+    const ctx = canvas.getContext("2d")
+
+    if (ctx) {
+      ctx.fillStyle = logoBgColor // Background color
+      // ctx.roundRect(size, size, size, size, 10)
+
+      // Draw a rounded rectangle if the roundRect method is available
+      if (activeBorder && ctx.roundRect) {
+        const padding = size * 0.1 // Padding from the canvas edge
+        ctx.beginPath()
+        ctx.roundRect(
+          padding, // x position
+          padding, // y position
+          size - padding * 2, // width
+          size - padding * 2, // height
+          borderRadius, // Corner radius
+        )
+        ctx.fill()
+        console.log("round")
+      } else {
+        // Fallback: draw a standard rectangle if roundRect is not available
+        ctx.fillRect(0, 0, size, size)
+      }
+      // ctx.fillRect(0, 0, size, size)
+      ctx.fillStyle = color // Text color
+      ctx.font = `bold ${size / 4}px Arial` // Font size and style
+      ctx.textAlign = "center"
+      ctx.textBaseline = "middle"
+      ctx.fillText(text, size / 2, size / 2)
+    }
+
+    setImagePreview(canvas.toDataURL("image/png"))
+  }
+
+  // Generate text image whenever overlayText changes
+  // useEffect(() => {
+  //   const textImage = generateTextImage(overlayText)
+  //   setTextImagePath(textImage)
+  // }, [overlayText])
 
   useEffect(() => {
     console.log({ qrText })
@@ -227,9 +333,9 @@ const Qrcode = () => {
                         marginSize={2}
                         fgColor={selectedFgColor}
                         bgColor={selectedBackColor}
-                        title="Buit by anurag"
+                        title="Build by anurag"
                         imageSettings={{
-                          src: imagePath, // Replace with your logo URL
+                          src: imagePreview, // Replace with your logo URL
                           //   src: getRoundedLogo(imagePath, 64, 64), // Replace with your logo URL
                           height: imageSize, // Height of the logo
                           width: imageSize, // Width of the logo
@@ -322,38 +428,191 @@ const Qrcode = () => {
                       onChange={handleFgColor}
                     />
                   </div>
-                  <div className="flex items-center gap-3 p-2 px-4">
-                    <label htmlFor="imagePath" className="whitespace-nowrap">
-                      Logo Link
-                    </label>
-                    <Input
-                      id="imagePath"
-                      type="url"
-                      title="Paste logo link"
-                      className=" "
-                      placeholder="Paste logo link"
-                      value={imagePath}
-                      onChange={(e) => {
-                        setImagePath(e.target.value)
-                      }}
-                    />
-                  </div>
-                  {imagePath && (
-                    <div className="flex items-center gap-3 ppx-4">
+                  <div className="p-2">
+                    <div className="flex items-center gap-3 px-4 py-4">
                       <label htmlFor="imagePath" className="whitespace-nowrap">
                         Logo size
                       </label>
                       <Slider
                         min={20}
                         max={70}
+                        value={[imageSize]}
                         onValueChange={(e) => {
                           console.log(e, "currentTarget")
-                          setImageSize(e[0])
+                          const currentSize = e[0]
+                          setImageSize(currentSize)
+                          generateTextImage({
+                            text: overlayText,
+                            color: textColor,
+                            size: currentSize,
+                            logoBgColor,
+                            borderRadius: logoBorderRadius,
+                          })
                         }}
                       />
                       <div>{(imageSize / 20).toFixed(1)}</div>
                     </div>
-                  )}
+                    <Tabs defaultValue="account">
+                      <TabsList className="w-full">
+                        <TabsTrigger value="text" className="w-full">
+                          Logo text
+                        </TabsTrigger>
+                        <TabsTrigger value="logo" className="w-full">
+                          Logo link
+                        </TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="text">
+                        <div className="flex items-center gap-3 p-2 px-4">
+                          <label
+                            htmlFor="imageText"
+                            className="whitespace-nowrap"
+                          >
+                            Logo Text
+                          </label>
+                          <Input
+                            id="imageText"
+                            type="text"
+                            title="Enter logo text"
+                            className=" "
+                            placeholder="Enter logo text"
+                            value={overlayText}
+                            onChange={(e) => {
+                              const currentText = e.target.value
+                              setOverlayText(currentText)
+                              generateTextImage({
+                                text: currentText,
+                                color: textColor,
+                                size: imageSize,
+                                logoBgColor,
+                                borderRadius: logoBorderRadius,
+                              })
+                            }}
+                          />
+                        </div>
+                        <div className="flex items-center gap-3 p-2 px-4">
+                          <label
+                            htmlFor="imageColor"
+                            className="whitespace-nowrap"
+                          >
+                            Logo Color
+                          </label>
+                          <Input
+                            id="imageColor"
+                            type="color"
+                            title="Enter logo color"
+                            className=""
+                            placeholder="Enter logo color"
+                            value={textColor}
+                            onChange={handleTextColor}
+                          />
+                        </div>
+                        <div className="flex items-center gap-3 p-2 px-4">
+                          <label
+                            htmlFor="imageColor"
+                            className="whitespace-nowrap"
+                          >
+                            Logo Bg Color
+                          </label>
+                          <Input
+                            id="imageColor"
+                            type="color"
+                            title="Enter logo color"
+                            className=""
+                            placeholder="Enter logo color"
+                            value={logoBgColor}
+                            onChange={handleLogoBgColor}
+                          />
+                        </div>
+                        <div className="flex flex-col  gap-3 px-4 py-4">
+                          <div className="flex justify-between">
+                            <div className="flex items-center gap-2">
+                              <Checkbox
+                                id="logoRadius"
+                                checked={activeBorder}
+                                onCheckedChange={(e) => {
+                                  setActiveBorder(Boolean(e))
+                                }}
+                              />
+                              <label
+                                htmlFor="logoRadius"
+                                className="whitespace-nowrap"
+                              >
+                                Logo border radius
+                              </label>
+                            </div>
+                            {activeBorder && (
+                              <div>{(logoBorderRadius / 20).toFixed(1)}</div>
+                            )}
+                          </div>
+                          <div className="relative flex gap-3">
+                            <Slider
+                              disabled={!activeBorder}
+                              min={20}
+                              max={70}
+                              value={[logoBorderRadius]}
+                              onValueChange={(e) => {
+                                console.log(e, "currentTarget")
+                                const currentSize = e[0]
+                                setLogoBorderRadius(currentSize)
+                                generateTextImage({
+                                  text: overlayText,
+                                  color: textColor,
+                                  size: currentSize,
+                                  logoBgColor,
+                                  borderRadius: currentSize,
+                                })
+                              }}
+                            />
+                            {!activeBorder && (
+                              <div className="bg-gray-50 w-full h-[100%] absolute -top-1 opacity-40 "></div>
+                            )}
+                          </div>
+                        </div>
+                      </TabsContent>
+                      <TabsContent value="logo">
+                        <div className="flex items-center gap-3 p-2 px-4">
+                          <label
+                            htmlFor="imagePath"
+                            className="whitespace-nowrap"
+                          >
+                            Logo Link
+                          </label>
+                          <Input
+                            id="imagePath"
+                            type="url"
+                            title="Paste logo link"
+                            className=" "
+                            placeholder="Paste logo link"
+                            value={imagePath}
+                            onChange={(e) => {
+                              const imageLink = e.target.value
+                              setImagePath(imageLink)
+                              setImagePreview(imageLink)
+                            }}
+                          />
+                        </div>
+                        {/* {imagePath && (
+                          <div className="flex items-center gap-3 px-4 py-2">
+                            <label
+                              htmlFor="imagePath"
+                              className="whitespace-nowrap"
+                            >
+                              Logo size
+                            </label>
+                            <Slider
+                              min={20}
+                              max={70}
+                              onValueChange={(e) => {
+                                console.log(e, "currentTarget")
+                                setImageSize(e[0])
+                              }}
+                            />
+                            <div>{(imageSize / 20).toFixed(1)}</div>
+                          </div>
+                        )} */}
+                      </TabsContent>
+                    </Tabs>
+                  </div>
                 </div>
                 {/* <h2>
                 Submitted text <u>{submittedValue}</u>

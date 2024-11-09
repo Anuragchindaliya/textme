@@ -34,7 +34,7 @@ export function NavMain({
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>QR Code</SidebarGroupLabel>
+      <SidebarGroupLabel>Quick Response Code</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
@@ -68,12 +68,17 @@ export function NavMain({
               </SidebarMenuItem>
             ) : (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild tooltip={item.title}>
-                  <NavLink to={item.url} className="inline-flex gap-2">
+                <NavLink
+                  to={item.url}
+                  className={({ isActive }) => {
+                    return `flex gap-2 rounded ${isActive ? "bg-gray-900" : ""}`
+                  }}
+                >
+                  <SidebarMenuButton tooltip={item.title}>
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
-                  </NavLink>
-                </SidebarMenuButton>
+                  </SidebarMenuButton>
+                </NavLink>
               </SidebarMenuItem>
             )}
           </Collapsible>
