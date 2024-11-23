@@ -12,6 +12,7 @@ import {
   QrCode,
   Scan,
   ScanIcon,
+  ScanLine,
   Settings2,
   SquareAsteriskIcon,
   Upload,
@@ -30,6 +31,7 @@ export const QR_ROUTES = {
   QR_CODE: "/qrcode",
   QR_SCAN: "/qrscan",
   QR_UPLOAD: "/qrupload",
+  QRL_DYNAMIC: "/qrl",
 }
 // This is sample data.
 const data = {
@@ -53,6 +55,11 @@ const data = {
       title: "Upload QR",
       url: QR_ROUTES.QR_UPLOAD,
       icon: Upload,
+    },
+    {
+      title: "Dynamic QRL",
+      url: QR_ROUTES.QRL_DYNAMIC,
+      icon: ScanLine,
     },
     // {
     //   title: "Documentation",

@@ -17,7 +17,7 @@ const allBaseUrls = {
   render:"https://textmen-backend.onrender.com"
 }
 // const baseUrl = allBaseUrls.local
-const baseUrl = allBaseUrls.prod
+export const baseUrl = allBaseUrls.prod
 export const baseQuery = fetchBaseQuery({
   baseUrl,
   prepareHeaders: (

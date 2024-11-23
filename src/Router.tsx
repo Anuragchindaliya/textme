@@ -26,9 +26,12 @@ import Products from "./pages/Products/page"
 import Cart from "./pages/Cart/page"
 import Qrcode from "./pages/Qrcode/page"
 import QRLayout from "./pages/Qrcode/QRLayout"
-import QRCodeScanner from "./pages/Qrcode/QRCodeScanner"
+import QRCodeScanner from "./pages/Qrcode/Scan/QRCodeScanner"
 import { QR_ROUTES } from "./pages/Qrcode/QRSidebar"
 import QRCodeUploader from "./pages/Qrcode/QRCodeUploader/QRCodeUploader"
+import QrlDynamic from "./pages/Qrcode/QRL/page"
+import QRLCodeScanner from "./pages/Qrcode/QRL/QRLCodeScanner"
+import AddRedirectUrl from "./pages/Qrcode/QRL/AddRedirectUrl"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
@@ -50,6 +53,7 @@ export const ROUTES = {
   QR_CODE: QR_ROUTES.QR_CODE,
   QR_SCAN: QR_ROUTES.QR_SCAN,
   QR_UPLOAD: QR_ROUTES.QR_UPLOAD,
+  QRL_DYNAMIC: QR_ROUTES.QRL_DYNAMIC,
 } as const
 const Router = () => {
   return (
@@ -59,8 +63,8 @@ const Router = () => {
       <Route path={ROUTES.QR_CODE} element={<Qrcode />} />
       <Route path={ROUTES.QR_SCAN} element={<QRCodeScanner />} />
       <Route path={ROUTES.QR_UPLOAD} element={<QRCodeUploader />} />
-      <Route path={"qr_generate"} element={<Qrcode />} />
-      <Route path={"qr_scan"} element={<QRCodeScanner />} />
+      <Route path={ROUTES.QRL_DYNAMIC} element={<QRLCodeScanner />} />
+      <Route path={ROUTES.QRL_DYNAMIC + "/add"} element={<AddRedirectUrl />} />
       <Route path={ROUTES.DRAW} element={<Draw />} />
       <Route path={ROUTES.CALENDAR} element={<MyCalendar />} />
       <Route path={ROUTES.PDF} element={<ExportPdf />} />
