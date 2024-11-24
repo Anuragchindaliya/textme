@@ -1,6 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { Html5Qrcode, Html5QrcodeScannerState } from "html5-qrcode"
-import { Camera, CameraOff, ChevronsRight } from "lucide-react"
+import {
+  Camera,
+  CameraOff,
+  ChevronsRight,
+  Link as LinkIcon,
+} from "lucide-react"
 import React, { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 import QRLayout from "../QRLayout"
@@ -15,6 +20,9 @@ import { QR_ROUTES } from "../QRSidebar"
 type PermissionStatus = "idle" | "granted" | "denied"
 const QRLCodeScanner: React.FC = () => {
   const [getUrlApi, { isLoading }] = useGetQrUrlMutation()
+  const [searchParams,setSearchParams] = useSearchParams()
+  const url = searchParams.get("url")
+  console.log({ url })
   // const [searchParams, setSearchParams] = useSearchParams()
   // const qrKey = searchParams.get("t")
   // const {
@@ -198,6 +206,29 @@ const QRLCodeScanner: React.FC = () => {
     startScanning() // Restart scanning
   }
 
+  useEffect(() => {
+    if (url) {
+      const fetchQrUrl = async () => {
+        try {
+          const result = (await getUrlApi(url)) as any
+          console.log({ result })
+          if (result?.data?.[0]) {
+            if(searchParams.has("url")){
+              searchParams.delete("url")
+              setSearchParams(searchParams)
+            }
+            console.log(result?.data[0].url,"url")
+            window.open(result?.data[0].url, "_blank")
+            return
+          }
+        } catch (error) {
+          console.log({ error })
+        }
+      }
+      fetchQrUrl()
+    }
+  }, [url])
+
   return (
     <QRLayout>
       {isLoading && (
@@ -214,8 +245,13 @@ const QRLCodeScanner: React.FC = () => {
 
           {/* <Menu /> */}
           <div className="w-full flex mt-1">
-            <Button className="ml-auto">
-              <Link to={QR_ROUTES.QRL_DYNAMIC + "/add"}>Add Redirect url</Link>
+            <Button className="ml-auto ">
+              <Link
+                className="flex items-center gap-2"
+                to={QR_ROUTES.QRL_DYNAMIC + "/add"}
+              >
+                <LinkIcon /> Redirect url
+              </Link>
             </Button>
           </div>
         </div>

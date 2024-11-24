@@ -58,10 +58,22 @@ export const qrApi = textmeApi.injectEndpoints({
           id: "INCREMENT",
           key: body.key,
           url: body.url,
-          created_at:"TIMESTAMP"
+          created_at:"TIMESTAMP",
+          modified_at:"TIMESTAMP"
         },
       }),
     }),
+    updateRedirectUrl: builder.mutation<any, { id: string; url: string}>({
+      query: (body) => ({
+        url: `https://sheetdb.io/api/v1/l73k7anfjfai9/id/${body.id}?sheet=QR`,
+        method: "PATCH",
+        body: {
+          url: body.url,
+          modified_at:"TIMESTAMP"
+        },
+      }),
+    }),
+
   }),
 })
 export const {
@@ -69,5 +81,6 @@ export const {
   useGetQrDataQuery,
   useGetQrUrlMutation,
   useAddRedirectMutation,
-  useGetQrDataListQuery
+  useGetQrDataListQuery,
+  useUpdateRedirectUrlMutation
 } = qrApi
