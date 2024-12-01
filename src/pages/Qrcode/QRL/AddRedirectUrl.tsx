@@ -23,6 +23,7 @@ import { Edit, ExternalLink, Save, Share2 } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import EditQRL from "./EditQRL"
+import Sidebar from "@/pages/Notes/components/Sidebar"
 
 const AddRedirectUrlSchema = z.object({
   key: z.string().min(1, "Key is required"),
@@ -44,20 +45,20 @@ const AddRedirectUrl: React.FC = () => {
   })
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [editModal, setEditModal] = useState(false)
-  const [addRedirect, { isLoading: isAddingURL, }] = useAddRedirectMutation()
+  const [addRedirect, { isLoading: isAddingURL }] = useAddRedirectMutation()
   const { toast } = useToast()
   const {
     isLoading: isLoadingList,
     data: dataList,
     refetch,
-    isFetching
+    isFetching,
   } = useGetQrDataListQuery()
   const [selectedItem, setSelectedItem] = useState<DynamicQrItemType>()
   useEffect(() => {
     if (dataList?.length) {
       setSelectedItem(dataList.at(-1))
     }
-  }, [isFetching,dataList?.length])
+  }, [isFetching, dataList?.length])
 
   const baseLink = useMemo(() => {
     return `${window.location.origin}/qrl?url=${selectedItem?.key}`
@@ -125,10 +126,15 @@ const AddRedirectUrl: React.FC = () => {
   return (
     <QRLayout>
       <div className="relative">
-        <SidebarTrigger className="absolute left-1 top-1" />
+        <div className="pl-4 py-2">
+          <Sidebar />
+        </div>
         <div className="flex  h-screen">
           <div className="sm:w-3/6 px-4 w-full ">
-            <h1 className="pt-12 ">Recently Created</h1>
+            <div  className=" flex items-center">
+              <SidebarTrigger className=" " />
+              <h1>Recently Createddsd</h1>
+            </div>
             <ScrollArea className="h-[calc(100vh-80px)]">
               <div className="flex flex-col gap-4 py-4 h-full">
                 {isLoadingList ? (

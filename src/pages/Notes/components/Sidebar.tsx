@@ -1,11 +1,12 @@
-import React, { useMemo } from "react"
+import { ROUTES } from "@/Router"
+import { Button } from "@/components/ui/button"
 import {
   Sheet,
-  SheetTrigger,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetFooter,
+  SheetTrigger,
 } from "@/components/ui/sheet"
 import {
   CalendarCheck,
@@ -13,18 +14,18 @@ import {
   CheckSquare,
   Edit,
   FileText,
+  Link,
   LogIn,
+  LucideMousePointerClick,
+  Map,
   QrCode,
   Share2,
   ShoppingCart,
-  Terminal,
+  Terminal
 } from "lucide-react"
-import { ModeToggle } from "./mode-toggle"
+import React, { useMemo } from "react"
 import { NavLink } from "react-router-dom"
-import { ROUTES } from "@/Router"
-import { Button } from "@/components/ui/button"
-import { LucideMousePointerClick } from "lucide-react"
-import { Link } from "lucide-react"
+import { ModeToggle } from "./mode-toggle"
 const Sidebar = () => {
   const [hasCopied, setHasCopied] = React.useState(false)
   const linksArr = useMemo(
@@ -68,6 +69,11 @@ const Sidebar = () => {
         title: "QR Code",
         icon: QrCode,
         link: ROUTES.QR_CODE,
+      },
+      {
+        title: "Location",
+        icon: Map,
+        link: ROUTES.LOCATION,
       },
       {
         title: "Login",

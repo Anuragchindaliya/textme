@@ -29,9 +29,9 @@ import QRLayout from "./pages/Qrcode/QRLayout"
 import QRCodeScanner from "./pages/Qrcode/Scan/QRCodeScanner"
 import { QR_ROUTES } from "./pages/Qrcode/QRSidebar"
 import QRCodeUploader from "./pages/Qrcode/QRCodeUploader/QRCodeUploader"
-import QrlDynamic from "./pages/Qrcode/QRL/page"
 import QRLCodeScanner from "./pages/Qrcode/QRL/QRLCodeScanner"
 import AddRedirectUrl from "./pages/Qrcode/QRL/AddRedirectUrl"
+import Location from "./pages/Location/page"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
@@ -45,6 +45,7 @@ export const ROUTES = {
   SETTINGS_ACCOUNT: "",
   EDITOR: "/editor",
   DRAW: "/draw",
+  LOCATION:"/location",
   CALENDAR: "/calendar",
   PDF: "/invoice-pdf",
   GOV_LINK: "/gov-link",
@@ -66,6 +67,7 @@ const Router = () => {
       <Route path={ROUTES.QRL_DYNAMIC} element={<QRLCodeScanner />} />
       <Route path={ROUTES.QRL_DYNAMIC + "/add"} element={<AddRedirectUrl />} />
       <Route path={ROUTES.DRAW} element={<Draw />} />
+      <Route path={ROUTES.LOCATION} element={<Location />} />
       <Route path={ROUTES.CALENDAR} element={<MyCalendar />} />
       <Route path={ROUTES.PDF} element={<ExportPdf />} />
       <Route path={ROUTES.PDF} element={<ExportPdf />} />
