@@ -1,15 +1,24 @@
-import React, { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Icon } from "leaflet"
+import {
+  ArrowRight,
+  BookPlus,
+  Coffee,
+  Dumbbell,
+  LocateIcon,
+  SearchIcon
+} from "lucide-react"
+import React, { useRef, useState } from "react"
 import {
   MapContainer,
-  TileLayer,
   Marker,
   Popup,
+  TileLayer,
   useMapEvents,
   ZoomControl,
 } from "react-leaflet"
-import { Icon } from "leaflet"
-import { Business, businesses } from "./data"
 import AddNewLocationForm from "./AddNewLocationForm"
+import { Business, businesses } from "./data"
 // Define a type for a business location
 type BusinessLocation = {
   id: number
@@ -21,13 +30,27 @@ type BusinessLocation = {
   longitude: number
 }
 const customIcon = new Icon({
-  iconUrl: "https://leafletjs.com/examples/custom-icons/leaf-green.png", // Replace with your icon URL
+  iconUrl: "https://upload.wikimedia.org/wikipedia/commons/4/4f/Pinpoint.svg", // Replace with your icon URL
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+})
+const newCustomIcon = new Icon({
+  iconUrl: "https://upload.wikimedia.org/wikipedia/commons/6/65/OOjs_UI_icon_mapPin-progressive.svg", // Replace with your icon URL
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
 })
 
+
+const LocationItemConfig = {
+  Cafe:<Coffee />,
+  Bookstore:<BookPlus />,
+  Gym:<Dumbbell />
+} as any
+
 const MapComponent: React.FC = () => {
+  const mapRef = useRef<any | null>(null)
   const [locationList, setLocationList] = useState<Business[]>(businesses)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [selectedPosition, setSelectedPosition] = useState<
@@ -69,11 +92,50 @@ const MapComponent: React.FC = () => {
     setSelectedPosition(null)
     setIsSidebarOpen(false)
   }
+  const handleLocationClick = (latitude: number, longitude: number) => {
+    if (mapRef.current) {
+      mapRef.current.flyTo([latitude, longitude], 15) // Adjust zoom level as needed
+      setSelectedPosition([latitude, longitude])
+    }
+  }
+  console.log({ mapRef })
   return (
-    <div className="flex flex-1">
+    <div className="flex flex-1 relative">
       {/* Map */}
-      <div className="flex-grow relative h-full">
+      <div className="absolute z-20 top-10 left-2 ">
+        <Button variant={"secondary"} className="px-2">
+          <SearchIcon />
+        </Button>
+        <ul className="bg-gray-900 p-4 rounded-md shadow divide-y divide-gray-200">
+          {locationList.map((location) => (
+            <li
+              onClick={() =>
+                handleLocationClick(location.latitude, location.longitude)
+              }
+              key={location.id}
+              className="p-2 flex gap-2 items-center cursor-pointer"
+            >
+              {LocationItemConfig?.[location.type as any] || <LocateIcon />}
+              <div>
+                <div>{location.name}</div>
+                <div className="text-xs text-gray-300">
+                  ({location.latitude}, {location.longitude})
+                </div>
+              </div>
+              <ArrowRight className="ml-auto" />
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="flex-grow flex relative h-full z-0">
+        <div className="absolute z-20 mx-auto flex w-full h-full pointer-events-none">
+          <div className=" mx-auto  pointer-events-auto mt-auto">
+            {/* <MapFloatingDock /> */}
+          </div>
+        </div>
+
         <MapContainer
+          ref={mapRef}
           center={[28.7041, 77.1025]} // Center at Delhi
           zoom={10}
           style={{ height: "100%", width: "100%", zIndex: 0, borderRadius: 5 }}
@@ -86,6 +148,7 @@ const MapComponent: React.FC = () => {
               key={business.id}
               position={[business.latitude, business.longitude]}
               icon={customIcon}
+              shadowPane="true"
             >
               <Popup>
                 <strong>{business.name}</strong>
@@ -101,7 +164,7 @@ const MapComponent: React.FC = () => {
           {selectedPosition && (
             <Marker
               position={selectedPosition}
-              icon={customIcon}
+              icon={newCustomIcon}
               draggable
               eventHandlers={{
                 dragend: handleMarkerDrag,
@@ -113,6 +176,9 @@ const MapComponent: React.FC = () => {
           <MapClickHandler />
         </MapContainer>
       </div>
+      {/* <div className="absolute w-full h-full  flex items-end ">
+      
+      </div> */}
       {/* <div className="backdrop-blur-sm absolute right-5 top-12 z-30 h-[89vh] w-72 dark:bg-gray-900/20">ds</div> */}
 
       {/* Sidebar */}

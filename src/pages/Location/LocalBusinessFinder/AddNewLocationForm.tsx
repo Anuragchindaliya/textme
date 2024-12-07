@@ -5,8 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { useAddLocationMutation } from "@/features/location/locationApi"
 import { toast } from "react-toastify"
+import { useAddLocationMutation } from "@/features/location/locationAPI"
 
 type AddLocationFormProps = {
   // onSubmit: (data: AddLocationFormData) => void
@@ -16,7 +16,7 @@ type AddLocationFormProps = {
 
 const schema = z.object({
   name: z.string().nonempty("Name is required"),
-  type: z.string().optional(),
+  type: z.string().nonempty("Type is required"),
   address: z.string().optional(),
   contact: z.string().optional(),
   latitude: z.number().min(-90, "Invalid latitude").max(90, "Invalid latitude").optional(),
@@ -34,6 +34,7 @@ const AddNewLocationForm: React.FC<AddLocationFormProps> = ({
     control,
     handleSubmit,
     formState: { errors },
+    reset
   } = useForm<AddLocationFormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -54,6 +55,8 @@ const AddNewLocationForm: React.FC<AddLocationFormProps> = ({
       console.log({ result })
       if (result.created) {
         toast.success("Location added successfully")
+        reset();
+        onCloseSidebar()
       } else {
         toast.error("Event creation failed")
       }
