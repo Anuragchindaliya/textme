@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { useGetLocationsQuery } from "@/features/location/locationAPI"
 import { Icon } from "leaflet"
 import {
   ArrowRight,
@@ -6,7 +7,8 @@ import {
   Coffee,
   Dumbbell,
   LocateIcon,
-  SearchIcon
+  Plus,
+  SearchIcon,
 } from "lucide-react"
 import React, { useRef, useState } from "react"
 import {
@@ -18,7 +20,7 @@ import {
   ZoomControl,
 } from "react-leaflet"
 import AddNewLocationForm from "./AddNewLocationForm"
-import { Business, businesses } from "./data"
+import { Input } from "@/components/ui/input"
 // Define a type for a business location
 type BusinessLocation = {
   id: number
@@ -36,32 +38,38 @@ const customIcon = new Icon({
   popupAnchor: [1, -34],
 })
 const newCustomIcon = new Icon({
-  iconUrl: "https://upload.wikimedia.org/wikipedia/commons/6/65/OOjs_UI_icon_mapPin-progressive.svg", // Replace with your icon URL
+  iconUrl:
+    "https://upload.wikimedia.org/wikipedia/commons/6/65/OOjs_UI_icon_mapPin-progressive.svg", // Replace with your icon URL
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
 })
 
-
 const LocationItemConfig = {
-  Cafe:<Coffee />,
-  Bookstore:<BookPlus />,
-  Gym:<Dumbbell />
+  Cafe: <Coffee />,
+  Bookstore: <BookPlus />,
+  Gym: <Dumbbell />,
 } as any
 
 const MapComponent: React.FC = () => {
+  const [searchText,setSearchText] = useState("");
+  const [actionType, setActionType] = useState("")
   const mapRef = useRef<any | null>(null)
-  const [locationList, setLocationList] = useState<Business[]>(businesses)
+  // const [locationList, setLocationList] = useState<Business[]>(businesses)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [selectedPosition, setSelectedPosition] = useState<
     [number, number] | null
   >(null)
+
+  const { data: locationList, isLoading } = useGetLocationsQuery()
   // Map click to add a new marker
   const MapClickHandler = () => {
     useMapEvents({
       click(e) {
-        setSelectedPosition([e.latlng.lat, e.latlng.lng])
-        setIsSidebarOpen(true)
+        if (actionType === "add") {
+          setSelectedPosition([e.latlng.lat, e.latlng.lng])
+          setIsSidebarOpen(true)
+        }
       },
     })
     return null
@@ -73,21 +81,6 @@ const MapComponent: React.FC = () => {
     setSelectedPosition([lat, lng])
   }
 
-  // Handle form submission to add a new location
-  const handleAddLocation = (data: Omit<BusinessLocation, "id">) => {
-    if (selectedPosition) {
-      // setLocationList((prev) => [
-      //   ...prev,
-      //   {
-      //     id: prev.length + 1,
-      //     ...data,
-      //     latitude: (selectedPosition as [number, number])[0],
-      //     longitude: (selectedPosition as [number, number])[1],
-      //   },
-      // ])
-      setSelectedPosition(null) // Reset selected position
-    }
-  }
   const handleCloseSidebar = () => {
     setSelectedPosition(null)
     setIsSidebarOpen(false)
@@ -95,37 +88,85 @@ const MapComponent: React.FC = () => {
   const handleLocationClick = (latitude: number, longitude: number) => {
     if (mapRef.current) {
       mapRef.current.flyTo([latitude, longitude], 15) // Adjust zoom level as needed
-      setSelectedPosition([latitude, longitude])
+      // setSelectedPosition([latitude, longitude])
     }
   }
-  console.log({ mapRef })
   return (
     <div className="flex flex-1 relative">
       {/* Map */}
       <div className="absolute z-20 top-10 left-2 ">
-        <Button variant={"secondary"} className="px-2">
-          <SearchIcon />
-        </Button>
-        <ul className="bg-gray-900 p-4 rounded-md shadow divide-y divide-gray-200">
-          {locationList.map((location) => (
-            <li
-              onClick={() =>
-                handleLocationClick(location.latitude, location.longitude)
-              }
-              key={location.id}
-              className="p-2 flex gap-2 items-center cursor-pointer"
+        <div className="bg-gray-900 shadow-lg">
+          <div className="relative">
+            <Button
+              variant={actionType === "search" ? "default" : "secondary"}
+              className="rounded-none"
+              onClick={() => {
+                setActionType((prev) => (prev === "search" ? "" : "search"))
+                setIsSidebarOpen(false)
+              }}
             >
-              {LocationItemConfig?.[location.type as any] || <LocateIcon />}
-              <div>
-                <div>{location.name}</div>
-                <div className="text-xs text-gray-300">
-                  ({location.latitude}, {location.longitude})
+              <SearchIcon />
+            </Button>
+            {actionType === "search" && (
+              <div className="absolute left-full top-0">
+                <div className="bg-gray-950 flex p-2 rounded-t gap-2">
+                  <Input placeholder="Search..." onChange={(e)=>{
+                    setSearchText(e.currentTarget.value);
+                  }} />
+                  <Button variant={"secondary"} className="px-2">
+                    <SearchIcon />
+                  </Button>
                 </div>
+                <ul className="bg-gray-900  rounded-b shadow divide-y divide-gray-200 w-[25vw]">
+                  {locationList?.filter((item)=>{
+                    return item.name.toLowerCase().includes(searchText.toLowerCase())
+                  })?.map((location) => (
+                    <li
+                      onClick={() =>
+                        handleLocationClick(
+                          location.latitude,
+                          location.longitude,
+                        )
+                      }
+                      key={location.id}
+                      className="px-4 py-2 flex gap-2 items-center cursor-pointer"
+                    >
+                      {LocationItemConfig?.[location.type as any] || (
+                        <LocateIcon />
+                      )}
+                      <div>
+                        <div>{location.name}</div>
+                        <div className="text-xs text-gray-300">
+                          ({location.latitude}, {location.longitude})
+                        </div>
+                      </div>
+                      <ArrowRight className="ml-auto" />
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <ArrowRight className="ml-auto" />
-            </li>
-          ))}
-        </ul>
+            )}
+          </div>
+          <Button
+            variant={actionType === "add" ? "default" : "secondary"}
+            className="rounded-none"
+
+            onClick={() => {
+              if (actionType === "add") {
+                setActionType("")
+                setSelectedPosition(null)
+                setIsSidebarOpen(false)
+              } else {
+                setActionType("add")
+                const coords = mapRef.current.getCenter()
+                setSelectedPosition([coords.lat, coords.lng])
+                setIsSidebarOpen(true)
+              }
+            }}
+          >
+            <Plus />
+          </Button>
+        </div>
       </div>
       <div className="flex-grow flex relative h-full z-0">
         <div className="absolute z-20 mx-auto flex w-full h-full pointer-events-none">
@@ -143,7 +184,7 @@ const MapComponent: React.FC = () => {
         >
           <ZoomControl position="topright" />
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {locationList.map((business) => (
+          {locationList?.map((business) => (
             <Marker
               key={business.id}
               position={[business.latitude, business.longitude]}
