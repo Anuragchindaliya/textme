@@ -32,6 +32,7 @@ import QRCodeUploader from "./pages/Qrcode/QRCodeUploader/QRCodeUploader"
 import QRLCodeScanner from "./pages/Qrcode/QRL/QRLCodeScanner"
 import AddRedirectUrl from "./pages/Qrcode/QRL/AddRedirectUrl"
 import Location from "./pages/Location/page"
+import { FormBuilderPage } from "./pages/DynamicForm/DynamicForm"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
@@ -55,6 +56,7 @@ export const ROUTES = {
   QR_SCAN: QR_ROUTES.QR_SCAN,
   QR_UPLOAD: QR_ROUTES.QR_UPLOAD,
   QRL_DYNAMIC: QR_ROUTES.QRL_DYNAMIC,
+  FORMS:"/create-form"
 } as const
 const Router = () => {
   return (
@@ -71,6 +73,10 @@ const Router = () => {
       <Route path={ROUTES.CALENDAR} element={<MyCalendar />} />
       <Route path={ROUTES.PDF} element={<ExportPdf />} />
       <Route path={ROUTES.PDF} element={<ExportPdf />} />
+
+      <Route path={ROUTES.FORMS} element={<FormBuilderPage />} />
+      {/* <Route path="/form/:id" element={<FormPage />} /> */}
+
       {/* <Route path={"/sidebar"} element={<Sidebar />} /> */}
       <Route path={ROUTES.GOV_LINK} element={<GovLink />} />
       <Route path={ROUTES.PRODUCTS} element={<Products />} />

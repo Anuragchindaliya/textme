@@ -21,7 +21,8 @@ import {
   QrCode,
   Share2,
   ShoppingCart,
-  Terminal
+  Terminal,
+  TextCursorInput
 } from "lucide-react"
 import React, { useMemo } from "react"
 import { NavLink } from "react-router-dom"
@@ -74,6 +75,11 @@ const Sidebar = () => {
         title: "Location",
         icon: Map,
         link: ROUTES.LOCATION,
+      },
+      {
+        title: "Forms",
+        icon: TextCursorInput,
+        link: ROUTES.FORMS,
       },
       {
         title: "Login",
