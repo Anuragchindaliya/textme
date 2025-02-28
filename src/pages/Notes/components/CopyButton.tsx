@@ -4,7 +4,7 @@ import { DropdownMenuTriggerProps } from "@radix-ui/react-dropdown-menu"
 // import { Event, trackEvent } from "@/lib/events"
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
-import { Button } from "@/components/ui/button"
+import { Button, ButtonProps } from "@/components/ui/button"
 // import { Button } from "@/registry/new-york/ui/button"
 import {
   DropdownMenu,
@@ -17,7 +17,7 @@ export interface NpmCommands {
   __yarnCommand__?: string
   __pnpmCommand__?: string
 }
-interface CopyButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
+interface CopyButtonProps extends ButtonProps {
   value: string
   src?: string
   // event?: Event["name"]

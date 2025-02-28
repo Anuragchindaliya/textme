@@ -58,7 +58,7 @@ export const textmeApi = createApi({
   baseQuery: baseQueryWithReauth,
   // tagTypes: ["UserProfile"],
   endpoints: () => ({}),
-  tagTypes:["AllEvents","Location"]
+  tagTypes:["AllEvents","Location","DynamicForm"]
 })
 const endpointsUrl = {
   EMAIL_VALIDATION: "emailvalidation",
