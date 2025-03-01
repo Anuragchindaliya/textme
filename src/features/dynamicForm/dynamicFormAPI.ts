@@ -28,7 +28,7 @@ export const sheetDbApi = textmeApi.injectEndpoints({
       query: () => SHEETDB_BASE_URL,
       providesTags: ["DynamicForm"],
     }),
-    getFormJson: builder.query<void, string>({
+    getFormJson: builder.query<FormListType[], string>({
       query: (key:string) => ({
         // https://sheetdb.io/api/v1/l73k7anfjfai9/search_or?key=127f924a-6275-4974-884a-b612da63eebb&sheet=forms
         url: `${endpoints.SEARCH}?key=${key}&sheet=forms`,

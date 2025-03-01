@@ -7,7 +7,7 @@ import {
 import { Form, FormBuilder, FormBuilderProps, FormType } from "@formio/react"
 import ReactJson from "@microlink/react-json-view"
 import React, { FormEvent, useEffect, useRef, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { v4 as uuidv4 } from "uuid"
 import { FormBuilder as FormioFormBuilder } from "@formio/js"
 // Router Setup
@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/resizable"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useAddFormJsonMutation } from "@/features/dynamicForm/dynamicFormAPI"
-import { Eye, Loader, Plus } from "lucide-react"
+import { Eye, Grid, Loader, Plus } from "lucide-react"
 import { AiOutlineClear } from "react-icons/ai"
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
 import { toast } from "react-toastify"
@@ -31,6 +31,13 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import SuccessIcon from "@/components/ui/successIcon"
 import SuccessAnimation from "@/components/ui/successAnimation"
+import { ROUTES } from "@/Router"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/Tooltip"
 
 type FormData = {
   key: string
@@ -85,7 +92,7 @@ const formSubmissionSchema = z.object({
 })
 type formSubmissionType = z.infer<typeof formSubmissionSchema>
 export const FormBuilderPage: React.FC = () => {
-  const [addFormJson, { isLoading: addingForm, isSuccess }] =
+  const [addFormJson, { isLoading: addingForm, data, isSuccess,reset }] =
     useAddFormJsonMutation()
   const formBuilderRef = useRef<FormioFormBuilder>()
   const [showPreview, setShowPreview] = useState(false)
@@ -106,10 +113,13 @@ export const FormBuilderPage: React.FC = () => {
 
     return {}
   })
+  const [formKeyId,setFormKeyId]=useState("");
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch
   } = useForm<formSubmissionType>({
     resolver: zodResolver(formSubmissionSchema),
     defaultValues: {
@@ -136,8 +146,10 @@ export const FormBuilderPage: React.FC = () => {
     const result = (await addFormJson(formEntry)) as any
     console.log(result)
     if (result?.data?.created) {
+      setFormKeyId(formId)
       // toast.success("From Json added successfully")
     } else {
+      setFormKeyId("")
       toast.error("Event creation failed")
     }
 
@@ -149,30 +161,15 @@ export const FormBuilderPage: React.FC = () => {
 
     // navigate(`/form/${formId}`)
   }
-  useEffect(() => {
-    const bootstrapLink = document.createElement("link")
-    bootstrapLink.rel = "stylesheet"
-    bootstrapLink.href =
-      "https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css"
-
-    const formioLink = document.createElement("link")
-    formioLink.rel = "stylesheet"
-    formioLink.href =
-      "https://cdn.jsdelivr.net/npm/@formio/js/dist/formio.full.min.css"
-
-    document.head.appendChild(bootstrapLink)
-    document.head.appendChild(formioLink)
-
-    return () => {
-      document.head.removeChild(bootstrapLink)
-      document.head.removeChild(formioLink)
-    }
-  }, [])
+  
   useEffect(() => {
     localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(formJson))
   }, [formJson])
   console.log({ formJson })
   console.log({ formBuilderRef })
+  const handleClosePreviewModal = () => {
+    setShowPreview(false)
+  }
 
   return (
     <div className=" md:px-8">
@@ -181,28 +178,41 @@ export const FormBuilderPage: React.FC = () => {
           <Sidebar />
           {/* <DrawInput /> */}
         </div>
+        <div>
+          <Link to={ROUTES.FORMS} className="no-underline">
+            <Button variant={"dark"} className="text-xs px-3 py-0">
+              <Grid className="mr-1 text-xs size-4" />
+              View all Forms
+            </Button>
+          </Link>
+        </div>
       </div>
       <Dialog
         open={!!showPreview}
-        onOpenChange={() => {
-          setShowPreview(false)
-        }}
+        onOpenChange={handleClosePreviewModal}
       >
         {/* <DialogTrigger>Open</DialogTrigger> */}
         <DialogContent
           className="bg-white sm:max-w-[80%] h-[70vh]"
           aria-describedby=""
         >
-          {isSuccess  ? (
+          {isSuccess ? (
             <div className="text-center m-auto">
               <div className="w-40 m-auto">
-              <SuccessAnimation />
+                <SuccessAnimation />
               </div>
               <h2>🎉 Form Created Successfully!</h2>
               <p>Your form is now live. Click the link below to preview it:</p>
-              {/* <a href={""} target="_blank" rel="noopener noreferrer">
+              <Link
+                to={`/form/${formKeyId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 🔗 Preview Form
-              </a> */}
+              </Link>
+              <Button variant={"success"} className="mx-auto mt-4" onClick={handleClosePreviewModal}>
+                Ok, Close
+              </Button>
             </div>
           ) : (
             <>
@@ -240,12 +250,12 @@ export const FormBuilderPage: React.FC = () => {
                 <DialogTitle className="">Form Preview</DialogTitle>
               </DialogHeader>
 
-              <ScrollArea className="p-4" >
+              <ScrollArea className="p-4">
                 <Form
                   src={""}
                   // className="border border-gray-300 p-2 shadow-sm rounded"
                   form={formJson}
-                  onSubmit={() => setShowPreview(false)}
+                  onSubmit={handleClosePreviewModal}
                 />
               </ScrollArea>
             </>
@@ -312,6 +322,8 @@ export const FormBuilderPage: React.FC = () => {
                       className="text-white text-xs"
                       onClick={() => {
                         setShowPreview(true)
+                        setFormKeyId("")
+                        reset()
                       }}
                     >
                       <Eye className="mr-1" style={{ width: 14 }} />
@@ -323,7 +335,7 @@ export const FormBuilderPage: React.FC = () => {
             </div>
             <ScrollArea className="h-full pb-2">
               <FormBuilder
-                // key={JSON.stringify(formJson)}
+                key={formKey}
 
                 // @ts-ignore
                 form={formJson}
@@ -349,7 +361,7 @@ export const FormBuilderPage: React.FC = () => {
               />
             </ScrollArea>
           </ResizablePanel>
-          <ResizableHandle withHandle iconClass="bg-white" />
+          <ResizableHandle withHandle iconClass="bg-white" className="bg-gray-200" />
 
           <ResizablePanel
             minSize={15}
@@ -357,10 +369,18 @@ export const FormBuilderPage: React.FC = () => {
           >
             <div className="flex  justify-between items-center">
               <h2 className="text-black text-lg  px-2">As JSON Schema</h2>
-              <CopyButton
-                title="Copy JSON"
-                value={JSON.stringify(formJson, null, 2)}
-              />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <CopyButton
+                      variant={"dark"}
+                      value={JSON.stringify(formJson, null, 2)}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>Copy JSON</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
             </div>
             <div className=" flex-1 p-2 rounded  h-full ">
               <ScrollArea className="h-full pb-2">

@@ -3,11 +3,13 @@ import React, { useState } from "react"
 import Sidebar from "../Notes/components/Sidebar"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import Skeleton from "react-loading-skeleton"
 import "react-loading-skeleton/dist/skeleton.css"
 import "./formList.css"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { ROUTES } from "@/Router"
 const FormList = () => {
   // State for filters
   const [searchTerm, setSearchTerm] = useState("")
@@ -19,11 +21,15 @@ const FormList = () => {
   const filteredForms = (data || [])
   .filter((form) =>
     form.formname.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  ).map((item)=>({...item,
+    format_created_at:new Date(+item?.created_at).toLocaleString(),
+    format_modified_at:new Date(+item?.modified_at).toLocaleDateString(),
+    date_created_at:new Date(+item?.created_at),
+    date_modified_at:new Date(+item?.modified_at),
+  }))
   .sort((a, b) => {
-    const dateA = new Date(a.created_at).getTime(); // Convert to timestamp
-    const dateB = new Date(b.created_at).getTime();
-
+    const dateA = a.date_created_at.getTime(); // Convert to timestamp
+    const dateB = b.date_created_at.getTime();
     return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
   });
   return (
@@ -48,6 +54,11 @@ const FormList = () => {
               <option value="newest">📅 Newest First</option>
               <option value="oldest">📜 Oldest First</option>
             </select>
+            <Link to={ROUTES.CREATE_FORMS} className=" ml-4" >
+            <Button>
+            Create Form
+            </Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -79,15 +90,15 @@ const FormList = () => {
                 .map((_, index) => (
                   <Card key={index} className="p-4 border border-gray-200">
                     <CardContent>
-                      <Skeleton height={20} width="60%" />
-                      <Skeleton height={15} width="80%" className="mt-2" />
-                      <Skeleton height={15} width="50%" className="mt-2" />
-                      <Skeleton height={15} width="70%" className="mt-2" />
+                      <Skeleton height={20} width="60%" className="dark:bg-gray-600" />
+                      <Skeleton height={15} width="80%" className="mt-2 dark:bg-gray-700" />
+                      <Skeleton height={15} width="50%" className="mt-2 dark:bg-gray-700" />
+                      <Skeleton height={15} width="70%" className="mt-2 dark:bg-gray-700" />
                     </CardContent>
                   </Card>
                 ))
             : // Show form list when loaded
-            filteredForms?.map((form, index) => (
+            filteredForms?.length ? filteredForms?.map((form, index) => (
                 <motion.div
                   key={form.id}
                   whileHover={{
@@ -99,7 +110,7 @@ const FormList = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
-                  onClick={() => navigate(`/form/${form.id}`)}
+                  onClick={() => navigate(`/form/${form?.key}`)}
                   className="glass-card cursor-pointer"
                 >
                   <Card className="p-4 cursor-pointer  hover:shadow-lg transition-shadow duration-200">
@@ -107,15 +118,15 @@ const FormList = () => {
                       <h2 className="text-lg font-medium">{form.formname}</h2>
                       <p className="text-sm text-gray-500">🆔 {form.key}</p>
                       <p className="text-sm text-gray-400 mt-1">
-                        📅 Created: {form.created_at}
+                        📅 Created: {form.format_created_at}
                       </p>
                       <p className="text-sm text-gray-400">
-                        ✏️ Modified: {form.modified_at}
+                        ✏️ Modified: {form.format_modified_at}
                       </p>
                     </CardContent>
                   </Card>
                 </motion.div>
-              ))}
+              )):<div>No Data Available</div>}
         </div>
       </div>
     </div>

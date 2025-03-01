@@ -35,6 +35,7 @@ import Location from "./pages/Location/page"
 import { FormBuilderPage } from "./pages/DynamicForm/DynamicForm"
 import PreviewForm from "./pages/DynamicForm/PreviewForm"
 import FormList from "./pages/DynamicForm/FormList"
+import FormLayout from "./pages/DynamicForm/FormLayout"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
@@ -76,10 +77,11 @@ const Router = () => {
       <Route path={ROUTES.CALENDAR} element={<MyCalendar />} />
       <Route path={ROUTES.PDF} element={<ExportPdf />} />
       <Route path={ROUTES.PDF} element={<ExportPdf />} />
-
-      <Route path={ROUTES.FORMS} element={<FormList />} />
-      <Route path={ROUTES.CREATE_FORMS} element={<FormBuilderPage />} />
-      <Route path="/form/:id" element={<PreviewForm />} />
+        <Route path={ROUTES.FORMS} element={<FormList />} />
+      <Route element={<FormLayout />}>
+        <Route path={ROUTES.CREATE_FORMS} element={<FormBuilderPage />} />
+        <Route path="/form/:id" element={<PreviewForm />} />
+      </Route>
 
       {/* <Route path={"/sidebar"} element={<Sidebar />} /> */}
       <Route path={ROUTES.GOV_LINK} element={<GovLink />} />
