@@ -1,4 +1,4 @@
-import { endpoints, textmeApi } from "@/app/services"
+import { baseUrl, endpoints, textmeApi } from "@/app/services"
 import { FormType } from "@formio/react"
 
 const SHEETDB_BASE_URL =
@@ -48,6 +48,19 @@ export const sheetDbApi = textmeApi.injectEndpoints({
       }),
       invalidatesTags: ["DynamicForm"],
     }),
+    addFormData: builder.mutation<any, any>({
+      query: (formData) => ({
+        url: `${baseUrl}?sheet=formData`,
+        method: "POST",
+        body: {
+          id: "INCREMENT",
+          ...formData,
+          created_at: "TIMESTAMP",
+          modified_at: "TIMESTAMP",
+        },
+      }),
+      invalidatesTags: ["DynamicForm"],
+    }),
     updateFormJson: builder.mutation<
       void,
       { id: string; data: Partial<FormType> }
@@ -67,6 +80,7 @@ export const sheetDbApi = textmeApi.injectEndpoints({
       }),
       invalidatesTags: ["DynamicForm"],
     }),
+    
   }),
 })
 
@@ -76,4 +90,5 @@ export const {
   useAddFormJsonMutation,
   useUpdateFormJsonMutation,
   useDeleteFormJsonMutation,
+  useAddFormDataMutation
 } = sheetDbApi

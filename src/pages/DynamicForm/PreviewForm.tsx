@@ -1,89 +1,97 @@
-import { useGetFormJsonQuery } from "@/features/dynamicForm/dynamicFormAPI"
+import {
+  useAddFormDataMutation,
+  useGetFormJsonQuery,
+} from "@/features/dynamicForm/dynamicFormAPI"
 import { Form } from "@formio/react"
 import React, { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import Sidebar from "../Notes/components/Sidebar"
+import { v4 as uuidv4 } from "uuid"
+import { toast } from "react-toastify"
+import Spinner from "@/components/ui/spinner"
+
 type SubmissionData = {
-  form_id: string
-  submission_data: string
+  key: string
+  formname: string
+  formdata: string
 }
 const PreviewForm = () => {
   const { id } = useParams<{ id: string }>()
   const [formJson, setFormJson] = useState<any>(null)
-  const {data,isLoading} = useGetFormJsonQuery(id || "", {
-    skip: !id,
-    refetchOnMountOrArgChange: true,
+  const { data, isLoading } = useGetFormJsonQuery(id || "",{
+    refetchOnMountOrArgChange:false,
+    refetchOnFocus:false,
   })
+
+  const currentFormData = data?.[0]
   
-  console.log({data},"formJsonData")
 
-  useEffect(() => {
-    // fetch(`${SHEETDB_API}/search?id=${id}`)
-    //   .then((res) => res.json())
-    //   .then((data: FormData[]) => setFormJson(JSON.parse(data[0]?.formjson)))
-  }, [id])
-  useEffect(() => {
-    if (data?.[0]?.formjson) {
-      try {
-        const parsedJson = JSON.parse(data?.[0]?.formjson);  // Safely parse JSON
-        setFormJson(parsedJson);
-      } catch (error) {
-        console.error("Invalid JSON format:", error);
-        setFormJson(null);  // Fallback if parsing fails
-      }
-    }
-  }, [data?.[0]?.formjson]);  // Run effect only when data.formjson changes
-
-  const handleSubmit = async (submission: any) => {
-    const submissionEntry: SubmissionData = {
-      form_id: id!,
-      submission_data: JSON.stringify(submission),
-    }
-
-    // await fetch(`${SHEETDB_API}`, {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ data: [submissionEntry] }),
-    // })
-    alert("Form submitted successfully!")
-  }
-
-  return <div className=" md:px-8">
+  return (
+    <div className="container md:px-8">
       <div className="flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-24">
         <div className="py-1 pt-3 flex flex-1 space-x-2 w-full">
           <Sidebar />
-          {/* <DrawInput /> */}
-          {/* <div className=" w-full flex flex-col items-start space-y-4 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-24">
-            <Input
-              type="text"
-              placeholder="🔍 Search forms..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/3"
-            />
-            <select
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
-              className="p-2 border border-gray-300 rounded-lg ml-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="newest">📅 Newest First</option>
-              <option value="oldest">📜 Oldest First</option>
-            </select>
-            <Link to={ROUTES.CREATE_FORMS} className=" ml-4" >
-            <Button>
-            Create Form
-            </Button>
-            </Link>
-          </div> */}
         </div>
       </div>
       {isLoading ? (
-    <p>Loading...</p>
-  ) : (
-    <Form src={""} form={formJson} onSubmit={handleSubmit} />
-  )}
-  </div>
+        <div className="flex justify-center items-center h-[70vh]">
+          <div className="flex items-center">
+            <Spinner />
+            Loading...
+          </div>
+        </div>
+      ) : (
+        <FormUI currentFormData={currentFormData} />
+      )}
+    </div>
+  )
+}
+const FormUI = ({
+  currentFormData,
+}: {
+  currentFormData: any
+}) => {
+  const [formKey, setFormKey] = useState(uuidv4())
+  const [addFormData, { isLoading }] = useAddFormDataMutation()
+  const [formJson, setFormJson] = useState<any>(null)
 
+  const handleSubmit = async (submission: any) => {
+    const submissionEntry: SubmissionData = {
+      key: currentFormData?.key,
+      formname: currentFormData?.formname || "",
+      formdata: JSON.stringify(submission),
+    }
+    console.log({ submissionEntry, submission })
+    try {
+      const result = await addFormData(submissionEntry).unwrap()
+      if (result?.created) {
+        toast.success("Form submitted successfully!")
+        setFormKey(uuidv4())
+      }
+    } catch (error) {
+      toast.error("Fail to submitted successfully!")
+      console.log({ error })
+    }
+  }
+  useEffect(() => {
+    if (currentFormData?.formjson) {
+      try {
+        const parsedJson = JSON.parse(currentFormData?.formjson) // Safely parse JSON
+        setFormJson(parsedJson)
+      } catch (error) {
+        console.error("Invalid JSON format:", error)
+        setFormJson(null) // Fallback if parsing fails
+      }
+    }
+  }, [currentFormData?.formjson]) // Run effect only when data.formjson changes
+  return (
+    <div>
+      <h2 className="text-center capitalize">{currentFormData?.formname}</h2>
+      <div className="bg-gray-100 p-4 rounded">
+        <Form key={formKey} src={""} form={formJson} onSubmit={handleSubmit} />
+      </div>
+    </div>
+  )
 }
 
 export default PreviewForm
