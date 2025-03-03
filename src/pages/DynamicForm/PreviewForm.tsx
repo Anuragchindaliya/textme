@@ -17,7 +17,6 @@ type SubmissionData = {
 }
 const PreviewForm = () => {
   const { id } = useParams<{ id: string }>()
-  const [formJson, setFormJson] = useState<any>(null)
   const { data, isLoading } = useGetFormJsonQuery(id || "",{
     refetchOnMountOrArgChange:false,
     refetchOnFocus:false,

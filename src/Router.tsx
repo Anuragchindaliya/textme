@@ -36,6 +36,7 @@ import { FormBuilderPage } from "./pages/DynamicForm/DynamicForm"
 import PreviewForm from "./pages/DynamicForm/PreviewForm"
 import FormList from "./pages/DynamicForm/FormList"
 import FormLayout from "./pages/DynamicForm/FormLayout"
+import FormSubmissionList from "./pages/DynamicForm/FormSubmissionList"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
@@ -60,6 +61,7 @@ export const ROUTES = {
   QR_UPLOAD: QR_ROUTES.QR_UPLOAD,
   QRL_DYNAMIC: QR_ROUTES.QRL_DYNAMIC,
   FORMS:"/form-list",
+  FORM_DATA:"/formdata-list",
   CREATE_FORMS:"/create-form"
 } as const
 const Router = () => {
@@ -78,6 +80,7 @@ const Router = () => {
       <Route path={ROUTES.PDF} element={<ExportPdf />} />
       <Route path={ROUTES.PDF} element={<ExportPdf />} />
         <Route path={ROUTES.FORMS} element={<FormList />} />
+        <Route path={`${ROUTES.FORM_DATA}/:id`} element={<FormSubmissionList />} />
       <Route element={<FormLayout />}>
         <Route path={ROUTES.CREATE_FORMS} element={<FormBuilderPage />} />
         <Route path="/form/:id" element={<PreviewForm />} />

@@ -1,24 +1,27 @@
-import { useGetFormJsonListQuery } from "@/features/dynamicForm/dynamicFormAPI"
+import { useGetFormSubmissionListQuery } from "@/features/dynamicForm/dynamicFormAPI"
 import React, { useState } from "react"
 import Sidebar from "../Notes/components/Sidebar"
-import { motion } from "framer-motion"
-import { Card, CardContent } from "@/components/ui/card"
-import { Link, useNavigate } from "react-router-dom"
-import Skeleton from "react-loading-skeleton"
-import "react-loading-skeleton/dist/skeleton.css"
-import "./formList.css"
 import { Input } from "@/components/ui/input"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { Database, Grid } from "lucide-react"
 import { ROUTES } from "@/Router"
-import { Database, Plus } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { motion } from "framer-motion"
+import Skeleton from "react-loading-skeleton"
 import { FcDocument } from "react-icons/fc"
-const FormList = () => {
-  // State for filters
+import { Dialog, DialogContent } from "@/components/ui/dialog"
+import ViewFormDataModal from "./ViewFormDataModal"
+
+const FormSubmissionList = () => {
+  const { id } = useParams<{ id: string }>()
+
+  const { isLoading, data } = useGetFormSubmissionListQuery(id || "")
   const [searchTerm, setSearchTerm] = useState("")
   const [sortOrder, setSortOrder] = useState("newest")
-  const { data, isLoading } = useGetFormJsonListQuery()
   console.log({ data }, "formList")
   const navigate = useNavigate()
+  const [formData,setFormData]=useState<any>(null)
   // Filter & sort logic
   const filteredForms = (data || [])
     .filter((form) =>
@@ -36,6 +39,7 @@ const FormList = () => {
       const dateB = b.date_created_at.getTime()
       return sortOrder === "newest" ? dateB - dateA : dateA - dateB
     })
+    console.log({formData})
   return (
     <div className=" md:px-8">
       <div className="flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-24">
@@ -58,10 +62,10 @@ const FormList = () => {
               <option value="newest">📅 Newest First</option>
               <option value="oldest">📜 Oldest First</option>
             </select>
-            <Link to={ROUTES.CREATE_FORMS} className=" ml-4">
+            <Link to={ROUTES.FORMS} className=" ml-4">
               <Button>
-                <Plus className="size-4 mr-1" />
-                Create Form
+                <Grid className="size-4 mr-1" />
+                View Forms
               </Button>
             </Link>
           </div>
@@ -69,7 +73,7 @@ const FormList = () => {
       </div>
 
       <div className="max-w-7xl mx-auto p-6">
-        <h1 className="text-2xl font-semibold mb-4">📋 Your Forms</h1>
+        <h1 className="text-2xl font-semibold mb-4">📋 Your Form submission</h1>
         <div className="grid md:grid-cols-3 gap-6">
           {isLoading ? (
             // Show skeleton loader while loading
@@ -110,12 +114,12 @@ const FormList = () => {
                   scale: 1.05,
                   backgroundColor: "rgba(255,255,255,0.1)",
                 }}
+                // whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
-                // onClick={() => navigate(`/form/${form?.key}`)}
-                className="glass-card"
+                // className="glass-card cursor-pointer"
               >
                 <Card className="p-4 cursor-pointer  hover:shadow-lg transition-shadow duration-200">
                   <CardContent>
@@ -133,11 +137,11 @@ const FormList = () => {
                           <FcDocument className="mr-1 size-4" /> Preview Form
                         </Button>
                       </Link>
-                      <Link to={`${ROUTES.FORM_DATA}/${form?.key}`}>
-                        <Button variant={"secondary"} className="text-xs">
-                          <Database className="mr-1 size-3" /> View Submission{" "}
+                        <Button onClick={()=>{
+                          setFormData({...form,formdata:JSON.parse(form?.formdata)})
+                        }} variant={"secondary"} className="text-xs">
+                          <Database className="mr-1 size-3" /> View Details{" "}
                         </Button>
-                      </Link>
                     </div>
                   </CardContent>
                 </Card>
@@ -148,8 +152,24 @@ const FormList = () => {
           )}
         </div>
       </div>
+
+      <Dialog
+        open={!!formData}
+        onOpenChange={()=>{
+          setFormData(null)
+        }}
+      >
+        {/* <DialogTrigger>Open</DialogTrigger> */}
+        <DialogContent
+          className=" sm:max-w-[80%] h-[70vh]"
+          aria-describedby=""
+        >
+          <ViewFormDataModal formData={formData} />
+        </DialogContent>
+      </Dialog>
+
     </div>
   )
 }
 
-export default FormList
+export default FormSubmissionList

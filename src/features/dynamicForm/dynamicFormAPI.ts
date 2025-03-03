@@ -1,25 +1,33 @@
 import { baseUrl, endpoints, textmeApi } from "@/app/services"
 import { FormType } from "@formio/react"
 
-const SHEETDB_BASE_URL =
-  "https://sheetdb.io/api/v1/l73k7anfjfai9?sheet=forms" // Replace with your SheetDB ID
+const SHEETDB_BASE_URL = "https://sheetdb.io/api/v1/l73k7anfjfai9?sheet=forms" // Replace with your SheetDB ID
 const data = [
   {
-    "id": "1",
-    "key": "127f924a-6275-4974-884a-b612da63eebb",
-    "formname": "",
-    "formjson": "{\"display\":\"form\",\"components\":[{\"label\":\"Text Field 1\",\"labelPosition\":\"top\",\"widget\":{\"type\":\"input\"},\"applyMaskOn\":\"change\",\"spellcheck\":true,\"tableView\":true,\"persistent\":true,\"inputFormat\":\"plain\",\"clearOnHide\":true,\"validateOn\":\"change\",\"key\":\"textField1\",\"type\":\"textfield\",\"input\":true,\"inputType\":\"text\",\"id\":\"ezv64ub\"},{\"label\":\"Text Field 2\",\"labelPosition\":\"top\",\"widget\":{\"type\":\"input\"},\"applyMaskOn\":\"change\",\"spellcheck\":true,\"tableView\":true,\"persistent\":true,\"inputFormat\":\"plain\",\"clearOnHide\":true,\"validateOn\":\"change\",\"key\":\"textField2\",\"type\":\"textfield\",\"input\":true,\"inputType\":\"text\",\"id\":\"ex8eoj9\"},{\"type\":\"button\",\"label\":\"Submit\",\"key\":\"submit\",\"size\":\"md\",\"action\":\"submit\",\"disableOnInvalid\":true,\"theme\":\"primary\",\"id\":\"emt07fc\",\"input\":true,\"clearOnHide\":true,\"dataGridLabel\":true,\"labelPosition\":\"top\",\"widget\":{\"type\":\"input\"},\"validateOn\":\"change\"}]}",
-    "created_at": "1740297050",
-    "modified_at": "1740297050"
-  }
+    id: "1",
+    key: "127f924a-6275-4974-884a-b612da63eebb",
+    formname: "",
+    formjson:
+      '{"display":"form","components":[{"label":"Text Field 1","labelPosition":"top","widget":{"type":"input"},"applyMaskOn":"change","spellcheck":true,"tableView":true,"persistent":true,"inputFormat":"plain","clearOnHide":true,"validateOn":"change","key":"textField1","type":"textfield","input":true,"inputType":"text","id":"ezv64ub"},{"label":"Text Field 2","labelPosition":"top","widget":{"type":"input"},"applyMaskOn":"change","spellcheck":true,"tableView":true,"persistent":true,"inputFormat":"plain","clearOnHide":true,"validateOn":"change","key":"textField2","type":"textfield","input":true,"inputType":"text","id":"ex8eoj9"},{"type":"button","label":"Submit","key":"submit","size":"md","action":"submit","disableOnInvalid":true,"theme":"primary","id":"emt07fc","input":true,"clearOnHide":true,"dataGridLabel":true,"labelPosition":"top","widget":{"type":"input"},"validateOn":"change"}]}',
+    created_at: "1740297050",
+    modified_at: "1740297050",
+  },
 ]
 type FormListType = {
-  id: string;
-  key: string;
-  formname: string;
-  formjson: string;
-  created_at: string;
-  modified_at: string;
+  id: string
+  key: string
+  formname: string
+  formjson: string
+  created_at: string
+  modified_at: string
+}
+type FormDataListType = {
+  id: string
+  key: string
+  formname: string
+  formdata: string
+  created_at: string
+  modified_at: string
 }
 
 export const sheetDbApi = textmeApi.injectEndpoints({
@@ -29,7 +37,7 @@ export const sheetDbApi = textmeApi.injectEndpoints({
       providesTags: ["DynamicForm"],
     }),
     getFormJson: builder.query<FormListType[], string>({
-      query: (key:string) => ({
+      query: (key: string) => ({
         // https://sheetdb.io/api/v1/l73k7anfjfai9/search_or?key=127f924a-6275-4974-884a-b612da63eebb&sheet=forms
         url: `${endpoints.SEARCH}?key=${key}&sheet=forms`,
       }),
@@ -47,6 +55,11 @@ export const sheetDbApi = textmeApi.injectEndpoints({
         },
       }),
       invalidatesTags: ["DynamicForm"],
+    }),
+    getFormSubmissionList: builder.query<FormDataListType[], string>({
+      query: (key) => ({
+        url: `${endpoints.SEARCH}?sheet=formData&key=${key}`,
+      }),
     }),
     addFormData: builder.mutation<any, any>({
       query: (formData) => ({
@@ -80,7 +93,6 @@ export const sheetDbApi = textmeApi.injectEndpoints({
       }),
       invalidatesTags: ["DynamicForm"],
     }),
-    
   }),
 })
 
@@ -90,5 +102,6 @@ export const {
   useAddFormJsonMutation,
   useUpdateFormJsonMutation,
   useDeleteFormJsonMutation,
-  useAddFormDataMutation
+  useAddFormDataMutation,
+  useGetFormSubmissionListQuery,
 } = sheetDbApi
