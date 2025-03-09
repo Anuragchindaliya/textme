@@ -82,6 +82,7 @@
     "react-dropzone": "^14.3.5",
     "react-hook-form": "^7.44.3",
     "react-icons": "^4.10.1",
+    "react-joyride": "^2.9.3",
     "react-leaflet": "^4.2.1",
     "react-loading-skeleton": "^3.5.0",
     "react-redux": "^8.1.1",
