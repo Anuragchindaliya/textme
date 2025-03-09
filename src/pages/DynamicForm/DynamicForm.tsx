@@ -179,7 +179,7 @@ export const FormBuilderPage: React.FC = () => {
           {/* <DrawInput /> */}
         </div>
         <div>
-          <Link to={ROUTES.FORMS} className="no-underline">
+          <Link to={ROUTES.FORMS} id="viewForms" className="no-underline">
             <Button variant={"dark"} className="text-xs px-3 py-0">
               <Grid className="mr-1 text-xs size-4" />
               View all Forms
@@ -302,7 +302,7 @@ export const FormBuilderPage: React.FC = () => {
           direction="horizontal"
           className="flex gap-2 h-full "
         >
-          <ResizablePanel className="flex-[3]  h-full" minSize={70}>
+          <ResizablePanel id="formbuilder" className="flex-[3]  h-full" minSize={70}>
             <div className="text-white flex justify-between mb-2 ">
               <h2 className="text-gray-800 text-xl">Create a Form</h2>
               <div className="flex gap-2">
@@ -333,9 +333,10 @@ export const FormBuilderPage: React.FC = () => {
                 )}
               </div>
             </div>
-            <ScrollArea className="h-full pb-2">
+            <ScrollArea  className="h-full pb-2">
               <FormBuilder
                 key={formKey}
+
 
                 // @ts-ignore
                 form={formJson}
@@ -365,6 +366,7 @@ export const FormBuilderPage: React.FC = () => {
 
           <ResizablePanel
             minSize={15}
+            id="formjson"
             className="flex-1  flex flex-col bg-slate-50 h-full "
           >
             <div className="flex  justify-between items-center">
