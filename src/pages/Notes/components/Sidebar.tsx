@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import {
+  Calculator,
   CalendarCheck,
   Check,
   CheckSquare,
@@ -80,6 +81,11 @@ const Sidebar = () => {
         title: "Forms",
         icon: TextCursorInput,
         link: ROUTES.FORMS,
+      },
+      {
+        title: "Plan Tax",
+        icon: Calculator,
+        link: ROUTES.TAX_CALCULATOR,
       },
       {
         title: "Login",

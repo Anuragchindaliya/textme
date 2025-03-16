@@ -37,6 +37,7 @@ import PreviewForm from "./pages/DynamicForm/PreviewForm"
 import FormList from "./pages/DynamicForm/FormList"
 import FormLayout from "./pages/DynamicForm/FormLayout"
 import FormSubmissionList from "./pages/DynamicForm/FormSubmissionList"
+import TaxPlan from "./pages/PlanTax/PlanTax"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
@@ -62,7 +63,8 @@ export const ROUTES = {
   QRL_DYNAMIC: QR_ROUTES.QRL_DYNAMIC,
   FORMS:"/form-list",
   FORM_DATA:"/formdata-list",
-  CREATE_FORMS:"/create-form"
+  CREATE_FORMS:"/create-form",
+  TAX_CALCULATOR:"/calculate-tax",
 } as const
 const Router = () => {
   return (
@@ -87,6 +89,7 @@ const Router = () => {
       </Route>
 
       {/* <Route path={"/sidebar"} element={<Sidebar />} /> */}
+      <Route path={ROUTES.TAX_CALCULATOR} element={<TaxPlan />} />
       <Route path={ROUTES.GOV_LINK} element={<GovLink />} />
       <Route path={ROUTES.PRODUCTS} element={<Products />} />
       <Route path={ROUTES.CART} element={<Cart />} />
