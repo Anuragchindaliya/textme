@@ -183,7 +183,7 @@ const QRCodeScanner: React.FC = () => {
           <Menu />
         </div>
 
-        <div className="relative  flex bg-gray-700 h-[68vh] justify-center items-center">
+        <div className="relative  flex bg-gray-200 dark:bg-gray-700 h-[68vh] justify-center items-center">
           <SidebarTrigger className="absolute left-1 top-1" />
           <div className="absolute">
             {/* {result && (
@@ -211,7 +211,7 @@ const QRCodeScanner: React.FC = () => {
                 <button onClick={startScanning}>Start Scanning</button>
                 <p>
                   Click {result ? "Restart" : "Start"} Scanning to begin
-                  scanning QR codes.
+                  scanning QR codes
                 </p>
               </div>
             )}

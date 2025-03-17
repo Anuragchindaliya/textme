@@ -256,7 +256,7 @@ const QRLCodeScanner: React.FC = () => {
           </div>
         </div>
 
-        <div className="relative  flex bg-gray-700 h-[68vh] justify-center items-center">
+        <div className="relative  flex bg-gray-200 dark:bg-gray-700 h-[68vh] justify-center items-center">
           <SidebarTrigger className="absolute left-1 top-1" />
           <div className="absolute">
             {/* {result && (

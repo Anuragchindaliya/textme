@@ -10,6 +10,7 @@ import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/comp
 import { Info } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Collapsible, CollapsibleContent,CollapsibleTrigger } from "@/components/ui/collapsible";
+import Sidebar from "../Notes/components/Sidebar";
 
 // Formatting numbers as currency
 const formatCurrency = (value: string | undefined) => {
@@ -237,6 +238,13 @@ const TaxPlanner = () => {
 
 
   return (
+    <div className="container mx-auto p-4">
+    <div className="flex">
+      <Sidebar />
+      <h1 className="text-2xl font-bold mb-4 text-center flex-1">
+        Government Websites
+      </h1>
+    </div>
     <Card className="p-6 container mx-auto mt-10">
       <CardContent>
         <h2 className="text-xl font-semibold mb-4">Tax Planner</h2>
@@ -423,6 +431,7 @@ const TaxPlanner = () => {
 
         </CardContent>
       </Card>
+      </div>
   );
 };
 
