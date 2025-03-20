@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useSearchParams } from "react-router-dom"
-import { ChangeEvent, useEffect, useRef, useState } from "react"
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
 import { QRCodeCanvas, QRCodeSVG } from "qrcode.react"
 import { Save, Share2 } from "lucide-react"
 
@@ -20,6 +20,123 @@ import { useGesture } from "@use-gesture/react"
 import { useSpring, animated } from "@react-spring/web"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Checkbox } from "@/components/ui/checkbox"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@radix-ui/react-select"
+
+
+const linkTypesConfig = {
+  url: {
+    label: "Website URL",
+    inputs: [
+      { label: "URL", name: "url", type: "url", required: true },
+    ],
+  },
+  tel: {
+    label: "Phone Call",
+    inputs: [
+      { label: "Phone Number", name: "phone", type: "tel", required: true },
+    ],
+  },
+  sms: {
+    label: "SMS",
+    inputs: [
+      { label: "Phone Number", name: "phone", type: "tel", required: true },
+      { label: "Message", name: "body", type: "text", required: false },
+    ],
+  },
+  mailto: {
+    label: "Email",
+    inputs: [
+      { label: "Email", name: "email", type: "email", required: true },
+      { label: "Subject", name: "subject", type: "text", required: false },
+      { label: "Body", name: "body", type: "text", required: false },
+    ],
+  },
+  whatsapp: {
+    label: "WhatsApp",
+    inputs: [
+      { label: "Phone Number", name: "phone", type: "tel", required: true },
+      { label: "Message", name: "text", type: "text", required: false },
+    ],
+  },
+  upi: {
+    label: "UPI Payment",
+    inputs: [
+      { label: "UPI ID", name: "pa", type: "text", required: true },
+      { label: "Payee Name", name: "pn", type: "text", required: true },
+      { label: "Merchant Code", name: "mc", type: "text", required: false },
+      { label: "Transaction ID", name: "tid", type: "text", required: false },
+      { label: "Transaction Ref ID", name: "tr", type: "text", required: false },
+      { label: "Transaction Note", name: "tn", type: "text", required: false },
+      { label: "Amount", name: "am", type: "number", required: false },
+      { label: "Currency", name: "cu", type: "text", required: false, default: "INR" },
+    ],
+  },
+  wifi: {
+    label: "Wi-Fi",
+    inputs: [
+      { label: "SSID", name: "ssid", type: "text", required: true },
+      { label: "Password", name: "password", type: "text", required: false },
+      { label: "Encryption", name: "encryption", type: "text", required: false },
+    ],
+  },
+  geo: {
+    label: "Geo Location",
+    inputs: [
+      { label: "Latitude", name: "lat", type: "number", required: true },
+      { label: "Longitude", name: "lng", type: "number", required: true },
+    ],
+  },
+};
+
+// Zod Schema Generator
+const generateZodSchema = (fields: any[]) => {
+  const shape: Record<string, z.ZodTypeAny> = {}
+
+  fields.forEach((field) => {
+    let validator: z.ZodTypeAny
+    if (field.required) {
+      if (field.type === "email") {
+        validator = z
+          .string()
+          .email("Invalid email")
+          .min(1, `${field.label} is required`)
+      } else if (field.type === "tel") {
+        validator = z
+          .string()
+          .regex(/^[6-9]\d{9}$/, "Invalid phone number")
+          .min(1, `${field.label} is required`)
+      } else if (field.type === "number") {
+        validator = z.coerce.number()
+      } else {
+        validator = z.string().min(1, `${field.label} is required`)
+      }
+    } else {
+      validator =
+        field.type === "number"
+          ? z.coerce.number().optional()
+          : z.string().optional()
+    }
+    shape[field.name] = validator
+  })
+
+  return z.object(shape)
+}
 
 // import "./styles.css"
 const noteFormSchema = z.object({
@@ -42,6 +159,34 @@ const Qrcode = () => {
   const [imagePreview, setImagePreview] = useState("")
 
   const [activeBorder, setActiveBorder] = useState(false)
+
+  const [open, setOpen] = useState(false)
+  const [linkType, setLinkType] = useState<keyof typeof linkTypesConfig | null>(
+    null,
+  )
+  const linkTypes = useMemo(
+    () =>
+      Object.entries(linkTypesConfig).map(([value, { label }]) => ({
+        value,
+        label,
+      })),
+    [],
+  )
+  const fields = useMemo(
+    () => (linkType ? linkTypesConfig[linkType].inputs : []),
+    [linkType],
+  )
+  const schema = useMemo(
+    () => (fields.length ? generateZodSchema(fields) : z.object({})),
+    [fields],
+  )
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(schema) })
 
   const [imageSize, setImageSize] = useState(64)
   const [textColor, setTextColor] = useState("#000000")
@@ -293,6 +438,64 @@ const Qrcode = () => {
       },
     },
   )
+  const onSubmit = (data: any) => {
+    let url = "";
+  
+    switch (linkType) {
+      case "mailto":
+        url = `mailto:${data.email}`;
+        const mailParams = new URLSearchParams();
+        if (data.subject) mailParams.append("subject", data.subject);
+        if (data.body) mailParams.append("body", data.body);
+        if (mailParams.toString()) url += `?${mailParams.toString()}`;
+        break;
+  
+      case "tel":
+        url = `tel:${data.phone}`;
+        break;
+  
+      case "sms":
+        url = `sms:${data.phone}`;
+        if (data.body) url += `?body=${encodeURIComponent(data.body)}`;
+        break;
+  
+      case "whatsapp":
+        url = `https://wa.me/${data.phone}`;
+        if (data.text) url += `?text=${encodeURIComponent(data.text)}`;
+        break;
+  
+      case "upi":
+        url = `upi://pay?`;
+        const upiParams = new URLSearchParams();
+        Object.entries(data).forEach(([key, value]) => {
+          if (typeof value==="string") upiParams.append(key, value);
+        });
+        url += upiParams.toString();
+        break;
+  
+      case "wifi":
+        url = `WIFI:S:${data.ssid};T:${data.encryption || ""};P:${data.password || ""};;`;
+        break;
+  
+      case "geo":
+        url = `geo:${data.lat},${data.lng}`;
+        break;
+  
+      case "url":
+        url = data.url.startsWith("http") ? data.url : `https://${data.url}`;
+        break;
+  
+      default:
+        console.warn("Unknown link type");
+        break;
+    }
+  
+    console.log("Generated Link:", url);
+    form.setValue("note", url);
+    reset();
+    setOpen(false);
+  };
+  
   return (
     <QRLayout>
       <div className="">
@@ -309,6 +512,117 @@ const Qrcode = () => {
           <div className="flex h-full  ">
             <SidebarTrigger className="m-2 p-2 absolute hover:bg-white dark:hover:bg-gray-700 bg-gray-100 dark:bg-gray-900 z-10" />
             <div className="flex-[3] overflow-hidden bg-gray-100 dark:bg-gray-900">
+              <div className="ml-16 flex mt-3">
+                {/* <Dialog
+                  open={open}
+                  onOpenChange={() => setOpen(false)}
+                >
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Create {linkTypes[showUrlModal as number]?.label} URL</DialogTitle>
+                      <DialogDescription>
+                        Create URL to generate QR code
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div>
+                      <div className="space-y-4 py-2 pb-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="name">Team name</Label>
+                          <Input id="name" placeholder="Acme Inc." />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="plan">Subscription plan</Label>
+                          <Select>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a plan" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="free">
+                                <span className="font-medium">Free</span> -{" "}
+                                <span className="text-muted-foreground">
+                                  Trial for two weeks
+                                </span>
+                              </SelectItem>
+                              <SelectItem value="pro">
+                                <span className="font-medium">Pro</span> -{" "}
+                                <span className="text-muted-foreground">
+                                  $9/month per user
+                                </span>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        variant="outline"
+                        onClick={() => setOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button type="submit">Continue</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog> */}
+                <Dialog
+                  open={open}
+                  onOpenChange={(o) => {
+                    if (!o) reset()
+                    setOpen(o)
+                  }}
+                >
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>
+                        Create {linkType?.toUpperCase()} Link
+                      </DialogTitle>
+                      <DialogDescription>
+                        Fill the form below to generate your dynamic link and QR
+                        code.
+                      </DialogDescription>
+                    </DialogHeader>
+
+                    <form
+                      onSubmit={handleSubmit(onSubmit)}
+                      className="space-y-4"
+                    >
+                      {fields.map((field) => (
+                        <div key={field.name}>
+                          <Input
+                            placeholder={field.label}
+                            {...register(field.name)}
+                          />
+                          {errors[field.name] && (
+                            <p className="text-red-500 text-xs">
+                              {errors[field.name]?.message as string}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                      <Button type="submit" className="w-full">
+                        Generate Link
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+
+                {linkTypes.map((item, index) => {
+                  return (
+                    <button
+                      onClick={() => {
+                        setOpen(true)
+                        setLinkType(item.value as any)
+                      }}
+                      type="button"
+                      key={item.value}
+                      className="shadow bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2 py-1 rounded-full dark:bg-gray-800 dark:text-gray-300"
+                    >
+                      {item.label}
+                    </button>
+                  )
+                })}
+              </div>
               <animated.div
                 ref={wrapperRef}
                 className="flex-[3]  flex justify-center items-center flex-col h-full"
