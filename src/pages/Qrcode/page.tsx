@@ -1,27 +1,26 @@
-import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useSearchParams } from "react-router-dom"
+import {
+  AtSign,
+  Globe,
+  IndianRupee,
+  LocateFixed,
+  MessageSquare,
+  PhoneOutgoing,
+  Save,
+  Share2,
+  Wifi
+} from "lucide-react"
+import { QRCodeCanvas } from "qrcode.react"
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
-import { QRCodeCanvas, QRCodeSVG } from "qrcode.react"
-import { Save, Share2 } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { useSearchParams } from "react-router-dom"
+import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 
-import Sidebar from "../Notes/components/Sidebar"
-import QRInput from "./components/QRInput"
-import { Input } from "@/components/ui/input"
-import { Slider } from "@/components/ui/slider"
-import QRLayout from "./QRLayout"
 import { SidebarTrigger } from "@/components/AppSidebar"
-import { getContrastRatio, isColorTooDark } from "./utils"
-import { useGesture } from "@use-gesture/react"
-import { useSpring, animated } from "@react-spring/web"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Checkbox } from "@/components/ui/checkbox"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Label } from "@/components/ui/label"
 import {
   Dialog,
   DialogContent,
@@ -30,30 +29,43 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@radix-ui/react-select"
-
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import { Slider } from "@/components/ui/slider"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { cn, RenderIcon } from "@/lib/utils"
+import { animated, useSpring } from "@react-spring/web"
+import { useGesture } from "@use-gesture/react"
+import { AiOutlineWhatsApp } from "react-icons/ai"
+import Sidebar from "../Notes/components/Sidebar"
+import QRInput from "./components/QRInput"
+import QRLayout from "./QRLayout"
+import { getContrastRatio, isColorTooDark } from "./utils"
 
 const linkTypesConfig = {
   url: {
     label: "Website URL",
-    inputs: [
-      { label: "URL", name: "url", type: "url", required: true },
-    ],
+    icon: <Globe className="w-4 h-4" />, // Website icon from Icons8
+    iconUrl:"https://img.icons8.com/ios/452/globe.png",
+    inputs: [{ label: "URL", name: "url", type: "url", required: true }],
   },
   tel: {
     label: "Phone Call",
+    icon: <PhoneOutgoing className="w-4 h-4" />, // Phone icon from Icons8
+    iconUrl:"https://img.icons8.com/ios/452/phone.png",
     inputs: [
       { label: "Phone Number", name: "phone", type: "tel", required: true },
     ],
   },
   sms: {
     label: "SMS",
+    icon: <MessageSquare className="w-4 h-4" />, // SMS icon from Icons8
+    iconUrl:"https://img.icons8.com/ios/452/sms.png",
     inputs: [
       { label: "Phone Number", name: "phone", type: "tel", required: true },
       { label: "Message", name: "body", type: "text", required: false },
@@ -61,6 +73,8 @@ const linkTypesConfig = {
   },
   mailto: {
     label: "Email",
+    icon: <AtSign className="w-4 h-4" />, // Email icon from Icons8
+    iconUrl:"https://img.icons8.com/ios/452/email.png",
     inputs: [
       { label: "Email", name: "email", type: "email", required: true },
       { label: "Subject", name: "subject", type: "text", required: false },
@@ -69,6 +83,8 @@ const linkTypesConfig = {
   },
   whatsapp: {
     label: "WhatsApp",
+    icon: <AiOutlineWhatsApp className="w-4 h-4" />, // WhatsApp icon from Icons8
+    iconUrl:"https://img.icons8.com/ios/452/whatsapp.png",
     inputs: [
       { label: "Phone Number", name: "phone", type: "tel", required: true },
       { label: "Message", name: "text", type: "text", required: false },
@@ -76,33 +92,55 @@ const linkTypesConfig = {
   },
   upi: {
     label: "UPI Payment",
+    icon: <IndianRupee className="w-4 h-4" />, // UPI icon from UXWing
+    iconUrl:"https://img.icons8.com/ios/452/bhim.png",
     inputs: [
       { label: "UPI ID", name: "pa", type: "text", required: true },
       { label: "Payee Name", name: "pn", type: "text", required: true },
       { label: "Merchant Code", name: "mc", type: "text", required: false },
       { label: "Transaction ID", name: "tid", type: "text", required: false },
-      { label: "Transaction Ref ID", name: "tr", type: "text", required: false },
+      {
+        label: "Transaction Ref ID",
+        name: "tr",
+        type: "text",
+        required: false,
+      },
       { label: "Transaction Note", name: "tn", type: "text", required: false },
       { label: "Amount", name: "am", type: "number", required: false },
-      { label: "Currency", name: "cu", type: "text", required: false, default: "INR" },
+      {
+        label: "Currency",
+        name: "cu",
+        type: "text",
+        required: false,
+        default: "INR",
+      },
     ],
   },
   wifi: {
     label: "Wi-Fi",
+    icon: <Wifi className="w-4 h-4" />, // Wi-Fi icon from Icons8
+    iconUrl:"https://img.icons8.com/ios/452/wifi.png",
     inputs: [
       { label: "SSID", name: "ssid", type: "text", required: true },
       { label: "Password", name: "password", type: "text", required: false },
-      { label: "Encryption", name: "encryption", type: "text", required: false },
+      {
+        label: "Encryption",
+        name: "encryption",
+        type: "text",
+        required: false,
+      },
     ],
   },
   geo: {
     label: "Geo Location",
+    icon: <LocateFixed className="w-4 h-4" />, // Geo Location icon from Icons8
+    iconUrl:"https://img.icons8.com/ios/452/marker.png",
     inputs: [
       { label: "Latitude", name: "lat", type: "number", required: true },
       { label: "Longitude", name: "lng", type: "number", required: true },
     ],
   },
-};
+}
 
 // Zod Schema Generator
 const generateZodSchema = (fields: any[]) => {
@@ -160,26 +198,40 @@ const Qrcode = () => {
 
   const [activeBorder, setActiveBorder] = useState(false)
 
+  const [currentTab, setCurrentTab] = useState("")
+
   const [open, setOpen] = useState(false)
   const [linkType, setLinkType] = useState<keyof typeof linkTypesConfig | null>(
     null,
   )
   const linkTypes = useMemo(
     () =>
-      Object.entries(linkTypesConfig).map(([value, { label }]) => ({
+      Object.entries(linkTypesConfig).map(([value, { label, icon }]) => ({
         value,
         label,
+        icon,
       })),
     [],
   )
-  const fields = useMemo(
-    () => (linkType ? linkTypesConfig[linkType].inputs : []),
+  const fields:{
+    label: string;
+    icon: JSX.Element;
+    iconUrl?:string;
+    inputs: {
+        label: string;
+        name: string;
+        type: string;
+        required: boolean;
+    }[];
+} | null  = useMemo(
+    () => (linkType ? linkTypesConfig[linkType] : null),
     [linkType],
   )
   const schema = useMemo(
-    () => (fields.length ? generateZodSchema(fields) : z.object({})),
-    [fields],
+    () => (fields?.inputs.length ? generateZodSchema(fields.inputs) : z.object({})),
+    [fields?.inputs],
   )
+  console.log({ open, linkType, fields, schema })
 
   const {
     register,
@@ -383,6 +435,7 @@ const Qrcode = () => {
       searchParams.delete("t")
       setSearchParams(searchParams)
     }
+    
   }, [qrText])
 
   useEffect(() => {
@@ -439,63 +492,71 @@ const Qrcode = () => {
     },
   )
   const onSubmit = (data: any) => {
-    let url = "";
-  
+    let url = ""
+
     switch (linkType) {
       case "mailto":
-        url = `mailto:${data.email}`;
-        const mailParams = new URLSearchParams();
-        if (data.subject) mailParams.append("subject", data.subject);
-        if (data.body) mailParams.append("body", data.body);
-        if (mailParams.toString()) url += `?${mailParams.toString()}`;
-        break;
-  
+        url = `mailto:${data.email}`
+        const mailParams = new URLSearchParams()
+        if (data.subject) mailParams.append("subject", data.subject)
+        if (data.body) mailParams.append("body", data.body)
+        if (mailParams.toString()) url += `?${mailParams.toString()}`
+        break
+
       case "tel":
-        url = `tel:${data.phone}`;
-        break;
-  
+        url = `tel:${data.phone}`
+        break
+
       case "sms":
-        url = `sms:${data.phone}`;
-        if (data.body) url += `?body=${encodeURIComponent(data.body)}`;
-        break;
-  
+        url = `sms:${data.phone}`
+        if (data.body) url += `?body=${encodeURIComponent(data.body)}`
+        break
+
       case "whatsapp":
-        url = `https://wa.me/${data.phone}`;
-        if (data.text) url += `?text=${encodeURIComponent(data.text)}`;
-        break;
-  
+        url = `https://wa.me/${data.phone}`
+        if (data.text) url += `?text=${encodeURIComponent(data.text)}`
+        break
+
       case "upi":
-        url = `upi://pay?`;
-        const upiParams = new URLSearchParams();
+        url = `upi://pay?`
+        const upiParams = new URLSearchParams()
         Object.entries(data).forEach(([key, value]) => {
-          if (typeof value==="string") upiParams.append(key, value);
-        });
-        url += upiParams.toString();
-        break;
-  
+          if (value && typeof value === "string") upiParams.append(key, value)
+        })
+        url += upiParams.toString()
+        break
+
       case "wifi":
-        url = `WIFI:S:${data.ssid};T:${data.encryption || ""};P:${data.password || ""};;`;
-        break;
-  
+        url = `WIFI:S:${data.ssid};T:${data.encryption || ""};P:${
+          data.password || ""
+        };;`
+        break
+
       case "geo":
-        url = `geo:${data.lat},${data.lng}`;
-        break;
-  
+        url = `geo:${data.lat},${data.lng}`
+        break
+
       case "url":
-        url = data.url.startsWith("http") ? data.url : `https://${data.url}`;
-        break;
-  
+        url = data.url.startsWith("http") ? data.url : `https://${data.url}`
+        break
+
       default:
-        console.warn("Unknown link type");
-        break;
+        console.warn("Unknown link type")
+        break
     }
-  
-    console.log("Generated Link:", url);
-    form.setValue("note", url);
-    reset();
-    setOpen(false);
-  };
-  
+
+    console.log("Generated Link:", {url,fields})
+    if(fields?.iconUrl){
+      setImagePath(fields?.iconUrl);
+      setImagePreview(fields.iconUrl);
+      setCurrentTab("logo")
+    }
+
+    form.setValue("note", url)
+    reset()
+    setOpen(false)
+  }
+
   return (
     <QRLayout>
       <div className="">
@@ -505,156 +566,137 @@ const Qrcode = () => {
             {/* <PresetSelector presets={presets}  /> */}
             <div className="py-1 pt-3 flex flex-1 space-x-2 sm:justify-end w-full">
               <Sidebar />
-              <QRInput form={form} onNoteSubmit={onNoteSubmit} />
+              <QRInput form={form} onNoteSubmit={onNoteSubmit} onChange={()=>{
+                setLinkType(null)
+              }} />
             </div>
           </div>
           <Separator />
           <div className="flex h-full  ">
-            <SidebarTrigger className="m-2 p-2 absolute hover:bg-white dark:hover:bg-gray-700 bg-gray-100 dark:bg-gray-900 z-10" />
-            <div className="flex-[3] overflow-hidden bg-gray-100 dark:bg-gray-900">
-              <div className="ml-16 flex mt-3">
-                {/* <Dialog
-                  open={open}
-                  onOpenChange={() => setOpen(false)}
-                >
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create {linkTypes[showUrlModal as number]?.label} URL</DialogTitle>
-                      <DialogDescription>
-                        Create URL to generate QR code
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div>
-                      <div className="space-y-4 py-2 pb-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="name">Team name</Label>
-                          <Input id="name" placeholder="Acme Inc." />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="plan">Subscription plan</Label>
-                          <Select>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a plan" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="free">
-                                <span className="font-medium">Free</span> -{" "}
-                                <span className="text-muted-foreground">
-                                  Trial for two weeks
-                                </span>
-                              </SelectItem>
-                              <SelectItem value="pro">
-                                <span className="font-medium">Pro</span> -{" "}
-                                <span className="text-muted-foreground">
-                                  $9/month per user
-                                </span>
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button
-                        variant="outline"
-                        onClick={() => setOpen(false)}
-                      >
-                        Cancel
-                      </Button>
-                      <Button type="submit">Continue</Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog> */}
-                <Dialog
-                  open={open}
-                  onOpenChange={(o) => {
-                    if (!o) reset()
-                    setOpen(o)
-                  }}
-                >
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>
-                        Create {linkType?.toUpperCase()} Link
-                      </DialogTitle>
-                      <DialogDescription>
-                        Fill the form below to generate your dynamic link and QR
-                        code.
-                      </DialogDescription>
-                    </DialogHeader>
-
-                    <form
-                      onSubmit={handleSubmit(onSubmit)}
-                      className="space-y-4"
-                    >
-                      {fields.map((field) => (
-                        <div key={field.name}>
-                          <Input
-                            placeholder={field.label}
-                            {...register(field.name)}
-                          />
-                          {errors[field.name] && (
-                            <p className="text-red-500 text-xs">
-                              {errors[field.name]?.message as string}
-                            </p>
-                          )}
-                        </div>
-                      ))}
-                      <Button type="submit" className="w-full">
-                        Generate Link
-                      </Button>
-                    </form>
-                  </DialogContent>
-                </Dialog>
-
-                {linkTypes.map((item, index) => {
-                  return (
-                    <button
-                      onClick={() => {
-                        setOpen(true)
-                        setLinkType(item.value as any)
-                      }}
-                      type="button"
-                      key={item.value}
-                      className="shadow bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2 py-1 rounded-full dark:bg-gray-800 dark:text-gray-300"
-                    >
-                      {item.label}
-                    </button>
-                  )
-                })}
-              </div>
-              <animated.div
-                ref={wrapperRef}
-                className="flex-[3]  flex justify-center items-center flex-col h-full"
-                style={{
-                  x,
-                  y,
-                  scale,
-                  touchAction: "none",
-                }}
+            <ResizablePanelGroup
+              direction="horizontal"
+              className="flex  h-full "
+            >
+              <ResizablePanel
+                id="qrCanvas"
+                className="flex-[3]  h-full"
+                minSize={70}
+                
               >
-                {qrText ? (
-                  <div className="flex flex-col">
-                    <div className="relative">
-                      <QRCodeCanvas
-                        value={qrText}
-                        size={356}
-                        ref={canvasRef}
-                        className={`border rounded-sm`}
-                        style={{ borderColor: selectedFgColor }}
-                        marginSize={2}
-                        fgColor={selectedFgColor}
-                        bgColor={selectedBackColor}
-                        title="Build by anurag"
-                        imageSettings={{
-                          src: imagePreview, // Replace with your logo URL
-                          //   src: getRoundedLogo(imagePath, 64, 64), // Replace with your logo URL
-                          height: imageSize, // Height of the logo
-                          width: imageSize, // Width of the logo
-                          excavate: true, // This option clears the area where the logo is placed so it's more readable
-                        }}
-                      />
-                      {/* <canvas
+                <SidebarTrigger className="m-2 p-2 absolute hover:bg-white dark:hover:bg-gray-700 bg-gray-100 dark:bg-gray-900 z-10" />
+                <div className="flex-[3] overflow-hidden bg-gray-100 dark:bg-gray-900 h-full">
+                  <Dialog
+                    open={open}
+                    onOpenChange={(o) => {
+                      if (!o) reset()
+                      setOpen(o)
+                    }}
+                  >
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>
+                          Create {linkType?.toUpperCase()} Link
+                        </DialogTitle>
+                        <DialogDescription>
+                          Fill the form below to generate your dynamic link and
+                          QR code.
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="space-y-4"
+                      >
+                        {fields?.inputs.map((field) => (
+                          <div key={field.name}>
+                            <Input
+                              placeholder={field.label}
+                              {...register(field.name)}
+                            />
+                            {errors[field.name] && (
+                              <p className="text-red-500 text-xs">
+                                {errors[field.name]?.message as string}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                        <DialogFooter>
+                          <Button type="submit" className="w-full">
+                            Generate Link
+                          </Button>
+                        </DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                  
+                  <div
+                    className={cn(
+                      // "absolute inset-0 flex flex-col",
+                      "flex-[3]  flex justify-center items-center flex-col h-full relative",
+                      "[background-size:20px_20px]",
+                      "[background-image:linear-gradient(to_right,#e4e4e7_1px,transparent_1px),linear-gradient(to_bottom,#e4e4e7_1px,transparent_1px)]",
+                      "dark:[background-image:linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]",
+                    )}
+                  >
+                    <div className="w-full">
+                    <ScrollArea>
+                      <div className="ml-10 flex w-max space-x-1 p-4 ">
+                        {linkTypes.map((item) => {
+                          return (
+                            <button
+                              onClick={() => {
+                                setOpen(true)
+                                setLinkType(item.value as any)
+                              }}
+                              type="button"
+                              key={item.value}
+                              className={`shadow-indigo-500/50 bg-white  text-gray-800 text-xs font-medium  px-2.5 py-1 rounded-full  dark:text-gray-300 flex gap-1 items-center border dark:border ${
+                                item.value === linkType
+                                  ? "dark:border-gray-50 border-gray-600"
+                                  : ""
+                              }`}
+                            >
+                              <RenderIcon icon={item.icon} />
+                              {item.label}
+                            </button>
+                          )
+                        })}
+                      </div>
+                      <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                  </div>
+                    <animated.div
+                      ref={wrapperRef}
+                      className="flex-[3]  flex justify-center items-center flex-col h-full relative"
+                      style={{
+                        x,
+                        y,
+                        scale,
+                        touchAction: "none",
+                      }}
+                    >
+                      {qrText ? (
+                        <div className="flex flex-col">
+                          <div className="relative">
+                            <QRCodeCanvas
+                              value={qrText}
+                              size={356}
+                              ref={canvasRef}
+                              className={`border rounded-sm`}
+                              style={{ borderColor: selectedFgColor }}
+                              marginSize={2}
+                              fgColor={selectedFgColor}
+                              bgColor={selectedBackColor}
+                              title="Build by anurag"
+                              imageSettings={{
+                                src: imagePreview, // Replace with your logo URL
+                                //   src: getRoundedLogo(imagePath, 64, 64), // Replace with your logo URL
+                                height: imageSize, // Height of the logo
+                                width: imageSize, // Width of the logo
+                                excavate: true, // This option clears the area where the logo is placed so it's more readable
+                              }}
+                            />
+                            {/* <canvas
                       id="canvasG"
                       ref={canvasGradientRef}
                       width={356}
@@ -662,7 +704,7 @@ const Qrcode = () => {
                       className="absolute top-0 mix-blend-screen"
                     /> */}
 
-                      {/* <img
+                            {/* <img
                     src="https://static.vecteezy.com/system/resources/previews/009/481/029/non_2x/geometric-icon-logo-geometric-abstract-element-free-vector.jpg" // Replace with your logo URL
                     alt="Logo"
                     style={{
@@ -675,235 +717,252 @@ const Qrcode = () => {
                       borderRadius: "50%", // Optional: make the logo circular
                     }}
                   /> */}
-                    </div>
+                          </div>
 
-                    <div className="mt-2 flex gap-2 mx-auto">
-                      <Button
-                        variant="secondary"
-                        className="p-0 w-10"
-                        onClick={handleShare}
-                      >
-                        <Share2 />
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        className="p-0 w-10"
-                        onClick={handleSave}
-                      >
-                        <Save />
-                      </Button>
-                    </div>
+                          <div className="mt-2 flex gap-2 mx-auto">
+                            <Button
+                              variant="secondary"
+                              className="p-0 w-10"
+                              onClick={handleShare}
+                            >
+                              <Share2 />
+                            </Button>
+                            <Button
+                              variant="secondary"
+                              className="p-0 w-10"
+                              onClick={handleSave}
+                            >
+                              <Save />
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button onClick={handleInputFocus}>
+                          Enter text to generate QR code{" "}
+                        </button>
+                      )}
+                    </animated.div>
                   </div>
-                ) : (
-                  <button onClick={handleInputFocus}>
-                    Enter text to generate QR code{" "}
-                  </button>
-                )}
-              </animated.div>
-            </div>
-            {qrText && (
-              <div className="flex-1 flex-col border-l hidden md:flex">
-                <div className="flex flex-col  mb-4 divide-y text-sm">
-                  <div className="flex items-center gap-3 p-4">
-                    <label htmlFor="bgColor" className="whitespace-nowrap">
-                      View Size
-                    </label>
-                    <Slider
-                      min={20}
-                      max={70}
-                      //   value={}
-                      onValueChange={(e) => {
-                        console.log(e, "currentTarget")
-                        api.start({ scale: 1 + e[0] / 50 })
-                      }}
-                    />
-                  </div>
-                  <div className="flex items-center gap-3 p-2 px-4">
-                    <label htmlFor="bgColor">Back Ground color</label>
-                    <input
-                      id="bgColor"
-                      type="color"
-                      title="Change QR color"
-                      className="w-10 h-10"
-                      value={selectedBackColor}
-                      onChange={handleBackColor}
-                    />
-                  </div>
-                  <div className="flex items-center gap-3 p-1 px-4">
-                    <label htmlFor="fgColor">Fore Ground color</label>
-                    <input
-                      id="fgColor"
-                      type="color"
-                      title="Change QR color"
-                      className="w-10 h-10"
-                      value={selectedFgColor}
-                      onChange={handleFgColor}
-                    />
-                  </div>
-                  <div className="p-2">
-                    <div className="flex items-center gap-3 px-4 py-4">
-                      <label htmlFor="imagePath" className="whitespace-nowrap">
-                        Logo size
-                      </label>
-                      <Slider
-                        min={20}
-                        max={70}
-                        value={[imageSize]}
-                        onValueChange={(e) => {
-                          console.log(e, "currentTarget")
-                          const currentSize = e[0]
-                          setImageSize(currentSize)
-                          generateTextImage({
-                            text: overlayText,
-                            color: textColor,
-                            size: currentSize,
-                            logoBgColor,
-                            borderRadius: logoBorderRadius,
-                          })
-                        }}
-                      />
-                      <div>{(imageSize / 20).toFixed(1)}</div>
-                    </div>
-                    <Tabs defaultValue="account">
-                      <TabsList className="w-full">
-                        <TabsTrigger value="text" className="w-full">
-                          Logo text
-                        </TabsTrigger>
-                        <TabsTrigger value="logo" className="w-full">
-                          Logo link
-                        </TabsTrigger>
-                      </TabsList>
-                      <TabsContent value="text">
-                        <div className="flex items-center gap-3 p-2 px-4">
+                </div>
+              </ResizablePanel>
+              {qrText && (
+                <>
+                  <ResizableHandle
+                    withHandle
+                    // iconClass="bg-gray-300"
+                    className="bg-gray-500"
+                  />
+                  <ResizablePanel minSize={15} id="qrOptions">
+                    <div className="flex-1 flex-col border-l hidden md:flex">
+                      <div className="flex flex-col  mb-4 divide-y text-sm">
+                        <div className="flex items-center gap-3 p-4">
                           <label
-                            htmlFor="imageText"
+                            htmlFor="bgColor"
                             className="whitespace-nowrap"
                           >
-                            Logo Text
+                            View Size
                           </label>
-                          <Input
-                            id="imageText"
-                            type="text"
-                            title="Enter logo text"
-                            className=" "
-                            placeholder="Enter logo text"
-                            value={overlayText}
-                            onChange={(e) => {
-                              const currentText = e.target.value
-                              setOverlayText(currentText)
-                              generateTextImage({
-                                text: currentText,
-                                color: textColor,
-                                size: imageSize,
-                                logoBgColor,
-                                borderRadius: logoBorderRadius,
-                              })
+                          <Slider
+                            min={20}
+                            max={70}
+                            //   value={}
+                            onValueChange={(e) => {
+                              console.log(e, "currentTarget")
+                              api.start({ scale: 1 + e[0] / 50 })
                             }}
                           />
                         </div>
                         <div className="flex items-center gap-3 p-2 px-4">
-                          <label
-                            htmlFor="imageColor"
-                            className="whitespace-nowrap"
-                          >
-                            Logo Color
-                          </label>
-                          <Input
-                            id="imageColor"
+                          <label htmlFor="bgColor">Back Ground color</label>
+                          <input
+                            id="bgColor"
                             type="color"
-                            title="Enter logo color"
-                            className=""
-                            placeholder="Enter logo color"
-                            value={textColor}
-                            onChange={handleTextColor}
+                            title="Change QR color"
+                            className="w-10 h-10"
+                            value={selectedBackColor}
+                            onChange={handleBackColor}
                           />
                         </div>
-                        <div className="flex items-center gap-3 p-2 px-4">
-                          <label
-                            htmlFor="imageColor"
-                            className="whitespace-nowrap"
-                          >
-                            Logo Bg Color
-                          </label>
-                          <Input
-                            id="imageColor"
+                        <div className="flex items-center gap-3 p-1 px-4">
+                          <label htmlFor="fgColor">Fore Ground color</label>
+                          <input
+                            id="fgColor"
                             type="color"
-                            title="Enter logo color"
-                            className=""
-                            placeholder="Enter logo color"
-                            value={logoBgColor}
-                            onChange={handleLogoBgColor}
+                            title="Change QR color"
+                            className="w-10 h-10"
+                            value={selectedFgColor}
+                            onChange={handleFgColor}
                           />
                         </div>
-                        <div className="flex flex-col  gap-3 px-4 py-4">
-                          <div className="flex justify-between">
-                            <div className="flex items-center gap-2">
-                              <Checkbox
-                                id="logoRadius"
-                                checked={activeBorder}
-                                onCheckedChange={(e) => {
-                                  setActiveBorder(Boolean(e))
-                                }}
-                              />
-                              <label
-                                htmlFor="logoRadius"
-                                className="whitespace-nowrap"
-                              >
-                                Logo border radius
-                              </label>
-                            </div>
-                            {activeBorder && (
-                              <div>{(logoBorderRadius / 20).toFixed(1)}</div>
-                            )}
-                          </div>
-                          <div className="relative flex gap-3">
+                        <div className="p-2">
+                          <div className="flex items-center gap-3 px-4 py-4">
+                            <label
+                              htmlFor="imagePath"
+                              className="whitespace-nowrap"
+                            >
+                              Logo size
+                            </label>
                             <Slider
-                              disabled={!activeBorder}
                               min={20}
                               max={70}
-                              value={[logoBorderRadius]}
+                              value={[imageSize]}
                               onValueChange={(e) => {
                                 console.log(e, "currentTarget")
                                 const currentSize = e[0]
-                                setLogoBorderRadius(currentSize)
+                                setImageSize(currentSize)
                                 generateTextImage({
                                   text: overlayText,
                                   color: textColor,
                                   size: currentSize,
                                   logoBgColor,
-                                  borderRadius: currentSize,
+                                  borderRadius: logoBorderRadius,
                                 })
                               }}
                             />
-                            {!activeBorder && (
-                              <div className="bg-gray-50 w-full h-[100%] absolute -top-1 opacity-40 "></div>
-                            )}
+                            <div>{(imageSize / 20).toFixed(1)}</div>
                           </div>
-                        </div>
-                      </TabsContent>
-                      <TabsContent value="logo">
-                        <div className="flex items-center gap-3 p-2 px-4">
-                          <label
-                            htmlFor="imagePath"
-                            className="whitespace-nowrap"
-                          >
-                            Logo Link
-                          </label>
-                          <Input
-                            id="imagePath"
-                            type="url"
-                            title="Paste logo link"
-                            className=" "
-                            placeholder="Paste logo link"
-                            value={imagePath}
-                            onChange={(e) => {
-                              const imageLink = e.target.value
-                              setImagePath(imageLink)
-                              setImagePreview(imageLink)
-                            }}
-                          />
-                        </div>
-                        {/* {imagePath && (
+                          <Tabs defaultValue="account" value={currentTab}>
+                            <TabsList className="w-full">
+                              <TabsTrigger value="text" className="w-full">
+                                Logo text
+                              </TabsTrigger>
+                              <TabsTrigger value="logo" className="w-full">
+                                Logo link
+                              </TabsTrigger>
+                            </TabsList>
+                            <TabsContent value="text">
+                              <div className="flex items-center gap-3 p-2 px-4">
+                                <label
+                                  htmlFor="imageText"
+                                  className="whitespace-nowrap"
+                                >
+                                  Logo Text
+                                </label>
+                                <Input
+                                  id="imageText"
+                                  type="text"
+                                  title="Enter logo text"
+                                  className=" "
+                                  placeholder="Enter logo text"
+                                  value={overlayText}
+                                  onChange={(e) => {
+                                    const currentText = e.target.value
+                                    setOverlayText(currentText)
+                                    generateTextImage({
+                                      text: currentText,
+                                      color: textColor,
+                                      size: imageSize,
+                                      logoBgColor,
+                                      borderRadius: logoBorderRadius,
+                                    })
+                                  }}
+                                />
+                              </div>
+                              <div className="flex items-center gap-3 p-2 px-4">
+                                <label
+                                  htmlFor="imageColor"
+                                  className="whitespace-nowrap"
+                                >
+                                  Logo Color
+                                </label>
+                                <Input
+                                  id="imageColor"
+                                  type="color"
+                                  title="Enter logo color"
+                                  className=""
+                                  placeholder="Enter logo color"
+                                  value={textColor}
+                                  onChange={handleTextColor}
+                                />
+                              </div>
+                              <div className="flex items-center gap-3 p-2 px-4">
+                                <label
+                                  htmlFor="imageColor"
+                                  className="whitespace-nowrap"
+                                >
+                                  Logo Bg Color
+                                </label>
+                                <Input
+                                  id="imageColor"
+                                  type="color"
+                                  title="Enter logo color"
+                                  className=""
+                                  placeholder="Enter logo color"
+                                  value={logoBgColor}
+                                  onChange={handleLogoBgColor}
+                                />
+                              </div>
+                              <div className="flex flex-col  gap-3 px-4 py-4">
+                                <div className="flex justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <Checkbox
+                                      id="logoRadius"
+                                      checked={activeBorder}
+                                      onCheckedChange={(e) => {
+                                        setActiveBorder(Boolean(e))
+                                      }}
+                                    />
+                                    <label
+                                      htmlFor="logoRadius"
+                                      className="whitespace-nowrap"
+                                    >
+                                      Logo border radius
+                                    </label>
+                                  </div>
+                                  {activeBorder && (
+                                    <div>
+                                      {(logoBorderRadius / 20).toFixed(1)}
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="relative flex gap-3">
+                                  <Slider
+                                    disabled={!activeBorder}
+                                    min={20}
+                                    max={70}
+                                    value={[logoBorderRadius]}
+                                    onValueChange={(e) => {
+                                      console.log(e, "currentTarget")
+                                      const currentSize = e[0]
+                                      setLogoBorderRadius(currentSize)
+                                      generateTextImage({
+                                        text: overlayText,
+                                        color: textColor,
+                                        size: currentSize,
+                                        logoBgColor,
+                                        borderRadius: currentSize,
+                                      })
+                                    }}
+                                  />
+                                  {!activeBorder && (
+                                    <div className="bg-gray-50 w-full h-[100%] absolute -top-1 opacity-40 "></div>
+                                  )}
+                                </div>
+                              </div>
+                            </TabsContent>
+                            <TabsContent value="logo">
+                              <div className="flex items-center gap-3 p-2 px-4">
+                                <label
+                                  htmlFor="imagePath"
+                                  className="whitespace-nowrap"
+                                >
+                                  Logo Link
+                                </label>
+                                <Input
+                                  id="imagePath"
+                                  type="url"
+                                  title="Paste logo link"
+                                  className=" "
+                                  placeholder="Paste logo link"
+                                  value={imagePath}
+                                  onChange={(e) => {
+                                    const imageLink = e.target.value
+                                    setImagePath(imageLink)
+                                    setImagePreview(imageLink)
+                                  }}
+                                />
+                              </div>
+                              {/* {imagePath && (
                           <div className="flex items-center gap-3 px-4 py-2">
                             <label
                               htmlFor="imagePath"
@@ -922,11 +981,11 @@ const Qrcode = () => {
                             <div>{(imageSize / 20).toFixed(1)}</div>
                           </div>
                         )} */}
-                      </TabsContent>
-                    </Tabs>
-                  </div>
-                </div>
-                {/* <h2>
+                            </TabsContent>
+                          </Tabs>
+                        </div>
+                      </div>
+                      {/* <h2>
                 Submitted text <u>{submittedValue}</u>
               </h2>
               {submittedValue && (
@@ -950,8 +1009,11 @@ const Qrcode = () => {
                   </div>
                 </div>
               )} */}
-              </div>
-            )}
+                    </div>
+                  </ResizablePanel>
+                </>
+              )}
+            </ResizablePanelGroup>
           </div>
         </div>
       </div>
