@@ -1,14 +1,19 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   AtSign,
+  ChevronsLeft,
+  ChevronsRight,
+  Copy,
   Globe,
   IndianRupee,
   LocateFixed,
   MessageSquare,
   PhoneOutgoing,
+  Plus,
   Save,
   Share2,
-  Wifi
+  Wifi,
+  X,
 } from "lucide-react"
 import { QRCodeCanvas } from "qrcode.react"
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
@@ -46,18 +51,33 @@ import Sidebar from "../Notes/components/Sidebar"
 import QRInput from "./components/QRInput"
 import QRLayout from "./QRLayout"
 import { getContrastRatio, isColorTooDark } from "./utils"
+import { Menu } from "./components/menu"
+import { useLocalStorage } from "@/hooks/useLocalStorage"
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu"
+import { toast } from "react-toastify"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/Tooltip"
 
 const linkTypesConfig = {
   url: {
     label: "Website URL",
     icon: <Globe className="w-4 h-4" />, // Website icon from Icons8
-    iconUrl:"https://img.icons8.com/ios/452/globe.png",
+    iconUrl: "https://img.icons8.com/ios/452/globe.png",
     inputs: [{ label: "URL", name: "url", type: "url", required: true }],
   },
   tel: {
     label: "Phone Call",
     icon: <PhoneOutgoing className="w-4 h-4" />, // Phone icon from Icons8
-    iconUrl:"https://img.icons8.com/ios/452/phone.png",
+    iconUrl: "https://img.icons8.com/ios/452/phone.png",
     inputs: [
       { label: "Phone Number", name: "phone", type: "tel", required: true },
     ],
@@ -65,7 +85,7 @@ const linkTypesConfig = {
   sms: {
     label: "SMS",
     icon: <MessageSquare className="w-4 h-4" />, // SMS icon from Icons8
-    iconUrl:"https://img.icons8.com/ios/452/sms.png",
+    iconUrl: "https://img.icons8.com/ios/452/sms.png",
     inputs: [
       { label: "Phone Number", name: "phone", type: "tel", required: true },
       { label: "Message", name: "body", type: "text", required: false },
@@ -74,7 +94,7 @@ const linkTypesConfig = {
   mailto: {
     label: "Email",
     icon: <AtSign className="w-4 h-4" />, // Email icon from Icons8
-    iconUrl:"https://img.icons8.com/ios/452/email.png",
+    iconUrl: "https://img.icons8.com/ios/452/email.png",
     inputs: [
       { label: "Email", name: "email", type: "email", required: true },
       { label: "Subject", name: "subject", type: "text", required: false },
@@ -84,7 +104,7 @@ const linkTypesConfig = {
   whatsapp: {
     label: "WhatsApp",
     icon: <AiOutlineWhatsApp className="w-4 h-4" />, // WhatsApp icon from Icons8
-    iconUrl:"https://img.icons8.com/ios/452/whatsapp.png",
+    iconUrl: "https://img.icons8.com/ios/452/whatsapp.png",
     inputs: [
       { label: "Phone Number", name: "phone", type: "tel", required: true },
       { label: "Message", name: "text", type: "text", required: false },
@@ -93,7 +113,7 @@ const linkTypesConfig = {
   upi: {
     label: "UPI Payment",
     icon: <IndianRupee className="w-4 h-4" />, // UPI icon from UXWing
-    iconUrl:"https://img.icons8.com/ios/452/bhim.png",
+    iconUrl: "https://img.icons8.com/ios/452/bhim.png",
     inputs: [
       { label: "UPI ID", name: "pa", type: "text", required: true },
       { label: "Payee Name", name: "pn", type: "text", required: true },
@@ -119,7 +139,7 @@ const linkTypesConfig = {
   wifi: {
     label: "Wi-Fi",
     icon: <Wifi className="w-4 h-4" />, // Wi-Fi icon from Icons8
-    iconUrl:"https://img.icons8.com/ios/452/wifi.png",
+    iconUrl: "https://img.icons8.com/ios/452/wifi.png",
     inputs: [
       { label: "SSID", name: "ssid", type: "text", required: true },
       { label: "Password", name: "password", type: "text", required: false },
@@ -134,13 +154,23 @@ const linkTypesConfig = {
   geo: {
     label: "Geo Location",
     icon: <LocateFixed className="w-4 h-4" />, // Geo Location icon from Icons8
-    iconUrl:"https://img.icons8.com/ios/452/marker.png",
+    iconUrl: "https://img.icons8.com/ios/452/marker.png",
     inputs: [
       { label: "Latitude", name: "lat", type: "number", required: true },
       { label: "Longitude", name: "lng", type: "number", required: true },
     ],
   },
 }
+type QRTab = {
+  id: string
+  label: string
+  url: string
+}
+const qrData = [
+  { id: "google", label: "Google", url: "https://www.google.com" },
+  { id: "youtube", label: "YouTube", url: "https://www.youtube.com" },
+  { id: "github", label: "GitHub", url: "https://www.github.com" },
+]
 
 // Zod Schema Generator
 const generateZodSchema = (fields: any[]) => {
@@ -199,6 +229,8 @@ const Qrcode = () => {
   const [activeBorder, setActiveBorder] = useState(false)
 
   const [currentTab, setCurrentTab] = useState("")
+  const [rightSidebar, setRightSidebar] = useState(true)
+  const [showGrid, setShowGrid] = useLocalStorage<boolean>("showGrid", false)
 
   const [open, setOpen] = useState(false)
   const [linkType, setLinkType] = useState<keyof typeof linkTypesConfig | null>(
@@ -213,25 +245,25 @@ const Qrcode = () => {
       })),
     [],
   )
-  const fields:{
-    label: string;
-    icon: JSX.Element;
-    iconUrl?:string;
+  const fields: {
+    label: string
+    icon: JSX.Element
+    iconUrl?: string
     inputs: {
-        label: string;
-        name: string;
-        type: string;
-        required: boolean;
-    }[];
-} | null  = useMemo(
+      label: string
+      name: string
+      type: string
+      required: boolean
+    }[]
+  } | null = useMemo(
     () => (linkType ? linkTypesConfig[linkType] : null),
     [linkType],
   )
   const schema = useMemo(
-    () => (fields?.inputs.length ? generateZodSchema(fields.inputs) : z.object({})),
+    () =>
+      fields?.inputs.length ? generateZodSchema(fields.inputs) : z.object({}),
     [fields?.inputs],
   )
-  console.log({ open, linkType, fields, schema })
 
   const {
     register,
@@ -256,7 +288,6 @@ const Qrcode = () => {
 
   const handleSave = () => {
     const canvas = canvasRef.current
-    console.log("canvas ele,emt", canvas)
     if (canvas) {
       const imgData = canvas.toDataURL("image/png")
       const link = document.createElement("a")
@@ -264,6 +295,32 @@ const Qrcode = () => {
       link.download = "qrcode.png"
       link.click()
       console.log("check canvas")
+    }
+  }
+  // Function to copy the QR image to clipboard
+  const handleCopyImage = async () => {
+    try {
+      const canvas = canvasRef.current
+      console.log("canvas ele,emt", canvas)
+
+      if (canvas) {
+        const imgData = canvas.toDataURL("image/png")
+        const response = await fetch(imgData)
+        const blob = await response.blob()
+        await navigator.clipboard.write([
+          new window.ClipboardItem({
+            ["image/png"]: blob,
+          }),
+        ])
+        // alert("QR Code copied to clipboard!")
+        toast.success("QR Code copied to clipboard!", {
+          position: "bottom-right",
+        })
+      }
+    } catch (error) {
+      console.error("Failed to copy image", error)
+      // alert("Copy failed. Your browser may not support this.")
+      toast.error("Copy failed. Your browser may not support this.")
     }
   }
   const handleDownload = () => {
@@ -435,7 +492,6 @@ const Qrcode = () => {
       searchParams.delete("t")
       setSearchParams(searchParams)
     }
-    
   }, [qrText])
 
   useEffect(() => {
@@ -521,7 +577,13 @@ const Qrcode = () => {
         url = `upi://pay?`
         const upiParams = new URLSearchParams()
         Object.entries(data).forEach(([key, value]) => {
-          if (value && typeof value === "string") upiParams.append(key, value)
+          if (value) {
+            if (typeof value === "number") {
+              upiParams.append(key, value.toString())
+            } else if (typeof value === "string") {
+              upiParams.append(key, value)
+            }
+          }
         })
         url += upiParams.toString()
         break
@@ -545,32 +607,147 @@ const Qrcode = () => {
         break
     }
 
-    console.log("Generated Link:", {url,fields})
-    if(fields?.iconUrl){
-      setImagePath(fields?.iconUrl);
-      setImagePreview(fields.iconUrl);
+    console.log("Generated Link:", { url, fields })
+    if (fields?.iconUrl) {
+      setImagePath(fields?.iconUrl)
+      setImagePreview(fields.iconUrl)
       setCurrentTab("logo")
     }
-
+    if (!rightSidebar) {
+      setRightSidebar(true)
+    }
+    form.clearErrors();
     form.setValue("note", url)
     reset()
     setOpen(false)
   }
+  const [tabs, setTabs] = useState<QRTab[]>([
+    { id: `tab-${Date.now()}`, label: "New QR 1", url: "https://www.google.com" },
+  ])
+  const [activeTab, setActiveTab] = useState(tabs[0]?.id)
+
+  const addNewTab = () => {
+    const newId = `tab-${Date.now()}`
+    setTabs([
+      ...tabs,
+      {
+        id: newId,
+        label: `New QR ${tabs.length + 1}`,
+        url: "https://example.com",
+      },
+    ])
+    setActiveTab(newId)
+  }
+
+  const removeTab = (id: string) => {
+    const newTabs = tabs.filter((tab) => tab.id !== id)
+    setTabs(newTabs)
+    if (activeTab === id && newTabs.length) setActiveTab(newTabs[0].id)
+  }
+  console.log({ activeTab, tabs })
 
   return (
     <QRLayout>
       <div className="">
         <div className="app-h-screen flex-col flex">
-          <div className="container  flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-24">
+          <Menu
+            onGrid={{
+              checked: showGrid,
+              onClick: () => {
+                setShowGrid(!showGrid)
+              },
+            }}
+          />
+          <div className="container pt-0  flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-24">
             {/* <h2 className="text-lg font-semibold">Playground</h2> */}
             {/* <PresetSelector presets={presets}  /> */}
             <div className="py-1 pt-3 flex flex-1 space-x-2 sm:justify-end w-full">
               <Sidebar />
-              <QRInput form={form} onNoteSubmit={onNoteSubmit} onChange={()=>{
-                setLinkType(null)
-              }} />
+              <QRInput
+                form={form}
+                onNoteSubmit={onNoteSubmit}
+                onChange={(e) => {
+                  // console.log({e:e.target.value})
+                  setLinkType(null);
+                  const updatedTabs = tabs.map((tab,index) =>
+                    tab.id === activeTab ? { ...tab, label: e.target.value || `New QR ${index+1}`,value:e.target.value } : tab
+                  );
+                  setTabs(updatedTabs);
+                  if (!rightSidebar) {
+                    setRightSidebar(true)
+                  }
+                }}
+              />
             </div>
           </div>
+          <Tabs
+            value={activeTab}
+            onValueChange={(item) => {
+              console.log({ item })
+              setActiveTab(item)
+            }}
+          >
+            <div className="flex items-center gap-2 ">
+              <TabsList className="bg-muted rounded-none p-0  overflow-x-auto h-auto w-full justify-start divide-x overflow-hidden">
+                <div className="overflow-scroll">
+                {tabs.map((tab) => (
+                  <TooltipProvider key={tab.id}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <TabsTrigger
+                          key={tab.id}
+                          value={tab.id}
+                          className="relative p-1 pr-6 rounded-none"
+                          asChild
+                        >
+                          <div>
+                            <span className="px-2">{tab.label}</span>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="absolute right-0 top-1/2 -translate-y-1/2 p-1 w-6 h-6"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                removeTab(tab.id)
+                              }}
+                              asChild
+                            >
+
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{tab.url}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ))}
+                </div>
+                <div className="flex pl-1">
+              <Button onClick={addNewTab} variant="ghost" size="sm" className="w-6 h-6  p-1 m-auto">
+                <Plus className="w-full" /> 
+              </Button>
+              </div>
+              </TabsList>
+            </div>
+            {/* {tabs.map((tab) => (
+              <TabsContent
+                key={tab.id}
+                value={tab.id}
+                className="flex justify-center p-6"
+              >
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+                    tab.url,
+                  )}`}
+                  alt={`${tab.label} QR`}
+                  className="border rounded shadow"
+                />
+              </TabsContent>
+            ))} */}
+          </Tabs>
           <Separator />
           <div className="flex h-full  ">
             <ResizablePanelGroup
@@ -579,16 +756,20 @@ const Qrcode = () => {
             >
               <ResizablePanel
                 id="qrCanvas"
-                className="flex-[3]  h-full"
+                className="flex-[3]  h-full relative"
                 minSize={70}
-                
               >
                 <SidebarTrigger className="m-2 p-2 absolute hover:bg-white dark:hover:bg-gray-700 bg-gray-100 dark:bg-gray-900 z-10" />
                 <div className="flex-[3] overflow-hidden bg-gray-100 dark:bg-gray-900 h-full">
                   <Dialog
                     open={open}
                     onOpenChange={(o) => {
-                      if (!o) reset()
+                      if (!o) {
+                        reset()
+                        if (!linkType) {
+                          setLinkType(null)
+                        }
+                      }
                       setOpen(o)
                     }}
                   >
@@ -628,43 +809,47 @@ const Qrcode = () => {
                       </form>
                     </DialogContent>
                   </Dialog>
-                  
+
                   <div
                     className={cn(
                       // "absolute inset-0 flex flex-col",
                       "flex-[3]  flex justify-center items-center flex-col h-full relative",
-                      "[background-size:20px_20px]",
-                      "[background-image:linear-gradient(to_right,#e4e4e7_1px,transparent_1px),linear-gradient(to_bottom,#e4e4e7_1px,transparent_1px)]",
-                      "dark:[background-image:linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]",
+                      showGrid
+                        ? [
+                            "[background-size:20px_20px]",
+                            "[background-image:linear-gradient(to_right,#e4e4e7_1px,transparent_1px),linear-gradient(to_bottom,#e4e4e7_1px,transparent_1px)]",
+                            "dark:[background-image:linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]",
+                          ]
+                        : "",
                     )}
                   >
                     <div className="w-full">
-                    <ScrollArea>
-                      <div className="ml-10 flex w-max space-x-1 p-4 ">
-                        {linkTypes.map((item) => {
-                          return (
-                            <button
-                              onClick={() => {
-                                setOpen(true)
-                                setLinkType(item.value as any)
-                              }}
-                              type="button"
-                              key={item.value}
-                              className={`shadow-indigo-500/50 bg-white  text-gray-800 text-xs font-medium  px-2.5 py-1 rounded-full  dark:text-gray-300 flex gap-1 items-center border dark:border ${
-                                item.value === linkType
-                                  ? "dark:border-gray-50 border-gray-600"
-                                  : ""
-                              }`}
-                            >
-                              <RenderIcon icon={item.icon} />
-                              {item.label}
-                            </button>
-                          )
-                        })}
-                      </div>
-                      <ScrollBar orientation="horizontal" />
-                    </ScrollArea>
-                  </div>
+                      <ScrollArea>
+                        <div className="ml-10 flex w-max space-x-1 p-4 ">
+                          {linkTypes.map((item) => {
+                            return (
+                              <button
+                                onClick={() => {
+                                  setOpen(true)
+                                  setLinkType(item.value as any)
+                                }}
+                                type="button"
+                                key={item.value}
+                                className={`shadow-indigo-500/50 bg-white dark:bg-gray-800  text-gray-800 text-xs font-medium  px-2.5 py-1 rounded-full  dark:text-gray-300 flex gap-1 items-center border dark:border ${
+                                  item.value === linkType
+                                    ? "dark:border-gray-50 border-gray-600"
+                                    : ""
+                                }`}
+                              >
+                                <RenderIcon icon={item.icon} />
+                                {item.label}
+                              </button>
+                            )
+                          })}
+                        </div>
+                        <ScrollBar orientation="horizontal" />
+                      </ScrollArea>
+                    </div>
                     <animated.div
                       ref={wrapperRef}
                       className="flex-[3]  flex justify-center items-center flex-col h-full relative"
@@ -678,45 +863,38 @@ const Qrcode = () => {
                       {qrText ? (
                         <div className="flex flex-col">
                           <div className="relative">
-                            <QRCodeCanvas
-                              value={qrText}
-                              size={356}
-                              ref={canvasRef}
-                              className={`border rounded-sm`}
-                              style={{ borderColor: selectedFgColor }}
-                              marginSize={2}
-                              fgColor={selectedFgColor}
-                              bgColor={selectedBackColor}
-                              title="Build by anurag"
-                              imageSettings={{
-                                src: imagePreview, // Replace with your logo URL
-                                //   src: getRoundedLogo(imagePath, 64, 64), // Replace with your logo URL
-                                height: imageSize, // Height of the logo
-                                width: imageSize, // Width of the logo
-                                excavate: true, // This option clears the area where the logo is placed so it's more readable
-                              }}
-                            />
-                            {/* <canvas
-                      id="canvasG"
-                      ref={canvasGradientRef}
-                      width={356}
-                      height={356}
-                      className="absolute top-0 mix-blend-screen"
-                    /> */}
-
-                            {/* <img
-                    src="https://static.vecteezy.com/system/resources/previews/009/481/029/non_2x/geometric-icon-logo-geometric-abstract-element-free-vector.jpg" // Replace with your logo URL
-                    alt="Logo"
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      width: "164px",
-                      height: "164px", // Set the size of the logo
-                      borderRadius: "50%", // Optional: make the logo circular
-                    }}
-                  /> */}
+                            <ContextMenu>
+                              <ContextMenuTrigger>
+                                <QRCodeCanvas
+                                  value={qrText}
+                                  size={356}
+                                  ref={canvasRef}
+                                  className={`border rounded-sm`}
+                                  style={{ borderColor: selectedFgColor }}
+                                  marginSize={2}
+                                  fgColor={selectedFgColor}
+                                  bgColor={selectedBackColor}
+                                  title="Build by anurag"
+                                  imageSettings={{
+                                    src: imagePreview, // Replace with your logo URL
+                                    //   src: getRoundedLogo(imagePath, 64, 64), // Replace with your logo URL
+                                    height: imageSize, // Height of the logo
+                                    width: imageSize, // Width of the logo
+                                    excavate: true, // This option clears the area where the logo is placed so it's more readable
+                                  }}
+                                />
+                              </ContextMenuTrigger>
+                              <ContextMenuContent>
+                                <ContextMenuItem onClick={handleSave}>
+                                  <Save className="w-5 h-5 mr-2" />
+                                  Save Image
+                                </ContextMenuItem>
+                                <ContextMenuItem onClick={handleCopyImage}>
+                                  <Copy className="w-5 h-5 mr-2" />
+                                  Copy Image
+                                </ContextMenuItem>
+                              </ContextMenuContent>
+                            </ContextMenu>
                           </div>
 
                           <div className="mt-2 flex gap-2 mx-auto">
@@ -744,16 +922,31 @@ const Qrcode = () => {
                     </animated.div>
                   </div>
                 </div>
+                {qrText && (
+                  <Button
+                    onClick={() => {
+                      setRightSidebar(!rightSidebar)
+                    }}
+                    variant={"ghost"}
+                    className="flex  p-0 px-2 absolute top-0 right-0"
+                  >
+                    {rightSidebar ? <ChevronsRight /> : <ChevronsLeft />}
+                  </Button>
+                )}
               </ResizablePanel>
-              {qrText && (
+              {qrText && rightSidebar && (
                 <>
                   <ResizableHandle
                     withHandle
                     // iconClass="bg-gray-300"
-                    className="bg-gray-500"
+                    className="dark:bg-gray-800"
                   />
-                  <ResizablePanel minSize={15} id="qrOptions">
-                    <div className="flex-1 flex-col border-l hidden md:flex">
+                  <ResizablePanel
+                    minSize={15}
+                    id="qrOptions"
+                    className="relative"
+                  >
+                    <div className="flex-1 flex-col border-l hidden md:flex relative">
                       <div className="flex flex-col  mb-4 divide-y text-sm">
                         <div className="flex items-center gap-3 p-4">
                           <label
@@ -821,7 +1014,11 @@ const Qrcode = () => {
                             />
                             <div>{(imageSize / 20).toFixed(1)}</div>
                           </div>
-                          <Tabs defaultValue="account" value={currentTab}>
+                          <Tabs
+                            defaultValue="account"
+                            value={currentTab}
+                            onValueChange={setCurrentTab}
+                          >
                             <TabsList className="w-full">
                               <TabsTrigger value="text" className="w-full">
                                 Logo text
