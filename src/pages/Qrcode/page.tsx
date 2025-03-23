@@ -10,6 +10,7 @@ import {
   MessageSquare,
   PhoneOutgoing,
   Plus,
+  QrCode,
   Save,
   Share2,
   Wifi,
@@ -66,7 +67,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/Tooltip"
-
+type LinkType = {
+  label: string
+  icon: JSX.Element
+  iconUrl?: string
+  inputs: {
+    label: string
+    name: string
+    type: string
+    required: boolean
+  }[]
+}
 const linkTypesConfig = {
   url: {
     label: "Website URL",
@@ -164,19 +175,15 @@ const linkTypesConfig = {
 type QRTab = {
   id: string
   label: string
-  url: string
+  url?: string
+  linkType?: LinkType
 }
-const qrData = [
-  { id: "google", label: "Google", url: "https://www.google.com" },
-  { id: "youtube", label: "YouTube", url: "https://www.youtube.com" },
-  { id: "github", label: "GitHub", url: "https://www.github.com" },
-]
 
 // Zod Schema Generator
-const generateZodSchema = (fields: any[]) => {
+const generateZodSchema = (currentLinkType: any[]) => {
   const shape: Record<string, z.ZodTypeAny> = {}
 
-  fields.forEach((field) => {
+  currentLinkType.forEach((field) => {
     let validator: z.ZodTypeAny
     if (field.required) {
       if (field.type === "email") {
@@ -205,6 +212,7 @@ const generateZodSchema = (fields: any[]) => {
 
   return z.object(shape)
 }
+const initialTabs = [{ id: `tab-${Date.now()}`, label: "New QR 1" }]
 
 // import "./styles.css"
 const noteFormSchema = z.object({
@@ -245,24 +253,15 @@ const Qrcode = () => {
       })),
     [],
   )
-  const fields: {
-    label: string
-    icon: JSX.Element
-    iconUrl?: string
-    inputs: {
-      label: string
-      name: string
-      type: string
-      required: boolean
-    }[]
-  } | null = useMemo(
+
+  const currentLinkType: LinkType | null = useMemo(
     () => (linkType ? linkTypesConfig[linkType] : null),
     [linkType],
   )
   const schema = useMemo(
     () =>
-      fields?.inputs.length ? generateZodSchema(fields.inputs) : z.object({}),
-    [fields?.inputs],
+      currentLinkType?.inputs.length ? generateZodSchema(currentLinkType.inputs) : z.object({}),
+    [currentLinkType?.inputs],
   )
 
   const {
@@ -607,44 +606,73 @@ const Qrcode = () => {
         break
     }
 
-    console.log("Generated Link:", { url, fields })
-    if (fields?.iconUrl) {
-      setImagePath(fields?.iconUrl)
-      setImagePreview(fields.iconUrl)
+    console.log("Generated Link:", { url, currentLinkType })
+    if (currentLinkType?.iconUrl) {
+      setImagePath(currentLinkType?.iconUrl)
+      setImagePreview(currentLinkType.iconUrl)
       setCurrentTab("logo")
     }
     if (!rightSidebar) {
       setRightSidebar(true)
     }
-    form.clearErrors();
+    form.clearErrors()
     form.setValue("note", url)
+    if(currentLinkType){
+    setTabs((tabs) =>{
+      const updatedTabs = tabs.map((tab) =>
+        tab.id === activeTab.id
+          ? {
+              ...tab,
+              label:url,
+              url,
+              linkType:currentLinkType,
+            }
+          : tab,
+      )
+      return updatedTabs
+    })
+  }
     reset()
     setOpen(false)
   }
-  const [tabs, setTabs] = useState<QRTab[]>([
-    { id: `tab-${Date.now()}`, label: "New QR 1", url: "https://www.google.com" },
-  ])
-  const [activeTab, setActiveTab] = useState(tabs[0]?.id)
+  const [tabs, setTabs] = useState<QRTab[]>(initialTabs)
+  const [activeTab, setActiveTab] = useState(tabs[0])
 
   const addNewTab = () => {
     const newId = `tab-${Date.now()}`
+    const newTab = {
+      id: newId,
+      label: `New QR ${tabs.length + 1}`,
+    }
     setTabs([
       ...tabs,
-      {
-        id: newId,
-        label: `New QR ${tabs.length + 1}`,
-        url: "https://example.com",
-      },
+      newTab
     ])
-    setActiveTab(newId)
+    setActiveTab(newTab)
+    form.setValue("note", "")
+    form.setFocus("note")
+    setImagePath("");
+    setImagePreview("");
   }
 
   const removeTab = (id: string) => {
+    if(tabs.length === 1){
+      return
+    }
     const newTabs = tabs.filter((tab) => tab.id !== id)
     setTabs(newTabs)
-    if (activeTab === id && newTabs.length) setActiveTab(newTabs[0].id)
+    if (activeTab.id === id && newTabs.length) {
+      const newActiveTab = newTabs[newTabs.length - 1]
+      // setActiveTab(newTabs[0].id)
+      setActiveTab(newActiveTab)
+    }
   }
-  console.log({ activeTab, tabs })
+  const removeAllTab = () => {
+    setTabs(initialTabs)
+    setActiveTab(initialTabs[0])
+    form.setValue("note", "")
+  }
+  // console.log({ activeTab, tabs })
 
   return (
     <QRLayout>
@@ -668,11 +696,18 @@ const Qrcode = () => {
                 onNoteSubmit={onNoteSubmit}
                 onChange={(e) => {
                   // console.log({e:e.target.value})
-                  setLinkType(null);
-                  const updatedTabs = tabs.map((tab,index) =>
-                    tab.id === activeTab ? { ...tab, label: e.target.value || `New QR ${index+1}`,value:e.target.value } : tab
-                  );
-                  setTabs(updatedTabs);
+                  setLinkType(null)
+                  const updatedTabs = tabs.map((tab, index) =>
+                    tab.id === activeTab.id
+                      ? {
+                          ...tab,
+                          label: e.target.value || `New QR ${index + 1}`,
+                          url: e.target.value,
+                          linkType:undefined
+                        }
+                      : tab,
+                  )
+                  setTabs(updatedTabs)
                   if (!rightSidebar) {
                     setRightSidebar(true)
                   }
@@ -681,56 +716,97 @@ const Qrcode = () => {
             </div>
           </div>
           <Tabs
-            value={activeTab}
-            onValueChange={(item) => {
-              console.log({ item })
-              setActiveTab(item)
+            value={activeTab.id}
+            onValueChange={(valueId) => {
+              console.log({ valueId })
+              const newTab = tabs.find((tab) => tab.id === valueId)
+              if(newTab){
+                setActiveTab(newTab)
+                if(newTab?.linkType?.iconUrl){
+                  setImagePreview(newTab.linkType.iconUrl)
+                  setImagePath(newTab.linkType.iconUrl)
+                }
+
+              }
+              const tabUrl = newTab?.url
+              if (tabUrl) {
+                form.setValue("note", tabUrl)
+              }
             }}
           >
             <div className="flex items-center gap-2 ">
               <TabsList className="bg-muted rounded-none p-0  overflow-x-auto h-auto w-full justify-start divide-x overflow-hidden">
                 <div className="overflow-scroll">
-                {tabs.map((tab) => (
-                  <TooltipProvider key={tab.id}>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <TabsTrigger
-                          key={tab.id}
-                          value={tab.id}
-                          className="relative p-1 pr-6 rounded-none"
-                          asChild
-                        >
-                          <div>
-                            <span className="px-2">{tab.label}</span>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="absolute right-0 top-1/2 -translate-y-1/2 p-1 w-6 h-6"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                removeTab(tab.id)
-                              }}
-                              asChild
-                            >
-
-                              <X className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TabsTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{tab.url}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                ))}
+                  {tabs.map((tab) => (
+                    <TooltipProvider key={tab.id}>
+                      <Tooltip delayDuration={1000}>
+                        <TooltipTrigger>
+                          <TabsTrigger
+                            key={tab.id}
+                            value={tab.id}
+                            className="relative p-1 rounded-none"
+                            asChild
+                          >
+                            <div>
+                              <div className="px-2 flex items-center">
+                              {tab.linkType?.icon ||<QrCode className="w-4 h-4" />}
+                              <span className="pl-1">{tab.label}</span>
+                              </div>
+                              {tabs.length > 1 && <Button
+                                size="icon"
+                                variant="ghost"
+                                className="p-1 w-6 h-6"
+                                // className="absolute right-0 top-1/2 -translate-y-1/2 p-1 w-6 h-6"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  removeTab(tab.id)
+                                }}
+                                asChild
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>}
+                            </div>
+                          </TabsTrigger>
+                        </TooltipTrigger>
+                        {tab?.url &&
+                        <TooltipContent>
+                          <p>{tab.url}</p>
+                        </TooltipContent>
+}
+                      </Tooltip>
+                     </TooltipProvider>
+                  ))}
                 </div>
                 <div className="flex pl-1">
-              <Button onClick={addNewTab} variant="ghost" size="sm" className="w-6 h-6  p-1 m-auto">
-                <Plus className="w-full" /> 
-              </Button>
-              </div>
+                  {tabs.every((tab) => tab.url) && (
+                    <Tooltip>
+                      <TooltipTrigger className="m-auto" asChild>
+                        <Button
+                          onClick={addNewTab}
+                          variant="ghost"
+                          size="sm"
+                          className="w-6 h-6  p-1 "
+                        >
+                          <Plus className="w-full" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Add new QR tab</p>
+                        </TooltipContent>
+                    </Tooltip>
+                  )}
+                </div>
               </TabsList>
+              {tabs.length > 2 && (
+                <Button
+                  onClick={removeAllTab}
+                  variant="ghost"
+                  size="sm"
+                  className=" w-24 h-7  p-1 rounded-none"
+                >
+                  <X className="w-4 h-4 mr-1" /> <span>Clear all</span>
+                </Button>
+              )}
             </div>
             {/* {tabs.map((tab) => (
               <TabsContent
@@ -788,7 +864,7 @@ const Qrcode = () => {
                         onSubmit={handleSubmit(onSubmit)}
                         className="space-y-4"
                       >
-                        {fields?.inputs.map((field) => (
+                        {currentLinkType?.inputs.map((field) => (
                           <div key={field.name}>
                             <Input
                               placeholder={field.label}
