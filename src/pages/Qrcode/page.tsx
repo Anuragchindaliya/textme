@@ -260,7 +260,9 @@ const Qrcode = () => {
   )
   const schema = useMemo(
     () =>
-      currentLinkType?.inputs.length ? generateZodSchema(currentLinkType.inputs) : z.object({}),
+      currentLinkType?.inputs.length
+        ? generateZodSchema(currentLinkType.inputs)
+        : z.object({}),
     [currentLinkType?.inputs],
   )
 
@@ -617,21 +619,21 @@ const Qrcode = () => {
     }
     form.clearErrors()
     form.setValue("note", url)
-    if(currentLinkType){
-    setTabs((tabs) =>{
-      const updatedTabs = tabs.map((tab) =>
-        tab.id === activeTab.id
-          ? {
-              ...tab,
-              label:url,
-              url,
-              linkType:currentLinkType,
-            }
-          : tab,
-      )
-      return updatedTabs
-    })
-  }
+    if (currentLinkType) {
+      setTabs((tabs) => {
+        const updatedTabs = tabs.map((tab) =>
+          tab.id === activeTab.id
+            ? {
+                ...tab,
+                label: url,
+                url,
+                linkType: currentLinkType,
+              }
+            : tab,
+        )
+        return updatedTabs
+      })
+    }
     reset()
     setOpen(false)
   }
@@ -644,19 +646,17 @@ const Qrcode = () => {
       id: newId,
       label: `New QR ${tabs.length + 1}`,
     }
-    setTabs([
-      ...tabs,
-      newTab
-    ])
+    setTabs([...tabs, newTab])
     setActiveTab(newTab)
     form.setValue("note", "")
     form.setFocus("note")
-    setImagePath("");
-    setImagePreview("");
+    setLinkType(null)
+    setImagePath("")
+    setImagePreview("")
   }
 
   const removeTab = (id: string) => {
-    if(tabs.length === 1){
+    if (tabs.length === 1) {
       return
     }
     const newTabs = tabs.filter((tab) => tab.id !== id)
@@ -703,7 +703,7 @@ const Qrcode = () => {
                           ...tab,
                           label: e.target.value || `New QR ${index + 1}`,
                           url: e.target.value,
-                          linkType:undefined
+                          linkType: undefined,
                         }
                       : tab,
                   )
@@ -720,13 +720,12 @@ const Qrcode = () => {
             onValueChange={(valueId) => {
               console.log({ valueId })
               const newTab = tabs.find((tab) => tab.id === valueId)
-              if(newTab){
+              if (newTab) {
                 setActiveTab(newTab)
-                if(newTab?.linkType?.iconUrl){
+                if (newTab?.linkType?.iconUrl) {
                   setImagePreview(newTab.linkType.iconUrl)
                   setImagePath(newTab.linkType.iconUrl)
                 }
-
               }
               const tabUrl = newTab?.url
               if (tabUrl) {
@@ -748,33 +747,37 @@ const Qrcode = () => {
                             asChild
                           >
                             <div>
-                              <div className="px-2 flex items-center">
-                              {tab.linkType?.icon ||<QrCode className="w-4 h-4" />}
-                              <span className="pl-1">{tab.label}</span>
+                              <div className=" flex items-center">
+                                {tab.linkType?.icon || (
+                                  <QrCode className="w-4 h-4" />
+                                )}
+                                <span className="pl-1 text-ellipsis overflow-hidden max-w-52 text-left">{tab.label}</span>
                               </div>
-                              {tabs.length > 1 && <Button
-                                size="icon"
-                                variant="ghost"
-                                className="p-1 w-6 h-6"
-                                // className="absolute right-0 top-1/2 -translate-y-1/2 p-1 w-6 h-6"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  removeTab(tab.id)
-                                }}
-                                asChild
-                              >
-                                <X className="w-4 h-4" />
-                              </Button>}
+                              {tabs.length > 1 && (
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="p-1 w-6 h-6"
+                                  // className="absolute right-0 top-1/2 -translate-y-1/2 p-1 w-6 h-6"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    removeTab(tab.id)
+                                  }}
+                                  asChild
+                                >
+                                  <X className="w-4 h-4" />
+                                </Button>
+                              )}
                             </div>
                           </TabsTrigger>
                         </TooltipTrigger>
-                        {tab?.url &&
-                        <TooltipContent>
-                          <p>{tab.url}</p>
-                        </TooltipContent>
-}
+                        {tab?.url && (
+                          <TooltipContent>
+                            <p>{tab.url}</p>
+                          </TooltipContent>
+                        )}
                       </Tooltip>
-                     </TooltipProvider>
+                    </TooltipProvider>
                   ))}
                 </div>
                 <div className="flex pl-1">
@@ -792,7 +795,7 @@ const Qrcode = () => {
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Add new QR tab</p>
-                        </TooltipContent>
+                      </TooltipContent>
                     </Tooltip>
                   )}
                 </div>
@@ -901,7 +904,7 @@ const Qrcode = () => {
                   >
                     <div className="w-full">
                       <ScrollArea>
-                        <div className="ml-10 flex w-max space-x-1 p-4 ">
+                        <div className="ml-10 flex  w-max space-x-1 p-4 ">
                           {linkTypes.map((item) => {
                             return (
                               <button
@@ -957,6 +960,7 @@ const Qrcode = () => {
                                     height: imageSize, // Height of the logo
                                     width: imageSize, // Width of the logo
                                     excavate: true, // This option clears the area where the logo is placed so it's more readable
+                                      crossOrigin: "anonymous",
                                   }}
                                 />
                               </ContextMenuTrigger>
