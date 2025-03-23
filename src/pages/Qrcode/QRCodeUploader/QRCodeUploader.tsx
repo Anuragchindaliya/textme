@@ -10,6 +10,8 @@ import { CopyButton } from "../Scan/components/CopyButton"
 import { toast } from "react-toastify"
 import { useToast } from "@/components/ui/use-toast"
 import { ROUTES } from "@/Router"
+import Sidebar from "@/pages/Notes/components/Sidebar"
+import { SidebarTrigger } from "@/components/AppSidebar"
 
 const QRCodeUploader: React.FC = () => {
   const [result, setResult] = useState<string | null>(null)
@@ -58,9 +60,7 @@ const QRCodeUploader: React.FC = () => {
   const handleAction = (data: string) => {
     if (data.startsWith("http://") || data.startsWith("https://")) {
       window.open(data, "_blank", "noopener,noreferrer")
-    } else if (data.startsWith("tel:")) {
-      window.location.href = data
-    } else if (data.startsWith("sms:")) {
+    } else if (data.startsWith("tel:") || data.startsWith("sms:") || data.startsWith("mailto:") || data.startsWith("geo:") || data.startsWith("BEGIN:VCARD") || data.startsWith("BEGIN:VEVENT") || data.startsWith("WIFI:")) {
       window.location.href = data
     } else {
       toast(
@@ -95,28 +95,44 @@ const QRCodeUploader: React.FC = () => {
       )
     }
   }
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const items = e.clipboardData.items;
+    for (const item of items) {
+      if (item.type.includes("image")) {
+        const file = item.getAsFile();
+        if(file){
+          onDrop([file]);
+        }
+      }
+    }
+  };
 
   return (
     <QRLayout>
+      <div className="py-1 pt-3 flex flex-1 space-x-2 sm:justify-end w-full container">
+        <div>
+          <Sidebar />
+        </div>
+        <div className="w-full">Upload QR Code Image</div>
+      </div>
+      <SidebarTrigger className="m-2 p-2 absolute hover:bg-white dark:hover:bg-gray-700 bg-gray-100 dark:bg-gray-900 z-10" />
       <div className="text-center h-screen flex-1 flex flex-col justify-center items-center p-8">
-        <h2 className="text-lg my-4">Upload QR Code Image</h2>
-        <div className="relative">
+        {/* <h2 className="text-lg my-4">Upload QR Code Image</h2> */}
+        <div className="relative  w-[90%] h-[90%]">
           <div
             {...getRootProps()}
-            //   style={{
-            //     border: "2px dashed #cccccc",
-            //     padding: "20px",
-            //     cursor: "pointer",
-            //     width: "300px",
-            //     margin: "auto",
-            //     borderRadius: "8px",
-            //   }}
-            className="p-5 w-80 h-80 flex flex-col justify-center items-center m-auto border-dashed border-gray-50 border-2 rounded-lg cursor-pointer "
+            onPaste={handlePaste}
+            className={`p-5 w-[90%] h-[90%] flex flex-col justify-center items-center m-auto border-dashed border-gray-200 dark:border-gray-700 border-2 rounded-lg cursor-pointer ${
+                 isDragActive ? "border-blue-500" : "border-gray-300"
+               } text-center`}
           >
             {preview ? (
               <div style={{ marginTop: "20px" }}>
                 <h3>Image Preview:</h3>
-                <img src={preview} alt="QR Code Preview" width="200" />
+                <img src={preview} alt="QR Code Preview" 
+                // width="200"
+                className="w-[90%] h-[90%] object-contain"
+                 />
               </div>
             ) : (
               <>
@@ -124,14 +140,16 @@ const QRCodeUploader: React.FC = () => {
                 {isDragActive ? (
                   <p>Drop the image here ...</p>
                 ) : (
-                  <p>
-                    Drag and drop a QR code image here, or click to select one
-                  </p>
+                    <p>
+                    Drag and drop a QR code image here, click to select one, or paste an image.
+                    </p>
                 )}
               </>
             )}
-            <input {...getInputProps()} />
-            <Button className="mt-4">Choose file</Button>
+            <input {...getInputProps()} 
+            // accept="image/*"
+             />
+            <Button className="mt-4">Choose Image</Button>
           </div>
           {preview && (
             <Button
