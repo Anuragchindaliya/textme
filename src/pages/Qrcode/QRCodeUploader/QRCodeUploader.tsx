@@ -37,6 +37,19 @@ const QRCodeUploader: React.FC = () => {
 
   // Handle QR code scanning from uploaded file
   const handleFileUpload = async (file: File) => {
+    const validImageTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+
+  if (!validImageTypes.includes(file.type)) {
+    appToast({
+      title: "Invalid File",
+      description: "Please upload a valid image file (PNG, JPEG, WEBP).",
+      onBlurCapture: () => {
+        setPreview(null);
+      },
+      className:"bg-red-800 border  border-red-900 text-white"
+    });
+    return;
+  }
     try {
       const html5QrCode = new Html5Qrcode("qr-reader-temp")
       const decodedText = await html5QrCode.scanFile(file, true)
@@ -48,7 +61,7 @@ const QRCodeUploader: React.FC = () => {
       // Clean up
       await html5QrCode.clear()
     } catch (error) {
-      console.error("Failed to scan QR code from file:", error)
+      console.error("Failed to scan QR code from file:", {error})
       appToast({
         title: "Error",
         description: "Failed to scan the uploaded QR code image.",
@@ -147,7 +160,7 @@ const QRCodeUploader: React.FC = () => {
               </>
             )}
             <input {...getInputProps()} 
-            // accept="image/*"
+              accept="image/*"
              />
             <Button className="mt-4">Choose Image</Button>
           </div>
