@@ -242,12 +242,12 @@ const TaxPlanner = () => {
     <div className="flex">
       <Sidebar />
       <h1 className="text-2xl font-bold mb-4 text-center flex-1">
-        Government Websites
+      Tax Planner
       </h1>
     </div>
     <Card className="p-6 container mx-auto mt-10">
       <CardContent>
-        <h2 className="text-xl font-semibold mb-4">Tax Planner</h2>
+        {/* <h2 className="text-xl font-semibold mb-4">Tax Planner</h2> */}
         <form onSubmit={handleSubmit(onSubmit)}>
 
           <label className="block text-sm font-medium">Annual Salary *</label>

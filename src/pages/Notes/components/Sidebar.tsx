@@ -23,6 +23,7 @@ import {
   Share2,
   ShoppingCart,
   Terminal,
+  TextCursor,
   TextCursorInput
 } from "lucide-react"
 import React, { useMemo } from "react"
@@ -86,6 +87,11 @@ const Sidebar = () => {
         title: "Plan Tax",
         icon: Calculator,
         link: ROUTES.TAX_CALCULATOR,
+      },
+      {
+        title: "Scan Text",
+        icon: TextCursor,
+        link: ROUTES.OCR,
       },
       {
         title: "Login",

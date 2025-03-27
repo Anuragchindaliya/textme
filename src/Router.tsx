@@ -38,6 +38,7 @@ import FormList from "./pages/DynamicForm/FormList"
 import FormLayout from "./pages/DynamicForm/FormLayout"
 import FormSubmissionList from "./pages/DynamicForm/FormSubmissionList"
 import TaxPlan from "./pages/PlanTax/PlanTax"
+import OcrApp from "./pages/OCR/Ocr"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
@@ -65,6 +66,7 @@ export const ROUTES = {
   FORM_DATA:"/formdata-list",
   CREATE_FORMS:"/create-form",
   TAX_CALCULATOR:"/calculate-tax",
+  OCR:"/ocr",
 } as const
 const Router = () => {
   return (
@@ -90,6 +92,7 @@ const Router = () => {
 
       {/* <Route path={"/sidebar"} element={<Sidebar />} /> */}
       <Route path={ROUTES.TAX_CALCULATOR} element={<TaxPlan />} />
+      <Route path={ROUTES.OCR} element={<OcrApp />} />
       <Route path={ROUTES.GOV_LINK} element={<GovLink />} />
       <Route path={ROUTES.PRODUCTS} element={<Products />} />
       <Route path={ROUTES.CART} element={<Cart />} />
