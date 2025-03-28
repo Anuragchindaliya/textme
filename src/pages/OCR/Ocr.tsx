@@ -168,7 +168,9 @@ export default function OcrApp() {
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4" 
+    onPaste={handlePaste}
+    >
       <div className="flex">
         <div className="flex pr-2">
           <Sidebar />
@@ -180,22 +182,74 @@ export default function OcrApp() {
             <div className="flex items-end space-x-4 mb-4 w-full ">
               <div className="grid w-full items-center gap-1.5">
                 {/* <Label htmlFor="picture">Scan Text</Label> */}
-                <Input
-                  readOnly
-                  value={image?.name || "Choose File - No File chosen"}
-                  placeholder="No file selected"
-                  className="w-full"
-                  onClick={() => open()}
-                />
+
+                <div>
+                  {image ? (
+                    <motion.div
+                      key={"file"}
+                      // layoutId={idx === 0 ? "file-upload" : "file-upload-" + idx}
+                      className={cn(
+                        "border relative overflow-hidden z-40 bg-neutral-50 dark:bg-neutral-900 flex flex-col items-start justify-start  p-1 h-10 px-4 mt-4 w-full mx-auto rounded-md",
+                        "shadow-sm",
+                      )}
+                    >
+                      <div className="flex justify-between w-full items-center gap-4">
+                        <motion.p
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          layout
+                          className="text-base text-neutral-700 dark:text-neutral-300 truncate max-w-sm"
+                        >
+                          {image.name}
+                        </motion.p>
+                        <motion.p
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          layout
+                          className="rounded-lg px-2 py-1 w-fit shrink-0 text-sm text-neutral-600 dark:bg-neutral-800 dark:text-white shadow-input"
+                        >
+                          {image.size < 1024 * 1024
+                            ? `${(image.size / 1024).toFixed(2)} KB`
+                            : `${(image.size / (1024 * 1024)).toFixed(2)} MB`}
+                        </motion.p>
+                      </div>
+
+                      {/* <div className="flex text-sm md:flex-row flex-col items-start md:items-center w-full mt-2 justify-between text-neutral-600 dark:text-neutral-400">
+                        <motion.p
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          layout
+                          className="px-1 py-0.5 rounded-md bg-gray-100 dark:bg-neutral-800 "
+                        >
+                          {image.type}
+                        </motion.p>
+
+                        <motion.p
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          layout
+                        >
+                          modified{" "}
+                          {new Date(image.lastModified).toLocaleDateString()}
+                        </motion.p>
+                      </div> */}
+                    </motion.div>
+                  ) : (
+                    <>
+                      <Input
+                        readOnly
+                        value={"Choose File - No File chosen"}
+                        placeholder="No file selected"
+                        className={cn(
+                          "border relative overflow-hidden z-40 bg-neutral-50 dark:bg-neutral-900 flex flex-col items-start justify-start h-10  p-4 mt-4 w-full mx-auto rounded-md",
+                          "shadow-sm",
+                        )}
+                        onClick={() => open()}
+                      />
+                    </>
+                  )}
+                </div>
               </div>
-              <Button
-                className="flex-1 whitespace-nowrap text-xs"
-                onClick={handleOcr}
-                disabled={!image || loading}
-              >
-                <Text className="mr-1" />
-                {loading ? "Processing..." : "Extract Text"}
-              </Button>
             </div>
           </div>
         </div>
@@ -212,10 +266,18 @@ export default function OcrApp() {
                   minSize={30}
                 >
                   {/* <Card className="flex-1 relative"> */}
-                  <div className="flex space-x-1 p-2">
+                  <div className="flex space-x-1 p-2 pr-6">
                     <Button variant={"dark"} onClick={() => open()}>
                       <Image className="p-1" />
                       New Image
+                    </Button>
+                    <Button
+                      className=" whitespace-nowrap text-xs"
+                      onClick={handleOcr}
+                      disabled={!image || loading}
+                    >
+                      <Text className="mr-1" />
+                      {loading ? "Processing..." : "Extract Text"}
                     </Button>
                     {preview && (
                       <Button
@@ -235,70 +297,71 @@ export default function OcrApp() {
                   <img
                     src={URL.createObjectURL(image)}
                     alt="Uploaded"
-                    className="mt-0 m-auto max-w-full max-h-full object-cover  border border-red-500 border-dashed h-[90%]"
+                    className="mt-0 m-auto max-w-full max-h-full object-contain  border border-red-500 border-dashed h-[90%]"
                   />
                   {/* </Card> */}
                 </ResizablePanel>
               )}
 
-                <>
-                  <ResizableHandle
-                    withHandle
-                    // iconClass="bg-gray-300"
-                    className={`dark:bg-gray-800 ${text ? "":"hidden"}`}
+              <>
+                <ResizableHandle
+                  withHandle
+                  // iconClass="bg-gray-300"
+                  className={`dark:bg-gray-800 ${text ? "" : "hidden"}`}
+                />
+                <ResizablePanel
+                  id="extractText"
+                  maxSize={70}
+                  minSize={30}
+                  className={`p-1 border rounded-none rounded-r-lg ${
+                    text ? "" : "hidden"
+                  }`}
+                >
+                  {/* <Card className="flex-1 p-2"> */}
+                  <div className="flex space-x-1 p-2">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div>
+                          <CopyButton variant={"dark"} value={text} />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <div className="max-w-sm  ">
+                          Copy:
+                          <p className="bg-gray-100 p-2 rounded max-h-[calc(100vh-200px)] overflow-auto">
+                            <pre>{text}</pre>
+                          </p>
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          onClick={handleExportPDF}
+                          className="w-9 h-9 p-1"
+                        >
+                          <AiFillFilePdf />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Download Pdf</TooltipContent>
+                    </Tooltip>
+                  </div>
+
+                  {/* https://ui.aceternity.com/components/text-generate-effect */}
+                  <Textarea
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    className="   h-[92%]  rounded-none rounded-br-lg"
                   />
-                  <ResizablePanel
-                    id="extractText"
-                    maxSize={70}
-                    minSize={30}
-                    className={`p-1 border rounded-none rounded-r-lg ${text ? "":"hidden"}`}
-                  >
-                    {/* <Card className="flex-1 p-2"> */}
-                    <div className="flex space-x-1 p-2">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div>
-                            <CopyButton variant={"dark"} value={text} />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <div className="max-w-sm  ">
-                            Copy:
-                            <p className="bg-gray-100 p-2 rounded max-h-[calc(100vh-200px)] overflow-auto">
-                              <pre>{text}</pre>
-                            </p>
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            onClick={handleExportPDF}
-                            className="w-9 h-9 p-1"
-                          >
-                            <AiFillFilePdf />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>Download Pdf</TooltipContent>
-                      </Tooltip>
-                    </div>
 
-                    {/* https://ui.aceternity.com/components/text-generate-effect */}
-                    <Textarea
-                      value={text}
-                      onChange={(e) => setText(e.target.value)}
-                      className="   h-[92%]  rounded-none rounded-br-lg"
-                    />
-
-                    {/* </Card> */}
-                  </ResizablePanel>
-                </>
+                  {/* </Card> */}
+                </ResizablePanel>
+              </>
             </div>
           </ResizablePanelGroup>
         )}
         <div
           {...getRootProps()}
-          onPaste={handlePaste}
           className={`p-5 w-full h-[90%] flex flex-col justify-center items-center m-auto border-dashed border-gray-200 dark:border-gray-700 border-2 rounded-lg cursor-pointer ${
             isDragActive ? "border-blue-500" : "border-gray-300"
           } text-center ${preview ? "hidden" : ""}`}
@@ -307,7 +370,6 @@ export default function OcrApp() {
             whileHover="animate"
             className="p-10 group/file block rounded-lg cursor-pointer w-full relative overflow-hidden"
           >
-    
             <div className="absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,white,transparent)]">
               <GridPattern />
             </div>
