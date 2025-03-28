@@ -169,7 +169,7 @@ export default function OcrApp() {
 
   return (
     <div className="container mx-auto p-4" 
-    onPaste={handlePaste}
+      onPaste={handlePaste}
     >
       <div className="flex">
         <div className="flex pr-2">

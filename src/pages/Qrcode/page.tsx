@@ -4,6 +4,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Copy,
+  FileDown,
   Globe,
   IndianRupee,
   LocateFixed,
@@ -16,7 +17,7 @@ import {
   Wifi,
   X,
 } from "lucide-react"
-import { QRCodeCanvas } from "qrcode.react"
+import { QRCodeCanvas, QRCodeSVG } from "qrcode.react"
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useSearchParams } from "react-router-dom"
@@ -67,6 +68,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/Tooltip"
+import jsPDF from "jspdf"
+import { svg2pdf } from "svg2pdf.js"
+
 type LinkType = {
   label: string
   icon: JSX.Element
@@ -324,7 +328,7 @@ const Qrcode = () => {
       toast.error("Copy failed. Your browser may not support this.")
     }
   }
-  const handleDownload = () => {
+  const handleDownloadSvg = () => {
     if (svgRef.current) {
       // Create a Blob from the SVG XML
       const svgData = new XMLSerializer().serializeToString(svgRef.current)
@@ -672,6 +676,30 @@ const Qrcode = () => {
     setActiveTab(initialTabs[0])
     form.setValue("note", "")
   }
+
+  const handleDownloadPDF =  async () => {
+    const svgElement = svgRef.current
+    // const svgElement = canvasRef.current
+
+    if (!svgElement) return
+
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "pt",
+      format: [300, 300], // Adjust size if needed
+    })
+
+
+    // Render SVG into the PDF
+    await svg2pdf(svgElement, pdf, {
+      x: 0,
+      y: 0,
+      width: 300,
+      height: 300,
+    })
+
+    pdf.save("qr-code.pdf")
+  }
   // console.log({ activeTab, tabs })
 
   return (
@@ -735,7 +763,7 @@ const Qrcode = () => {
           >
             <div className="flex items-center gap-2 ">
               <TabsList className="bg-muted rounded-none p-0  overflow-x-auto h-auto w-full justify-start divide-x overflow-hidden">
-                <div className="overflow-scroll">
+                <div className="overflow-auto">
                   {tabs.map((tab) => (
                     <TooltipProvider key={tab.id}>
                       <Tooltip delayDuration={1000}>
@@ -751,7 +779,9 @@ const Qrcode = () => {
                                 {tab.linkType?.icon || (
                                   <QrCode className="w-4 h-4" />
                                 )}
-                                <span className="pl-1 text-ellipsis overflow-hidden max-w-52 text-left">{tab.label}</span>
+                                <span className="pl-1 text-ellipsis overflow-hidden max-w-52 text-left">
+                                  {tab.label}
+                                </span>
                               </div>
                               {tabs.length > 1 && (
                                 <Button
@@ -781,7 +811,7 @@ const Qrcode = () => {
                   ))}
                 </div>
                 <div className="flex pl-1">
-                  {tabs.every((tab) => tab.url) && (
+                  {/* {tabs.every((tab) => tab.url) && ( */}
                     <Tooltip>
                       <TooltipTrigger className="m-auto" asChild>
                         <Button
@@ -797,7 +827,7 @@ const Qrcode = () => {
                         <p>Add new QR tab</p>
                       </TooltipContent>
                     </Tooltip>
-                  )}
+                  {/* )} */}
                 </div>
               </TabsList>
               {tabs.length > 2 && (
@@ -960,7 +990,7 @@ const Qrcode = () => {
                                     height: imageSize, // Height of the logo
                                     width: imageSize, // Width of the logo
                                     excavate: true, // This option clears the area where the logo is placed so it's more readable
-                                      crossOrigin: "anonymous",
+                                    crossOrigin: "anonymous",
                                   }}
                                 />
                               </ContextMenuTrigger>
@@ -991,6 +1021,13 @@ const Qrcode = () => {
                               onClick={handleSave}
                             >
                               <Save />
+                            </Button>
+                            <Button
+                              variant="secondary"
+                              className="p-0 w-10"
+                              onClick={handleDownloadPDF}
+                            >
+                              <FileDown />
                             </Button>
                           </div>
                         </div>
@@ -1261,31 +1298,51 @@ const Qrcode = () => {
                             </TabsContent>
                           </Tabs>
                         </div>
+                        <div className="p-4">
+                          {/* <div className="pb-1">Svg Preview</div> */}
+                          <div className="mb-2 flex gap-2 ">
+                              <Button
+                                onClick={handleDownloadSvg}
+                                variant="secondary"
+                                className="p-0 w-24"
+                              >
+                                <Share2 className="my-4 mr-2" /> SVG
+                              </Button>
+                            </div>
+                        {/* <h2>
+                          Submitted text{" "}
+                          <u className="text-ellipsis whitespace-nowrap w-[200px] inline-block">
+                            {submittedValue}
+                          </u>
+                        </h2> */}
+                        {qrText && (
+                          <div className="flex flex-col ">
+                            <QRCodeSVG
+                              value={qrText}
+                              size={240}
+                              // className="border"
+                              marginSize={2}
+                              // level="H"
+                              ref={svgRef}
+                              className={`border rounded-sm`}
+                              style={{ borderColor: selectedFgColor }}
+                              fgColor={selectedFgColor}
+                              bgColor={selectedBackColor}
+                              title="Build by anurag"
+                              imageSettings={{
+                                src: imagePreview, // Replace with your logo URL
+                                height: imageSize, // Height of the logo
+                                width: imageSize, // Width of the logo
+                                excavate: true, // This option clears the area where the logo is placed so it's more readable
+                                crossOrigin: "anonymous",
+                              }}
+                            />
+                            
+                          </div>
+                        )}
                       </div>
-                      {/* <h2>
-                Submitted text <u>{submittedValue}</u>
-              </h2>
-              {submittedValue && (
-                <div className="flex flex-col ">
-                  <QRCodeSVG
-                    value={submittedValue}
-                    size={356}
-                    className="border"
-                    marginSize={2}
-                    level="H"
-                    ref={svgRef}
-                  />
-                  <div className="mt-2 flex gap-2 mx-auto">
-                    <Button
-                      onClick={handleDownload}
-                      variant="secondary"
-                      className="p-0 w-24"
-                    >
-                      <Share2 className="my-4 mr-2" /> SVG
-                    </Button>
-                  </div>
-                </div>
-              )} */}
+                      </div>
+                      
                     </div>
                   </ResizablePanel>
                 </>
