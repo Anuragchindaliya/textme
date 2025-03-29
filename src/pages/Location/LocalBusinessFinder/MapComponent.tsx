@@ -21,6 +21,10 @@ import {
 } from "react-leaflet"
 import AddNewLocationForm from "./AddNewLocationForm"
 import { Input } from "@/components/ui/input"
+import { useTheme } from "next-themes"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import "./mapComponent.scss"
+import SearchBox from "./SearchBox"
 // Define a type for a business location
 type BusinessLocation = {
   id: number
@@ -52,7 +56,9 @@ const LocationItemConfig = {
 } as any
 
 const MapComponent: React.FC = () => {
-  const [searchText,setSearchText] = useState("");
+  const { theme } = useTheme()
+
+  const [searchText, setSearchText] = useState("")
   const [actionType, setActionType] = useState("")
   const mapRef = useRef<any | null>(null)
   // const [locationList, setLocationList] = useState<Business[]>(businesses)
@@ -91,6 +97,7 @@ const MapComponent: React.FC = () => {
       // setSelectedPosition([latitude, longitude])
     }
   }
+
   return (
     <div className="flex flex-1 relative">
       {/* Map */}
@@ -109,48 +116,57 @@ const MapComponent: React.FC = () => {
             </Button>
             {actionType === "search" && (
               <div className="absolute left-full top-0">
-                <div className="bg-gray-950 flex p-2 rounded-t gap-2">
-                  <Input placeholder="Search..." onChange={(e)=>{
-                    setSearchText(e.currentTarget.value);
-                  }} />
+                <div className="backdrop-blur-sm bg-gray-100/40 dark:bg-gray-950 flex p-2 rounded-t gap-2">
+                  <Input
+                    placeholder="Search..."
+                    onChange={(e) => {
+                      setSearchText(e.currentTarget.value)
+                    }}
+                  />
                   <Button variant={"secondary"} className="px-2">
                     <SearchIcon />
                   </Button>
                 </div>
-                <ul className="bg-gray-900  rounded-b shadow divide-y divide-gray-200 w-[25vw]">
-                  {locationList?.filter((item)=>{
-                    return item.name.toLowerCase().includes(searchText.toLowerCase())
-                  })?.map((location) => (
-                    <li
-                      onClick={() =>
-                        handleLocationClick(
-                          location.latitude,
-                          location.longitude,
-                        )
-                      }
-                      key={location.id}
-                      className="px-4 py-2 flex gap-2 items-center cursor-pointer"
-                    >
-                      {LocationItemConfig?.[location.type as any] || (
-                        <LocateIcon />
-                      )}
-                      <div>
-                        <div>{location.name}</div>
-                        <div className="text-xs text-gray-300">
-                          ({location.latitude}, {location.longitude})
-                        </div>
-                      </div>
-                      <ArrowRight className="ml-auto" />
-                    </li>
-                  ))}
-                </ul>
+                <ScrollArea className="h-[calc(100vh-200px)]">
+                  <ul className="backdrop-blur-sm bg-gray-100/40 dark:bg-gray-900  rounded-b shadow divide-y divide-gray-200 w-[25vw] ">
+                    {locationList
+                      ?.filter((item) => {
+                        return item.name
+                          .toLowerCase()
+                          .includes(searchText.toLowerCase())
+                      })
+                      ?.map((location) => (
+                        <li
+                          onClick={() =>
+                            handleLocationClick(
+                              location.latitude,
+                              location.longitude,
+                            )
+                          }
+                          key={location.id}
+                          className="px-4 py-2 flex gap-2 items-center cursor-pointer"
+                        >
+                          {LocationItemConfig?.[location.type as any] || (
+                            <LocateIcon />
+                          )}
+                          <div>
+                            <div>{location.name}</div>
+                            <div className="text-xs dark:text-gray-300">
+                              ({location.latitude}, {location.longitude})
+                            </div>
+                          </div>
+                          <ArrowRight className="ml-auto" />
+                        </li>
+                      ))}
+                  </ul>
+                  <ScrollBar />
+                </ScrollArea>
               </div>
             )}
           </div>
           <Button
             variant={actionType === "add" ? "default" : "secondary"}
             className="rounded-none"
-
             onClick={() => {
               if (actionType === "add") {
                 setActionType("")
@@ -174,6 +190,17 @@ const MapComponent: React.FC = () => {
             {/* <MapFloatingDock /> */}
           </div>
         </div>
+        <div className="absolute top-4 left-1/2 z-50 w-[400px]">
+          <SearchBox
+            onSelectLocation={(lat, lon) => {
+              // setPosition([lat, lon])
+              handleLocationClick(
+                lat,
+                lon,
+              )
+            }}
+          />
+        </div>
 
         <MapContainer
           ref={mapRef}
@@ -183,7 +210,15 @@ const MapComponent: React.FC = () => {
           zoomControl={false}
         >
           <ZoomControl position="topright" />
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          {/* <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" /> */}
+          {/* Dynamic Tile Layer Based on Theme */}
+          <TileLayer
+            url={
+              theme === "dark"
+                ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            }
+          />
           {locationList?.map((business) => (
             <Marker
               key={business.id}

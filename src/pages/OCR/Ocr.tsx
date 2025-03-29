@@ -189,9 +189,11 @@ export default function OcrApp() {
                       key={"file"}
                       // layoutId={idx === 0 ? "file-upload" : "file-upload-" + idx}
                       className={cn(
-                        "border relative overflow-hidden z-40 bg-neutral-50 dark:bg-neutral-900 flex flex-col items-start justify-start  p-1 h-10 px-4 mt-4 w-full mx-auto rounded-md",
+                        "cursor-pointer border relative overflow-hidden z-40 bg-neutral-50 dark:bg-neutral-900 flex flex-col items-start justify-start  p-1 h-10 px-4 mt-4 w-full mx-auto rounded-md",
                         "shadow-sm",
                       )}
+                      onClick={() => open()}
+
                     >
                       <div className="flex justify-between w-full items-center gap-4">
                         <motion.p

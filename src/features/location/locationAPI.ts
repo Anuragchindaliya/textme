@@ -14,10 +14,32 @@ export interface Location {
   longitude: number
 }
 
+
+type PlaceType = {
+  place_id: number;
+  licence: string;
+  osm_type: string;
+  osm_id: number;
+  lat: string;
+  lon: string;
+  class: string;
+  type: string;
+  place_rank: number;
+  importance: number;
+  addresstype: string;
+  name: string;
+  display_name: string;
+  boundingbox: string[];
+}
+
 export const sheetDbApi = textmeApi.injectEndpoints({
   endpoints: (builder) => ({
     getLocations: builder.query<Location[], void>({
       query: () => SHEETDB_BASE_URL,
+      providesTags: ["Location"],
+    }),
+    searchPlaces: builder.query<PlaceType[], string>({
+      query: (query) => `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`,
       providesTags: ["Location"],
     }),
     addLocation: builder.mutation<any, Location>({
@@ -60,4 +82,5 @@ export const {
   useAddLocationMutation,
   useUpdateLocationMutation,
   useDeleteLocationMutation,
+  useSearchPlacesQuery
 } = sheetDbApi

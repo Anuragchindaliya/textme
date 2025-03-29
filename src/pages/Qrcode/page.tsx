@@ -23,7 +23,7 @@ import { useForm } from "react-hook-form"
 import { useSearchParams } from "react-router-dom"
 import { z } from "zod"
 
-import { Button } from "@/components/ui/button"
+import { Button, ButtonTooltip } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 
 import { SidebarTrigger } from "@/components/AppSidebar"
@@ -677,7 +677,7 @@ const Qrcode = () => {
     form.setValue("note", "")
   }
 
-  const handleDownloadPDF =  async () => {
+  const handleDownloadPDF = async () => {
     const svgElement = svgRef.current
     // const svgElement = canvasRef.current
 
@@ -688,7 +688,6 @@ const Qrcode = () => {
       unit: "pt",
       format: [300, 300], // Adjust size if needed
     })
-
 
     // Render SVG into the PDF
     await svg2pdf(svgElement, pdf, {
@@ -812,21 +811,21 @@ const Qrcode = () => {
                 </div>
                 <div className="flex pl-1">
                   {/* {tabs.every((tab) => tab.url) && ( */}
-                    <Tooltip>
-                      <TooltipTrigger className="m-auto" asChild>
-                        <Button
-                          onClick={addNewTab}
-                          variant="ghost"
-                          size="sm"
-                          className="w-6 h-6  p-1 "
-                        >
-                          <Plus className="w-full" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Add new QR tab</p>
-                      </TooltipContent>
-                    </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger className="m-auto" asChild>
+                      <Button
+                        onClick={addNewTab}
+                        variant="ghost"
+                        size="sm"
+                        className="w-6 h-6  p-1 "
+                      >
+                        <Plus className="w-full" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Add new QR tab</p>
+                    </TooltipContent>
+                  </Tooltip>
                   {/* )} */}
                 </div>
               </TabsList>
@@ -979,7 +978,10 @@ const Qrcode = () => {
                                   size={356}
                                   ref={canvasRef}
                                   className={`border rounded-sm`}
-                                  style={{ borderColor: selectedFgColor }}
+                                  style={{
+                                    borderColor: selectedFgColor,
+                                    cursor: "context-menu",
+                                  }}
                                   marginSize={2}
                                   fgColor={selectedFgColor}
                                   bgColor={selectedBackColor}
@@ -1008,27 +1010,32 @@ const Qrcode = () => {
                           </div>
 
                           <div className="mt-2 flex gap-2 mx-auto">
-                            <Button
+                            <ButtonTooltip
+                              tooltipContent={"Share QR"}
                               variant="secondary"
                               className="p-0 w-10"
                               onClick={handleShare}
                             >
                               <Share2 />
-                            </Button>
-                            <Button
+                            </ButtonTooltip>
+
+                            <ButtonTooltip
+                              tooltipContent={"Save QR (.png)"}
                               variant="secondary"
                               className="p-0 w-10"
                               onClick={handleSave}
                             >
                               <Save />
-                            </Button>
-                            <Button
+                            </ButtonTooltip>
+
+                            <ButtonTooltip
+                              tooltipContent={"Export PDF"}
                               variant="secondary"
                               className="p-0 w-10"
                               onClick={handleDownloadPDF}
                             >
                               <FileDown />
-                            </Button>
+                            </ButtonTooltip>
                           </div>
                         </div>
                       ) : (
@@ -1301,48 +1308,46 @@ const Qrcode = () => {
                         <div className="p-4">
                           {/* <div className="pb-1">Svg Preview</div> */}
                           <div className="mb-2 flex gap-2 ">
-                              <Button
-                                onClick={handleDownloadSvg}
-                                variant="secondary"
-                                className="p-0 w-24"
-                              >
-                                <Share2 className="my-4 mr-2" /> SVG
-                              </Button>
-                            </div>
-                        {/* <h2>
+                            <Button
+                              onClick={handleDownloadSvg}
+                              variant="secondary"
+                              className="p-0 w-24"
+                            >
+                              <Share2 className="my-4 mr-2" /> SVG
+                            </Button>
+                          </div>
+                          {/* <h2>
                           Submitted text{" "}
                           <u className="text-ellipsis whitespace-nowrap w-[200px] inline-block">
                             {submittedValue}
                           </u>
                         </h2> */}
-                        {qrText && (
-                          <div className="flex flex-col ">
-                            <QRCodeSVG
-                              value={qrText}
-                              size={240}
-                              // className="border"
-                              marginSize={2}
-                              // level="H"
-                              ref={svgRef}
-                              className={`border rounded-sm`}
-                              style={{ borderColor: selectedFgColor }}
-                              fgColor={selectedFgColor}
-                              bgColor={selectedBackColor}
-                              title="Build by anurag"
-                              imageSettings={{
-                                src: imagePreview, // Replace with your logo URL
-                                height: imageSize, // Height of the logo
-                                width: imageSize, // Width of the logo
-                                excavate: true, // This option clears the area where the logo is placed so it's more readable
-                                crossOrigin: "anonymous",
-                              }}
-                            />
-                            
-                          </div>
-                        )}
+                          {qrText && (
+                            <div className="flex flex-col ">
+                              <QRCodeSVG
+                                value={qrText}
+                                size={240}
+                                // className="border"
+                                marginSize={2}
+                                // level="H"
+                                ref={svgRef}
+                                className={`border rounded-sm`}
+                                style={{ borderColor: selectedFgColor }}
+                                fgColor={selectedFgColor}
+                                bgColor={selectedBackColor}
+                                title="Build by anurag"
+                                imageSettings={{
+                                  src: imagePreview, // Replace with your logo URL
+                                  height: imageSize, // Height of the logo
+                                  width: imageSize, // Width of the logo
+                                  excavate: true, // This option clears the area where the logo is placed so it's more readable
+                                  crossOrigin: "anonymous",
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      </div>
-                      
                     </div>
                   </ResizablePanel>
                 </>

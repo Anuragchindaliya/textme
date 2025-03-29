@@ -69,7 +69,7 @@ const AddNewLocationForm: React.FC<AddLocationFormProps> = ({
   console.log({errors})
 
   return (
-    <div className="backdrop-blur-sm absolute right-6 top-12 z-30 h-[89vh] w-72 dark:bg-gray-950 p-4 rounded-md">
+    <div className="dark:border backdrop-blur-sm bg-gray-100/80 absolute right-6 top-12 z-30 h-[89vh] w-72 dark:bg-gray-950/20 p-4 rounded-md">
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 p-4   ">
       <div>
         <label className="block text-sm font-medium">Business Name</label>

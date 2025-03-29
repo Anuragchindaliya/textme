@@ -92,6 +92,8 @@
     "react-router-dom": "^6.12.1",
     "react-toastify": "^10.0.6",
     "recharts": "^2.7.1",
+    "sass": "^1.86.0",
+    "sass-loader": "^16.0.5",
     "svg2pdf.js": "^2.5.0",
     "tailwind-merge": "^1.13.1",
     "tailwindcss-animate": "^1.0.6",

@@ -4,7 +4,7 @@ import Sidebar from '@/pages/Notes/components/Sidebar'
 
 const LocalBusinessFinder = () => {
   return (<div className=' h-full flex flex-col'>
-    <div className='flex p-2'>
+    <div className='flex p-2 px-4 py-2 bg-gray-900'>
       <Sidebar/>
       <h1>Local Business Finder</h1>
     </div>

@@ -1,0 +1,7 @@
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  @apply dark:bg-gray-800 dark:text-white;
+  &:hover {
+    @apply dark:bg-gray-700;
+  }
+}

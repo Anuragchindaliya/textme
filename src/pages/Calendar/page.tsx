@@ -36,6 +36,7 @@ import {
 } from "@/features/myCalendar/calendarAPI"
 import { useToast } from "@/components/ui/use-toast"
 import { Loader, Trash } from "lucide-react"
+import "./calendar.scss"
 const locales = {
   "en-US": enUS,
 }

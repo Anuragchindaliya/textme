@@ -34,54 +34,36 @@ const Sidebar = () => {
   const linksArr = useMemo(
     () => [
       {
-        title: "Tasks",
-        icon: CheckSquare,
-        link: ROUTES.TASK,
-      },
-      {
-        title: "Editor",
-        icon: Edit,
-        link: ROUTES.EDITOR,
-      },
-      {
-        title: "Draw",
-        icon: LucideMousePointerClick,
-        link: ROUTES.DRAW,
-      },
-      {
-        title: "Calendar",
-        icon: CalendarCheck,
-        link: ROUTES.CALENDAR,
-      },
-      {
-        title: "Invoice Pdf",
-        icon: FileText,
-        link: ROUTES.PDF,
-      },
-      {
-        title: "Goverment site",
-        icon: Link,
-        link: ROUTES.GOV_LINK,
-      },
-      {
-        title: "Products",
-        icon: ShoppingCart,
-        link: ROUTES.PRODUCTS,
-      },
-      {
         title: "QR Code",
         icon: QrCode,
         link: ROUTES.QR_CODE,
       },
       {
-        title: "Location",
-        icon: Map,
-        link: ROUTES.LOCATION,
+        title: "Draw & Sketch",
+        icon: LucideMousePointerClick,
+        link: ROUTES.DRAW,
       },
       {
-        title: "Forms",
+        title: "Form Builder",
         icon: TextCursorInput,
         link: ROUTES.FORMS,
+      },
+      
+      {
+        title: "Rich Text Editor",
+        icon: Edit,
+        link: ROUTES.EDITOR,
+      },
+     
+      {
+        title: "Event Calendar",
+        icon: CalendarCheck,
+        link: ROUTES.CALENDAR,
+      },
+      {
+        title: "Map & Location",
+        icon: Map,
+        link: ROUTES.LOCATION,
       },
       {
         title: "Plan Tax",
@@ -92,6 +74,26 @@ const Sidebar = () => {
         title: "Scan Text",
         icon: TextCursor,
         link: ROUTES.OCR,
+      },
+      {
+        title: "Invoice Generator",
+        icon: FileText,
+        link: ROUTES.PDF,
+      },
+      {
+        title: "Product Catalog",
+        icon: ShoppingCart,
+        link: ROUTES.PRODUCTS,
+      },
+      {
+        title: "Task Manager",
+        icon: CheckSquare,
+        link: ROUTES.TASK,
+      },
+      {
+        title: "Government Services",
+        icon: Link,
+        link: ROUTES.GOV_LINK,
       },
       {
         title: "Login",
