@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import Breadcrumb from "./Breadcrumb"
 import { Product, useGetAllProductQuery } from "@/features/products/productAPI"
 import { Link } from "react-router-dom"
@@ -16,7 +16,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
+import { Button, ButtonTooltip } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { CreditCard, Loader, LogOut, User } from "lucide-react"
 import Sidebar from "../Notes/components/Sidebar"
@@ -24,7 +24,6 @@ import Sidebar from "../Notes/components/Sidebar"
 const Products = () => {
   const { isLoading, data } = useGetAllProductQuery()
   const email = useAppSelector(selectCurrentEmail)
-  console.log({ data })
   const dispatch = useAppDispatch()
   const carts = useAppSelector(selectCarts)
   const handleAddToCart = (item: Product) => {
@@ -34,6 +33,13 @@ const Products = () => {
   const handleLogout = () => {
     dispatch(removeAuth())
   }
+  const products = useMemo(()=>{
+    if(data && data.length>0){
+      return data.toReversed()
+    }
+    return []
+  },[data])
+  // console.log({products,data})
   return (
     <section className="bg-gray-50 py-8 antialiased dark:bg-gray-900 md:py-12 h-screen">
       <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
@@ -258,7 +264,7 @@ const Products = () => {
           </div>
         ) : (
           <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
-            {data?.map((item) => {
+            {products?.map((item) => {
               return (
                 <div
                   key={item.ID}
@@ -461,13 +467,15 @@ const Products = () => {
                       <p className="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">
                         ₹{item.Price}
                       </p>
-                      <button
+                      <div className="flex gap-2">
+                      <ButtonTooltip
+                      tooltipContent="Add to cart"
                         type="button"
                         onClick={() => handleAddToCart(item)}
                         className="inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                       >
                         <svg
-                          className="-ms-2 me-2 h-5 w-5"
+                          className="  h-5 w-5"
                           aria-hidden="true"
                           xmlns="http://www.w3.org/2000/svg"
                           width={24}
@@ -483,8 +491,19 @@ const Products = () => {
                             d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6"
                           />
                         </svg>
-                        Add to cart
-                      </button>
+                        {/* Add to cart */}
+                      </ButtonTooltip>
+                      <a
+                        type="button"
+                        // onClick={() => handleAddToCart(item)}
+                        href={item.Prod_link}
+                        target="_blank"
+                        className="inline-flex items-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      >
+                        
+                        Buy Now
+                      </a>
+                      </div>
                     </div>
                   </div>
                 </div>
