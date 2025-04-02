@@ -277,7 +277,7 @@ const Qrcode = () => {
     formState: { errors },
   } = useForm({ resolver: zodResolver(schema) })
 
-  const [imageSize, setImageSize] = useState(64)
+  const [imageSize, setImageSize] = useState(34)
   const [textColor, setTextColor] = useState("#000000")
   const [searchParams, setSearchParams] = useSearchParams()
   const form = useForm<noteFormType>({

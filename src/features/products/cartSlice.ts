@@ -4,8 +4,19 @@ import { Product } from "./productAPI";
 type InitialStateType = {
   carts: (Product & {qty:number} )[];
 }
+
+const CART_KEY = "carts"
+const initialCart = (() => {
+  try {
+    const storedCart = localStorage?.getItem(CART_KEY);
+    return storedCart ? JSON.parse(storedCart) : [];
+  } catch (error) {
+    console.error("Error parsing cart data from localStorage:", error);
+    return [];
+  }
+})();
 const initialState:InitialStateType = {
-  carts: [],
+  carts: initialCart,
 }
 const cartSlice = createSlice({
   name: "cart",
@@ -19,6 +30,7 @@ const cartSlice = createSlice({
         state.carts.push({...cart,qty:1})
       }
       // state.carts.push(cart)
+      localStorage.setItem(CART_KEY,JSON.stringify(state?.carts))
     },
     removeFromCart:(state,{payload:{cart}}:PayloadAction<{ cart: Product }>)=>{
         state.carts = state.carts.filter(item=>item.ID !== cart.ID);
