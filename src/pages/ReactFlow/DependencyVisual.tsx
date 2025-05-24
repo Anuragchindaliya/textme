@@ -238,6 +238,7 @@ export default function DependencyGraphViewer() {
               // onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               fitView
+                  proOptions={{hideAttribution:true}}
             >
               <MiniMap />
               <Controls />

@@ -9,6 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import {
+  BoxIcon,
   Calculator,
   CalendarCheck,
   Check,
@@ -97,8 +98,8 @@ const Sidebar = () => {
         link: ROUTES.GOV_LINK,
       },
       {
-        title: "Design",
-        icon: AiOutlineAntDesign,
+        title: "Dependency Box",
+        icon: BoxIcon,
         link: ROUTES.REACT_FLOW,
       },
       {
