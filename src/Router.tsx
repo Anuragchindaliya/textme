@@ -39,6 +39,7 @@ import FormLayout from "./pages/DynamicForm/FormLayout"
 import FormSubmissionList from "./pages/DynamicForm/FormSubmissionList"
 import TaxPlan from "./pages/PlanTax/PlanTax"
 import OcrApp from "./pages/OCR/Ocr"
+import ReactFlow from "./pages/ReactFlow/page"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
@@ -67,6 +68,7 @@ export const ROUTES = {
   CREATE_FORMS:"/create-form",
   TAX_CALCULATOR:"/calculate-tax",
   OCR:"/ocr",
+  REACT_FLOW:"/react-flow",
 } as const
 const Router = () => {
   return (
@@ -81,7 +83,7 @@ const Router = () => {
       <Route path={ROUTES.DRAW} element={<Draw />} />
       <Route path={ROUTES.LOCATION} element={<Location />} />
       <Route path={ROUTES.CALENDAR} element={<MyCalendar />} />
-      <Route path={ROUTES.PDF} element={<ExportPdf />} />
+      <Route path={ROUTES.REACT_FLOW} element={<ReactFlow />} />
       <Route path={ROUTES.PDF} element={<ExportPdf />} />
         <Route path={ROUTES.FORMS} element={<FormList />} />
         <Route path={`${ROUTES.FORM_DATA}/:id`} element={<FormSubmissionList />} />

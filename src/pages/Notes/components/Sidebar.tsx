@@ -29,6 +29,7 @@ import {
 import React, { useMemo } from "react"
 import { NavLink } from "react-router-dom"
 import { ModeToggle } from "./mode-toggle"
+import { AiOutlineAntDesign } from "react-icons/ai"
 const Sidebar = () => {
   const [hasCopied, setHasCopied] = React.useState(false)
   const linksArr = useMemo(
@@ -94,6 +95,11 @@ const Sidebar = () => {
         title: "Government Services",
         icon: Link,
         link: ROUTES.GOV_LINK,
+      },
+      {
+        title: "Design",
+        icon: AiOutlineAntDesign,
+        link: ROUTES.REACT_FLOW,
       },
       {
         title: "Login",
