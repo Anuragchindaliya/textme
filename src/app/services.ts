@@ -22,7 +22,7 @@ export const baseQuery = fetchBaseQuery({
   baseUrl,
   prepareHeaders: (
     headers,
-    //  { getState }
+     { endpoint }
   ) => {
     // const token = (getState() as RootState).auth.token
 
@@ -30,6 +30,10 @@ export const baseQuery = fetchBaseQuery({
     // if (token) {
     //   headers.set("Authorization", `Bearer ${token}`)
     // }
+    // console.log("endpoint", endpoint)
+    if(endpoint==="getWeatherByCity" || endpoint==="getWeatherByCoords"){
+      return headers
+    }
     headers.set("Access-Control-Allow-Origin", "*")
     headers.set("Access-Control-Allow-Headers", "X-Requested-With")
     return headers

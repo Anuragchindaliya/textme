@@ -14,6 +14,7 @@ import {
   CalendarCheck,
   Check,
   CheckSquare,
+  CloudDrizzle,
   Edit,
   FileText,
   Link,
@@ -101,6 +102,11 @@ const Sidebar = () => {
         title: "Dependency Box",
         icon: BoxIcon,
         link: ROUTES.REACT_FLOW,
+      },
+      {
+        title: "Weather App",
+        icon: CloudDrizzle,
+        link: ROUTES.WEATHER,
       },
       {
         title: "Login",
