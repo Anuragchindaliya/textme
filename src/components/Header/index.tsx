@@ -1,19 +1,21 @@
-import React from "react"
 import { ROUTES } from "@/Router"
 import { cn } from "@/lib/utils"
-import { Terminal } from "lucide-react"
+import Sidebar from "@/pages/Notes/components/Sidebar"
 import { Link, NavLink } from "react-router-dom"
 
 const Header = () => {
   return (
     <nav className="z-50 sticky top-0 bg-white border-gray-200 dark:bg-gray-900">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        <div className="flex items-center">
+          <Sidebar />
         <Link to="/" className="flex items-center">
-          <Terminal />
+          {/* <Terminal /> */}
           <span className="self-center text-xl  whitespace-nowrap dark:text-white">
             Share text
           </span>
         </Link>
+        </div>
         <button
           data-collapse-toggle="navbar-default"
           type="button"

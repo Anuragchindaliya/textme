@@ -1,14 +1,15 @@
 import { LucideIcon } from "lucide-react"
 
 export type Status = {
+  id:string;
   value: string
   label: string
-  icon: LucideIcon
+  icon?: LucideIcon
 }
 export interface TaskType {
   id: string
   title: string
-  status: Status | null
+  status: string | null
 }
 
 export interface DragEndResult {

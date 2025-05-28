@@ -5,6 +5,7 @@ import { textmeApi } from "@/app/services"
 import authSlice from "./auth/authSlice"
 import cartSlice from "./products/cartSlice"
 import dynamicFormSlice from "./dynamicForm/dynamicFormSlice"
+import taskReducer from "./task/taskSlice"
 
 const rootReducer = combineReducers({
   counter: counterSlice,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   auth: authSlice,
   products:cartSlice,
   dynamicForm:dynamicFormSlice,
+  tasks: taskReducer,
   // note: noteSlice,
 })
 export default rootReducer

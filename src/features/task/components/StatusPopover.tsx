@@ -26,10 +26,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Status } from "../task.types"
-import { statuses } from "../utils"
+import { statusConfig, statuses } from "../utils"
 
 interface ComboboxPopoverProps {
-  selectedStatus: Status | null
+  selectedStatus: string | null
   setSelectedStatus: (statusValue: string) => void
 }
 export function ComboboxPopover({
@@ -37,9 +37,8 @@ export function ComboboxPopover({
   setSelectedStatus,
 }: ComboboxPopoverProps) {
   const [open, setOpen] = React.useState(false)
-  // const [selectedStatus, setSelectedStatus] = React.useState<Status | null>(
-  //     null
-  // )
+  const statusData = statusConfig[selectedStatus || ""]
+  const StatusIcon = statusData?.icon as LucideIcon | undefined
 
   return (
     <div className="flex items-center space-x-4">
@@ -51,10 +50,11 @@ export function ComboboxPopover({
             size="sm"
             className="w-[150px] justify-start"
           >
-            {selectedStatus ? (
+            {statusData ? (
               <>
-                <selectedStatus.icon className="mr-2 h-4 w-4 shrink-0" />
-                {selectedStatus.label}
+                
+                {StatusIcon && <StatusIcon className="mr-2 h-4 w-4 shrink-0" />}
+                {statusData.label}  
               </>
             ) : (
               <>+ Set status</>
@@ -67,11 +67,14 @@ export function ComboboxPopover({
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
-                {statuses.map((status) => (
+                {statuses.map((status) => {
+                  const Icon = status?.icon as LucideIcon | undefined
+                  return (
                   <CommandItem
-                    key={status.value}
+                    key={status.id}
                     onSelect={(value) => {
-                      setSelectedStatus(value)
+                      console.log("CommandItem",{value},status.id)
+                      setSelectedStatus(status.id)
                       // setSelectedStatus(
                       //     statuses.find((priority) => priority.value === value) ||
                       //     null
@@ -79,17 +82,17 @@ export function ComboboxPopover({
                       setOpen(false)
                     }}
                   >
-                    <status.icon
+                    {Icon&& <Icon
                       className={cn(
                         "mr-2 h-4 w-4",
-                        status.value === selectedStatus?.value
+                        status.value === statusData?.value
                           ? "opacity-100"
                           : "opacity-40",
                       )}
-                    />
+                    />}
                     <span>{status.label}</span>
                   </CommandItem>
-                ))}
+                )})}
               </CommandGroup>
             </CommandList>
           </Command>

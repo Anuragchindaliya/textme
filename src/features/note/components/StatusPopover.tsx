@@ -40,6 +40,7 @@ export function ComboboxPopover({
   // const [selectedStatus, setSelectedStatus] = React.useState<Status | null>(
   //     null
   // )
+  const StatusIcon = selectedStatus?.icon as any
 
   return (
     <div className="flex items-center space-x-4">
@@ -53,7 +54,7 @@ export function ComboboxPopover({
           >
             {selectedStatus ? (
               <>
-                <selectedStatus.icon className="mr-2 h-4 w-4 shrink-0" />
+                {StatusIcon && <StatusIcon className="mr-2 h-4 w-4 shrink-0" />}
                 {selectedStatus.label}
               </>
             ) : (
@@ -67,7 +68,10 @@ export function ComboboxPopover({
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
-                {statuses.map((status) => (
+                {statuses.map((status) => {
+                const Icon = status?.icon as any;
+
+                  return(
                   <CommandItem
                     key={status.value}
                     onSelect={(value) => {
@@ -79,17 +83,19 @@ export function ComboboxPopover({
                       setOpen(false)
                     }}
                   >
-                    <status.icon
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        status.value === selectedStatus?.value
-                          ? "opacity-100"
-                          : "opacity-40",
-                      )}
-                    />
+                    {Icon ? (
+                      <Icon
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          status.value === selectedStatus?.value
+                            ? "opacity-100"
+                            : "opacity-40",
+                        )}
+                      />
+                    ):null}
                     <span>{status.label}</span>
                   </CommandItem>
-                ))}
+                )})}
               </CommandGroup>
             </CommandList>
           </Command>

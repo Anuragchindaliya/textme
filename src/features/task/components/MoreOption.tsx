@@ -25,6 +25,8 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useAppDispatch } from "@/app/hooks"
+import { deleteTask } from "../taskSlice"
 
 const labels = [
   "feature",
@@ -36,12 +38,19 @@ const labels = [
   "maintenance",
 ]
 
-export function ComboboxDropdownMenu() {
+export function ComboboxDropdownMenu({id}:{id:string}) {
   // const [label, setLabel] = React.useState("feature")
   const [open, setOpen] = React.useState(false)
+  const dispatch = useAppDispatch()
+
+  const handleDelete = () => {
+    // Handle delete action here
+    console.log("Delete action triggered")
+    dispatch(deleteTask(id))
+  }
 
   return (
-    <div className="flex  flex-col items-start justify-between rounded-md border px-4 py-3 sm:flex-row sm:items-center">
+    <div className="flex  flex-col items-start justify-between rounded-md border ml-2 sm:flex-row sm:items-center">
       {/* <p className="text-sm font-medium leading-none">
         <span className="mr-2 rounded-lg bg-primary px-2 py-1 text-xs text-primary-foreground">
           {label}
@@ -97,7 +106,7 @@ export function ComboboxDropdownMenu() {
               </DropdownMenuSubContent>
             </DropdownMenuSub>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-600">
+            <DropdownMenuItem className="text-red-600" onClick={handleDelete}>
               <Trash className="mr-2 h-4 w-4" />
               Delete
               <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
