@@ -17,7 +17,7 @@ const taskSlice = createSlice({
         title: action.payload.title,
         status: statuses[1].value, // Default status
       }
-      state.push(newTask)
+      state.unshift(newTask)
     },
     updateTaskStatus(state, action: PayloadAction<{ id: string; status: string }>) {
       const task = state.find((t) => t.id === action.payload.id)
