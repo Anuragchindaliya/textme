@@ -42,6 +42,7 @@ import OcrApp from "./pages/OCR/Ocr"
 import ReactFlow from "./pages/ReactFlow/page"
 import WeatherApp from "./pages/Weather/page"
 import CityWeather from "./pages/Weather/cityWeather"
+import PDFEditor from "./pages/PDFEditor/page"
 export const ROUTES = {
   NOTES: "/",
   TASK: "/task",
@@ -73,6 +74,7 @@ export const ROUTES = {
   REACT_FLOW:"/react-flow",
   WEATHER: "/weather",
   WEATHER_SEARCH: "/weather-search",
+  PDF_EDITOR: "/pdf-editor",
 } as const
 const Router = () => {
   return (
@@ -90,6 +92,7 @@ const Router = () => {
       <Route path={ROUTES.REACT_FLOW} element={<ReactFlow />} />
       <Route path={ROUTES.WEATHER} element={<WeatherApp />} />
       <Route path={ROUTES.WEATHER_SEARCH} element={<CityWeather />} />
+      <Route path={ROUTES.PDF_EDITOR} element={<PDFEditor />} />
       <Route path={ROUTES.PDF} element={<ExportPdf />} />
         <Route path={ROUTES.FORMS} element={<FormList />} />
         <Route path={`${ROUTES.FORM_DATA}/:id`} element={<FormSubmissionList />} />

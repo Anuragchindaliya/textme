@@ -16,6 +16,7 @@ import {
   CheckSquare,
   CloudDrizzle,
   Edit,
+  FileEdit,
   FileText,
   Link,
   LogIn,
@@ -26,7 +27,7 @@ import {
   ShoppingCart,
   Terminal,
   TextCursor,
-  TextCursorInput
+  TextCursorInput,
 } from "lucide-react"
 import React, { useMemo } from "react"
 import { NavLink } from "react-router-dom"
@@ -51,13 +52,13 @@ const Sidebar = () => {
         icon: TextCursorInput,
         link: ROUTES.FORMS,
       },
-      
+
       {
         title: "Rich Text Editor",
         icon: Edit,
         link: ROUTES.EDITOR,
       },
-     
+
       {
         title: "Event Calendar",
         icon: CalendarCheck,
@@ -74,7 +75,7 @@ const Sidebar = () => {
         link: ROUTES.TAX_CALCULATOR,
       },
       {
-        title: "Scan Text",
+        title: "Scan Image Text",
         icon: TextCursor,
         link: ROUTES.OCR,
       },
@@ -107,6 +108,13 @@ const Sidebar = () => {
         title: "Weather App",
         icon: CloudDrizzle,
         link: ROUTES.WEATHER,
+      },
+      {
+        title: "PDF Editor",
+        icon: FileEdit,
+        link: ROUTES.PDF_EDITOR,
+        // icon: CloudDrizzle,
+        // link: ROUTES.WEATHER,
       },
       {
         title: "Login",
