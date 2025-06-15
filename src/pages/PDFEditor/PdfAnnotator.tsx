@@ -44,7 +44,6 @@ const PdfAnnotator = () => {
     if (selection && selection.rangeCount > 0) {
       const range = selection.getRangeAt(0);
       const rect = range.getBoundingClientRect();
-      console.log('Selection rect:', rect);
       if (!range.collapsed && textLayerRef.current?.contains(range.startContainer)) {
         setSelectionText(selection.toString());
         setSelectionRect(rect);

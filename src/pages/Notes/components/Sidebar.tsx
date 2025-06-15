@@ -33,6 +33,7 @@ import React, { useMemo } from "react"
 import { NavLink } from "react-router-dom"
 import { ModeToggle } from "./mode-toggle"
 import { AiOutlineAntDesign } from "react-icons/ai"
+import { ScrollArea } from "@/components/ui/scroll-area"
 const Sidebar = () => {
   const [hasCopied, setHasCopied] = React.useState(false)
   const linksArr = useMemo(
@@ -167,7 +168,7 @@ const Sidebar = () => {
               aria-label="Sidenav"
               id="drawer-navigation"
             > */}
-            <div className="overflow-y-auto py-5 px-3 h-full  ">
+            <ScrollArea  className="overflow-y-auto py-2 px-3 h-[84vh] ">
               {/* <form action="#" method="GET" className=" mb-2">
                   <label htmlFor="sidebar-search" className="sr-only">
                     Search
@@ -331,7 +332,7 @@ const Sidebar = () => {
                     </a>
                   </li>
                 </ul> */}
-            </div>
+            </ScrollArea>
             {/* </aside> */}
           </aside>
           <SheetFooter className="mt-auto block">
