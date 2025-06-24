@@ -1,56 +1,64 @@
 // PdfAnnotator.tsx
-import { useEffect, useRef, useState } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
+import { useEffect, useRef, useState } from "react"
+import { Document, Page, pdfjs } from "react-pdf"
+import "react-pdf/dist/esm/Page/AnnotationLayer.css"
+import "react-pdf/dist/esm/Page/TextLayer.css"
+import Sidebar from "../Notes/components/Sidebar"
+import { Input } from "@/components/ui/input"
 // import './styles.css';
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.js', import.meta.url).toString();
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.js",
+  import.meta.url,
+).toString()
 
 interface Annotation {
-  page: number;
-  text: string;
-  rect: DOMRect;
-  comment: string;
+  page: number
+  text: string
+  rect: DOMRect
+  comment: string
 }
 
 const PdfAnnotator = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [numPages, setNumPages] = useState<number>(0);
-  const [pageNumber, setPageNumber] = useState<number>(1);
-  const [annotations, setAnnotations] = useState<Annotation[]>([]);
-  const [selectionText, setSelectionText] = useState<string>('');
-  const [showCommentInput, setShowCommentInput] = useState<boolean>(false);
-  const [selectionRect, setSelectionRect] = useState<DOMRect | null>(null);
-  const [comment, setComment] = useState<string>('');
-  const [history, setHistory] = useState<Annotation[][]>([]);
-  const [redoStack, setRedoStack] = useState<Annotation[][]>([]);
+  const [file, setFile] = useState<File | null>(null)
+  const [numPages, setNumPages] = useState<number>(0)
+  const [pageNumber, setPageNumber] = useState<number>(1)
+  const [annotations, setAnnotations] = useState<Annotation[]>([])
+  const [selectionText, setSelectionText] = useState<string>("")
+  const [showCommentInput, setShowCommentInput] = useState<boolean>(false)
+  const [selectionRect, setSelectionRect] = useState<DOMRect | null>(null)
+  const [comment, setComment] = useState<string>("")
+  const [history, setHistory] = useState<Annotation[][]>([])
+  const [redoStack, setRedoStack] = useState<Annotation[][]>([])
 
-  const textLayerRef = useRef<HTMLDivElement | null>(null);
+  const textLayerRef = useRef<HTMLDivElement | null>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const nextFile = e.target.files?.[0];
-    if (nextFile) setFile(nextFile);
-  };
+    const nextFile = e.target.files?.[0]
+    if (nextFile) setFile(nextFile)
+  }
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-    setNumPages(numPages);
-    setPageNumber(1);
-  };
+    setNumPages(numPages)
+    setPageNumber(1)
+  }
 
   const handleTextSelection = (e: any) => {
-    console.log('Text selected:', e);
-    const selection = window.getSelection();
+    console.log("Text selected:", e)
+    const selection = window.getSelection()
     if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      const rect = range.getBoundingClientRect();
-      if (!range.collapsed && textLayerRef.current?.contains(range.startContainer)) {
-        setSelectionText(selection.toString());
-        setSelectionRect(rect);
-        setShowCommentInput(true);
+      const range = selection.getRangeAt(0)
+      const rect = range.getBoundingClientRect()
+      if (
+        !range.collapsed &&
+        textLayerRef.current?.contains(range.startContainer)
+      ) {
+        setSelectionText(selection.toString())
+        setSelectionRect(rect)
+        setShowCommentInput(true)
       }
     }
-  };
+  }
 
   const addAnnotation = () => {
     if (selectionText && selectionRect && comment) {
@@ -59,49 +67,55 @@ const PdfAnnotator = () => {
         text: selectionText,
         rect: selectionRect,
         comment,
-      };
-      const updated = [...annotations, newAnnotation];
-      setAnnotations(updated);
-      setHistory([...history, annotations]);
-      setRedoStack([]);
+      }
+      const updated = [...annotations, newAnnotation]
+      setAnnotations(updated)
+      setHistory([...history, annotations])
+      setRedoStack([])
     }
-    setSelectionText('');
-    setComment('');
-    setSelectionRect(null);
-    setShowCommentInput(false);
-  };
+    setSelectionText("")
+    setComment("")
+    setSelectionRect(null)
+    setShowCommentInput(false)
+  }
 
   const undo = () => {
     if (history.length > 0) {
-      const prev = history[history.length - 1];
-      setRedoStack([...redoStack, annotations]);
-      setAnnotations(prev);
-      setHistory(history.slice(0, -1));
+      const prev = history[history.length - 1]
+      setRedoStack([...redoStack, annotations])
+      setAnnotations(prev)
+      setHistory(history.slice(0, -1))
     }
-  };
+  }
 
   const redo = () => {
     if (redoStack.length > 0) {
-      const next = redoStack[redoStack.length - 1];
-      setHistory([...history, annotations]);
-      setAnnotations(next);
-      setRedoStack(redoStack.slice(0, -1));
+      const next = redoStack[redoStack.length - 1]
+      setHistory([...history, annotations])
+      setAnnotations(next)
+      setRedoStack(redoStack.slice(0, -1))
     }
-  };
+  }
 
   const goToPrevPage = () => {
-    if (pageNumber > 1) setPageNumber(pageNumber - 1);
-  };
+    if (pageNumber > 1) setPageNumber(pageNumber - 1)
+  }
 
   const goToNextPage = () => {
-    if (pageNumber < numPages) setPageNumber(pageNumber + 1);
-  };
+    if (pageNumber < numPages) setPageNumber(pageNumber + 1)
+  }
 
   return (
-    <div className="p-4 max-w-screen-md mx-auto">
-      <h1 className="text-xl font-semibold mb-4">PDF Annotator</h1>
-
-      <input type="file" onChange={handleFileChange} className="mb-4" />
+    <div className="p-4  mx-auto">
+      <div className="flex items-center ">
+        <div className="">
+          <Sidebar />
+        </div>
+        <div className="flex space-x-2 w-full items-center">
+          <h1 className="text-xl font-semibold mb-4">PDF Annotator</h1>
+          <Input type="file" onChange={handleFileChange} className="mb-4 w-full flex-1" />
+        </div>
+      </div>
 
       {file && (
         <div className="border rounded shadow relative">
@@ -114,8 +128,11 @@ const PdfAnnotator = () => {
               pageNumber={pageNumber}
               width={600}
               onRenderSuccess={() => {
-                const textLayer = document.querySelector('.react-pdf__Page__textContent');
-                if (textLayer) textLayerRef.current = textLayer as HTMLDivElement;
+                const textLayer = document.querySelector(
+                  ".react-pdf__Page__textContent",
+                )
+                if (textLayer)
+                  textLayerRef.current = textLayer as HTMLDivElement
               }}
               onClick={handleTextSelection}
             />
@@ -175,6 +192,7 @@ const PdfAnnotator = () => {
       )}
 
       {/* Controls */}
+      {file && (
       <div className="mt-4 flex justify-between items-center">
         <div className="space-x-2">
           <button
@@ -193,12 +211,16 @@ const PdfAnnotator = () => {
           </button>
         </div>
         <div className="space-x-2">
-          <button onClick={undo} className="px-3 py-1 bg-orange-200 rounded">Undo</button>
-          <button onClick={redo} className="px-3 py-1 bg-orange-300 rounded">Redo</button>
+          <button onClick={undo} className="px-3 py-1 bg-orange-200 rounded">
+            Undo
+          </button>
+          <button onClick={redo} className="px-3 py-1 bg-orange-300 rounded">
+            Redo
+          </button>
         </div>
-      </div>
+      </div>)}
     </div>
-  );
-};
+  )
+}
 
-export default PdfAnnotator;
+export default PdfAnnotator
