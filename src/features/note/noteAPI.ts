@@ -37,11 +37,29 @@ type sheetRes = {
   title: string
   content: string
 }[]
+type ContentType = {
+  id: string
+  title: string
+  content: string
+  tab: string
+}[]
 export const noteContentFormSchema = z.object({
   title: z.string().nonempty(),
   content: z.string().nonempty(),
 })
 export type NoteContentForm = z.infer<typeof noteContentFormSchema>
+
+export const ShareContentFormSchema = z.object({
+  title: z.string().nonempty(),
+  content: z.string().nonempty(),
+  tab: z.string().nonempty(),
+})
+
+export type ShareContentForm = {
+  title: string;
+  content: string;
+  tab: string;
+}
 
 export const notesApi = textmeApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -55,6 +73,13 @@ export const notesApi = textmeApi.injectEndpoints({
       query: (title) => ({
         // url: `${endpoints.NOTES}/${title}`,
         url: `${endpoints.SEARCH}?title=${title}`,
+        method: "GET",
+      }),
+    }),
+    getContentData: builder.query<ContentType, string>({
+      query: (title) => ({
+        // url: `${endpoints.NOTES}/${title}`,
+        url: `${endpoints.SEARCH}?sheet=shareContent&title=${title}`,
         method: "GET",
       }),
     }),
@@ -76,11 +101,21 @@ export const notesApi = textmeApi.injectEndpoints({
         body: { data: { content: body.content } },
       }),
     }),
+    postShareContent: builder.mutation<any, ShareContentForm>({
+      query: (body) => ({
+        // url: endpoints.NOTES,
+        url: `${endpoints.NOTE_TITLE}/${body.title}?sheet=shareContent`,
+        method: "PATCH",
+        body: { data: { content: body.content,tab:body.tab } },
+      }),
+    }),
   }),
 })
 export const {
   // useGetNoteMutation,
   usePostNoteContentMutation,
   useGetNoteDataQuery,
-  useCreateNoteQuery
+  useCreateNoteQuery,
+  useGetContentDataQuery,
+  usePostShareContentMutation,
 } = notesApi

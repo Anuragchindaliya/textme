@@ -43,8 +43,10 @@ import ReactFlow from "./pages/ReactFlow/page"
 import WeatherApp from "./pages/Weather/page"
 import CityWeather from "./pages/Weather/cityWeather"
 import PDFEditor from "./pages/PDFEditor/page"
+import ShareContent from "./pages/ShareContent/page"
 export const ROUTES = {
   NOTES: "/",
+  SHARE_CONTENT: "/share-content",
   TASK: "/task",
   ABOUT: "/about",
   LOGIN: "/login",
@@ -80,6 +82,7 @@ const Router = () => {
   return (
     <Routes>
       <Route path={ROUTES.NOTES} element={<Notes />} />
+      <Route path={ROUTES.SHARE_CONTENT} element={<ShareContent />} />
       <Route path={ROUTES.EDITOR} element={<Editor />} />
       <Route path={ROUTES.QR_CODE} element={<Qrcode />} />
       <Route path={ROUTES.QR_SCAN} element={<QRCodeScanner />} />

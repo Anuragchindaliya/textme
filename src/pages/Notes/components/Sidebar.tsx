@@ -39,6 +39,11 @@ const Sidebar = () => {
   const linksArr = useMemo(
     () => [
       {
+        title: "Share Content",
+        icon: Share2,
+        link: ROUTES.SHARE_CONTENT,
+      },
+      {
         title: "QR Code",
         icon: QrCode,
         link: ROUTES.QR_CODE,
