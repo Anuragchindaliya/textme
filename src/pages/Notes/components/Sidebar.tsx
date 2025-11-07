@@ -116,6 +116,11 @@ const Sidebar = () => {
         link: ROUTES.WEATHER,
       },
       {
+        title: "Ai Playground",
+        icon: AiOutlineAntDesign,
+        link: ROUTES.AI_PLAYGROUND,
+      },
+      {
         title: "PDF Editor",
         icon: FileEdit,
         link: ROUTES.PDF_EDITOR,
