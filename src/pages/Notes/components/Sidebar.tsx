@@ -1,5 +1,6 @@
 import { ROUTES } from "@/Router"
 import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Sheet,
   SheetContent,
@@ -28,12 +29,12 @@ import {
   Terminal,
   TextCursor,
   TextCursorInput,
+  Users2
 } from "lucide-react"
 import React, { useMemo } from "react"
+import { AiOutlineAntDesign } from "react-icons/ai"
 import { NavLink } from "react-router-dom"
 import { ModeToggle } from "./mode-toggle"
-import { AiOutlineAntDesign } from "react-icons/ai"
-import { ScrollArea } from "@/components/ui/scroll-area"
 const Sidebar = () => {
   const [hasCopied, setHasCopied] = React.useState(false)
   const linksArr = useMemo(
@@ -52,6 +53,11 @@ const Sidebar = () => {
         title: "Draw & Sketch",
         icon: LucideMousePointerClick,
         link: ROUTES.DRAW,
+      },
+      {
+        title: "Family Tree",
+        icon: Users2,
+        link: ROUTES.FAMILY_TREE,
       },
       {
         title: "Form Builder",

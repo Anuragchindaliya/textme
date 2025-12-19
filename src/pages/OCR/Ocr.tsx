@@ -168,15 +168,13 @@ export default function OcrApp() {
   }
 
   return (
-    <div className="container mx-auto p-4" 
-      onPaste={handlePaste}
-    >
+    <div className="container mx-auto p-4" onPaste={handlePaste}>
       <div className="flex">
         <div className="flex pr-2">
           <Sidebar />
         </div>
         <div className="flex flex-col w-full">
-          <h2 className="font-bold px-2 pt-2 ">Scan Text</h2>
+          <h2 className="font-bold px-2 pt-2 ">Scan Image Text</h2>
           <div className="flex">
             {/* <input type="file" accept="image/*" onChange={handleImageUpload} /> */}
             <div className="flex items-end space-x-4 mb-4 w-full ">
@@ -193,7 +191,6 @@ export default function OcrApp() {
                         "shadow-sm",
                       )}
                       onClick={() => open()}
-
                     >
                       <div className="flex justify-between w-full items-center gap-4">
                         <motion.p

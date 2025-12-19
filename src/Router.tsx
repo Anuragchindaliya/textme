@@ -45,6 +45,7 @@ import CityWeather from "./pages/Weather/cityWeather"
 import PDFEditor from "./pages/PDFEditor/page"
 import ShareContent from "./pages/ShareContent/page"
 import AiPlayground from "./pages/AiPlayground/page"
+import FamilyTreePage from "./pages/FamilyTree/page"
 export const ROUTES = {
   NOTES: "/",
   SHARE_CONTENT: "/share-content",
@@ -79,12 +80,14 @@ export const ROUTES = {
   WEATHER_SEARCH: "/weather-search",
   PDF_EDITOR: "/pdf-editor",
   AI_PLAYGROUND: "/ai-playground",
+  FAMILY_TREE: "/family-tree",
 } as const
 const Router = () => {
   return (
     <Routes>
       <Route path={ROUTES.NOTES} element={<Notes />} />
       <Route path={ROUTES.AI_PLAYGROUND} element={<AiPlayground />} />
+      <Route path={ROUTES.FAMILY_TREE} element={<FamilyTreePage />} />
       <Route path={ROUTES.SHARE_CONTENT} element={<ShareContent />} />
       <Route path={ROUTES.EDITOR} element={<Editor />} />
       <Route path={ROUTES.QR_CODE} element={<Qrcode />} />
