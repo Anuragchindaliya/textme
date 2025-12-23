@@ -36,7 +36,11 @@ import { toast } from "react-toastify"
 import { themes } from "./utils/themes"
 import { exportToPDF } from "./utils/exportPdf"
 import Sidebar from "@/pages/Notes/components/Sidebar"
-import { useCreateFamilyTreeMutation, useGetFamilyTreeQuery, useUpdateFamilyTreeMutation } from "./familyTreeAPI"
+import {
+  useCreateFamilyTreeMutation,
+  useGetFamilyTreeQuery,
+  useUpdateFamilyTreeMutation,
+} from "./familyTreeAPI"
 import { loadLocal, saveLocal } from "./utils/localStorage"
 import { autoRelation } from "./utils/relationship"
 
@@ -88,7 +92,8 @@ function treeToFlowNodes(tree: FamilyTree): Node<FamilyCardNodeData>[] {
   return tree.nodes.map((n, index) => ({
     id: n.id,
     type: "familyCard",
-    position: { x: index * 50, y: index * 80 }, // starting positions
+    // position: { x: index * 50, y: index * 80 }, // starting positions
+    position: n.position ? n.position : { x: index * 50, y: index * 80 },
     data: {} as any, // will be filled later in map
   }))
 }
@@ -129,9 +134,6 @@ function treeToFlowEdges(tree: FamilyTree): Edge[] {
 
   return edges
 }
-
-
-
 
 // function treeToFlowEdges(tree: FamilyTree): Edge[] {
 //   const edges: Edge[] = [];
@@ -200,7 +202,6 @@ function treeToFlowEdges(tree: FamilyTree): Edge[] {
 //   return edges;
 // }
 
-
 export const FamilyTreeBuilder: React.FC = () => {
   const [treeName, setTreeName] = useState(defaultTreeName)
   const [tree, setTree] = useState<FamilyTree>(() =>
@@ -208,35 +209,53 @@ export const FamilyTreeBuilder: React.FC = () => {
   )
 
   const { data: sheetTree } = useGetFamilyTreeQuery(treeName, {
-  skip: !treeName,
-});
+    skip: !treeName,
+  })
 
-const [createTree] = useCreateFamilyTreeMutation();
-const [updateTreeApi] = useUpdateFamilyTreeMutation();
+  const [createTree] = useCreateFamilyTreeMutation()
+  const [updateTreeApi] = useUpdateFamilyTreeMutation()
 
-async function handleSave() {
-  try {
-    const payload = { name: treeName, tree };
-    const exists = sheetTree !== null;
+  async function handleSave() {
+    try {
+      const payload = { name: treeName, tree }
+      const exists = sheetTree !== null
 
-    if (!exists) {
-      await createTree(payload).unwrap();
-      toast.success("Tree created in SheetDB");
-    } else {
-      await updateTreeApi(payload).unwrap();
-      toast.success("Tree updated in SheetDB");
+      if (!exists) {
+        await createTree(payload).unwrap()
+        toast.success("Tree created in SheetDB")
+      } else {
+        await updateTreeApi(payload).unwrap()
+        toast.success("Tree updated in SheetDB")
+      }
+    } catch (err) {
+      toast.error("Failed to save to SheetDB")
     }
-  } catch (err) {
-    toast.error("Failed to save to SheetDB");
   }
-}
-
-
 
   const flowWrapperRef = useRef<HTMLDivElement | null>(null)
 
   const [nodes, setNodes, onNodesChange] = useNodesState<FamilyCardNodeData>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
+
+
+  const handleNodeDragStop: (
+    event: React.MouseEvent,
+    node: Node,
+    nodes: Node[],
+  ) => void = useCallback((event, node) => {
+    setTree((prev) => {
+      const updatedNodes = prev.nodes.map((n) =>
+        n.id === node.id
+          ? { ...n, position: { x: node.position.x, y: node.position.y } }
+          : n,
+      )
+
+      const updatedTree = { ...prev, nodes: updatedNodes }
+      saveLocal(updatedTree) // persist positions
+
+      return updatedTree
+    })
+  }, [])
 
   const [editState, setEditState] = useState<EditState>({
     nodeId: null,
@@ -258,7 +277,12 @@ async function handleSave() {
         return {
           id: n.id,
           type: "familyCard",
-          position: existing?.position ?? { x: index * 80, y: index * 80 },
+          position: n.position
+            ? n.position // ← saved position from localStorage
+            : existing?.position
+            ? existing.position // ← reactflow last known drag position
+            : { x: index * 80, y: index * 80 },
+          // position: existing?.position ?? { x: index * 80, y: index * 80 },
           data: existing?.data ?? ({} as any),
         }
       })
@@ -281,7 +305,7 @@ async function handleSave() {
             onAddPartner: handleAddPartner,
             onAddChild: handleAddChild,
             onAddParent: handleAddParent,
-            onDelete: handleDelete
+            onDelete: handleDelete,
           },
         }
       }),
@@ -296,7 +320,7 @@ async function handleSave() {
   function updateTree(fn: (prev: FamilyTree) => FamilyTree) {
     setTree((prev) => {
       const updated = fn(prev)
-      saveLocal(updated);
+      saveLocal(updated)
       return {
         ...updated,
         updatedAt: new Date().toISOString(),
@@ -343,6 +367,7 @@ async function handleSave() {
       parentIds: [],
       partnerIds: [],
       childIds: [],
+      position: { x: Math.random() * 300, y: Math.random() * 300 }, // OPTIONAL default
       ...partial,
     }
   }
@@ -398,7 +423,7 @@ async function handleSave() {
         relationLabel: "Child",
         parentIds: [parent.id],
       })
-       newNode.relationLabel = autoRelation(newNode, prev.nodes);
+      newNode.relationLabel = autoRelation(newNode, prev.nodes)
       parent.childIds = [...parent.childIds, newNode.id]
 
       return {
@@ -432,23 +457,23 @@ async function handleSave() {
     })
   }
   function handleDelete(nodeId: string) {
-  updateTree((prev) => {
-    let updatedNodes = prev.nodes.filter((n) => n.id !== nodeId);
+    updateTree((prev) => {
+      let updatedNodes = prev.nodes.filter((n) => n.id !== nodeId)
 
-    updatedNodes = updatedNodes.map((n) => ({
-      ...n,
-      parentIds: n.parentIds.filter((p) => p !== nodeId),
-      childIds: n.childIds.filter((c) => c !== nodeId),
-      partnerIds: n.partnerIds.filter((p) => p !== nodeId),
-    }));
+      updatedNodes = updatedNodes.map((n) => ({
+        ...n,
+        parentIds: n.parentIds.filter((p) => p !== nodeId),
+        childIds: n.childIds.filter((c) => c !== nodeId),
+        partnerIds: n.partnerIds.filter((p) => p !== nodeId),
+      }))
 
-    return {
-      ...prev,
-      nodes: updatedNodes,
-      rootId: prev.rootId === nodeId ? null : prev.rootId,
-    };
-  });
-}
+      return {
+        ...prev,
+        nodes: updatedNodes,
+        rootId: prev.rootId === nodeId ? null : prev.rootId,
+      }
+    })
+  }
 
   // async function handleSave() {
   //   try {
@@ -509,15 +534,15 @@ async function handleSave() {
   }
 
   function handleReset() {
-  const fresh = createInitialTree(treeName);
+    const fresh = createInitialTree(treeName)
 
-  setTree(fresh);       // update react state
-  saveLocal(fresh);     // update localStorage
-  setNodes(treeToFlowNodes(fresh)); // refresh nodes visually
-  setEdges([]);         // clear all edges
+    setTree(fresh) // update react state
+    saveLocal(fresh) // update localStorage
+    setNodes(treeToFlowNodes(fresh)) // refresh nodes visually
+    setEdges([]) // clear all edges
 
-  toast.success("Family tree reset. Fresh card created.");
-}
+    toast.success("Family tree reset. Fresh card created.")
+  }
   // Style tweaks based on theme
   const wrapperThemeClass = useMemo(() => {
     const themeObj = themes.find((t) => t.id === tree.themeId)
@@ -525,13 +550,13 @@ async function handleSave() {
   }, [tree.themeId])
 
   useEffect(() => {
-  const local = loadLocal();
-  if (local) setTree(local);
-}, []);
+    const local = loadLocal()
+    if (local) setTree(local)
+  }, [])
 
-useEffect(() => {
-  if (sheetTree) setTree(sheetTree);
-}, [sheetTree]);
+  useEffect(() => {
+    if (sheetTree) setTree(sheetTree);
+  }, [sheetTree]);
 
   return (
     <div className="flex flex-col h-screen gap-2 p-3">
@@ -572,12 +597,9 @@ useEffect(() => {
         <Button variant="outline" onClick={handleExportPdf}>
           Export PDF
         </Button>
-        <Button
-  variant="destructive"
-  onClick={handleReset}
->
-  Reset Tree
-</Button>
+        <Button variant="destructive" onClick={handleReset}>
+          Reset Tree
+        </Button>
       </div>
 
       {/* Canvas */}
@@ -589,14 +611,15 @@ useEffect(() => {
           fitView
           nodes={enhancedNodes}
           edges={edges}
+          // onNodesChange={onNodesChangeWithPosition}
           onNodesChange={onNodesChange}
+          onNodeDragStop={handleNodeDragStop}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           nodeTypes={nodeTypes}
           panOnScroll
           zoomOnScroll
           panOnDrag
-          
         >
           <Background />
           <Controls />

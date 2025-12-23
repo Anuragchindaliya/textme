@@ -9,6 +9,7 @@ export interface FamilyNode {
   parentIds: NodeId[];
   partnerIds: NodeId[];
   childIds: NodeId[];
+  position?: { x: number; y: number };   
 }
 
 export type ThemeId = "classic" | "minimal" | "cinematic";
