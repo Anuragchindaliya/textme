@@ -1,7 +1,7 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit"
 import rootReducer from "../features"
 import thunkMiddleware from "redux-thunk"
-import { textmeApi } from "./services"
+import { nodeBaseApi, textmeApi } from "./services"
 export const setupStore = (preloadedState = {}) => {
   return configureStore({
     reducer: rootReducer,
@@ -10,6 +10,7 @@ export const setupStore = (preloadedState = {}) => {
       return getDefaultMiddleware().concat(
         thunkMiddleware,
         textmeApi.middleware,
+        nodeBaseApi.middleware,
       )
     },
   })

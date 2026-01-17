@@ -11,19 +11,19 @@ export interface ApiStandardResponse {
 }
 // https://textmen-backend.onrender.com
 // https://sheetdb.io/api/v1/l73k7anfjfai9/search_or?title=anurag
-const allBaseUrls = {
+export const allBaseUrls = {
   local: "http://localhost:5000",
   prod: "https://sheetdb.io/api/v1/l73k7anfjfai9",
-  render:"https://textmen-backend.onrender.com"
+  render: "https://textmen-backend.onrender.com",
+  drizzleApi: "http://localhost:3000/api/v1",
+  // "http://localhost:3000/api/v1"
 }
 // const baseUrl = allBaseUrls.local
 export const baseUrl = allBaseUrls.prod
 export const baseQuery = fetchBaseQuery({
   baseUrl,
-  prepareHeaders: (
-    headers,
-     { endpoint }
-  ) => {
+  // credentials: 'include',
+  prepareHeaders: (headers, { endpoint }) => {
     // const token = (getState() as RootState).auth.token
 
     // // If we have a token set in state, let's assume that we should be passing it.
@@ -31,7 +31,7 @@ export const baseQuery = fetchBaseQuery({
     //   headers.set("Authorization", `Bearer ${token}`)
     // }
     // console.log("endpoint", endpoint)
-    if(endpoint==="getWeatherByCity" || endpoint==="getWeatherByCoords"){
+    if (endpoint === "getWeatherByCity" || endpoint === "getWeatherByCoords") {
       return headers
     }
     headers.set("Access-Control-Allow-Origin", "*")
@@ -39,6 +39,13 @@ export const baseQuery = fetchBaseQuery({
     return headers
   },
   // credentials: "include",
+})
+
+export const nodeBaseQuery = fetchBaseQuery({
+  // baseUrl,
+    baseUrl: allBaseUrls.drizzleApi,
+  credentials: "include",
+  
 })
 
 const baseQueryWithReauth: BaseQueryFn<
@@ -62,7 +69,14 @@ export const textmeApi = createApi({
   baseQuery: baseQueryWithReauth,
   // tagTypes: ["UserProfile"],
   endpoints: () => ({}),
-  tagTypes:["AllEvents","Location","DynamicForm"]
+  tagTypes: ["AllEvents", "Location", "DynamicForm", "User"],
+})
+
+export const nodeBaseApi = createApi({
+  baseQuery: nodeBaseQuery,
+  reducerPath: "nodeBaseApi",
+  endpoints: () => ({}),
+  tagTypes: ["User"],
 })
 const endpointsUrl = {
   EMAIL_VALIDATION: "emailvalidation",
@@ -96,10 +110,10 @@ const endpointsUrl = {
   VERIFY_OTP: "auth/verify-otp",
   CREATE_ACCOUNT: "auth/create-account",
   LOGIN: "auth/login",
-  LOGIN_USER:"search?sheet=users",
-  SEARCH:"search_or",
-  NOTE_TITLE:"title",
-  EDITOR_FILENAME:"filename"
+  LOGIN_USER: "search?sheet=users",
+  SEARCH: "search_or",
+  NOTE_TITLE: "title",
+  EDITOR_FILENAME: "filename",
 } as const
 
 type EndpointsType = typeof endpointsUrl

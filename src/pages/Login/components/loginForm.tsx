@@ -19,7 +19,7 @@ import {
   useGoogleOneTapLogin,
 } from "@react-oauth/google"
 import { ROUTES } from "@/Router"
-import { useLoginMutation } from "@/features/auth/authAPI"
+import { useLoginApiMutation, useLoginMutation } from "@/features/auth/authAPI"
 import PasswordInput from "@/features/auth/components/PasswordInput"
 import { useAppDispatch } from "@/app/hooks"
 import { setEmail } from "@/features/auth/authSlice"
@@ -73,48 +73,44 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const dispatch = useAppDispatch()
 
   const navigate = useNavigate()
-  const [loginManual, { isLoading }] = useLoginMutation()
+  const [loginManual, { isLoading }] = useLoginApiMutation();
   const onSubmit = async (data: UserLoginType) => {
     // setIsLoading(true)
     console.log({ data })
     try {
       const result = await loginManual(data).unwrap();
       console.log({result})
-      if(result.length && result[0]?.email){
-        const userInfo = {email:result[0].email,id:result[0].id}
+
+      if (result?.statusCode === 200) {
+        const userInfo = {email:result.data?.user?.email,id:result.data?.user?.id}
         dispatch(setEmail(userInfo))
         localStorage.setItem("userInfo",JSON.stringify(userInfo))
         navigate(ROUTES.DASHBOARD)
         return
       } else {
-          return toast({
-            title: "Login failed",
-            description: "Please check credentials",
-          })
-        }
-
-      // if (result.statusCode === 200) {
-      //   navigate(ROUTES.DASHBOARD)
-      //   return
-      // } else {
-      //   return toast({
-      //     title: "Login failed",
-      //     description: result.message,
-      //   })
-      // }
+        return toast({
+          title: "Login failed",
+          description: result.message || "Please check credentials",
+        })
+      }
     } catch (error: any) {
       console.log({ error })
-      return toast({
+      toast({
         title: "Login error",
-        description: (
-          <ul>
-            {error.data.message ||
-              error.data.data.map((el: any) => {
-                return <li>{el.message}</li>
-              })}
-          </ul>
-        ),
+        description: error?.data?.error || "An unexpected error occurred.",
       })
+      // return toast({
+      //   title: "Login error",
+      //   description: (
+      //     <ul>
+      //       {error.message 
+      //       // || error.data.map((el: any) => {
+      //       //     return <li>{el.message}</li>
+      //       //   })
+      //         }
+      //     </ul>
+      //   ),
+      // })
     }
 
     // const signInResult = await signIn("email", {
@@ -192,6 +188,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             {isLoading && <Loader className="mr-2 h-4 w-4 animate-spin" />}
             Sign In with Email
           </button>
+
         </div>
       </form>
       <div className="relative">

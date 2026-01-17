@@ -1,7 +1,8 @@
-import { ApiStandardResponse, endpoints, textmeApi } from "@/app/services"
+import { allBaseUrls, ApiStandardResponse, endpoints, nodeBaseApi } from "@/app/services"
+import { UserLoginType } from "@/pages/Login/components/loginForm"
+import { ApiResponse, UserPublic } from "@/types"
 import { z } from "zod"
 import { SetPasswordType } from "./SetPassword"
-import { UserLoginType } from "@/pages/Login/components/loginForm"
 
 export type NoteType = {
   id: number
@@ -37,7 +38,18 @@ export const noteContentFormSchema = z.object({
 })
 export type NoteContentForm = z.infer<typeof noteContentFormSchema>
 type verifyOTPReq = { email: string; otp: string }
-export const notesApi = textmeApi.injectEndpoints({
+
+
+interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+interface UserResponse {
+  user: UserPublic;
+}
+
+export const notesApi = nodeBaseApi.injectEndpoints({
   overrideExisting:true,
   endpoints: (builder) => ({
     sendOTP: builder.mutation<getNoteRes, getNoteReq>({
@@ -72,6 +84,17 @@ export const notesApi = textmeApi.injectEndpoints({
         url: `${endpoints.LOGIN_USER}&email=${body.email}&password=${body.password}`,
       }),
     }),
+
+    loginApi: builder.mutation<ApiResponse<UserResponse>, LoginRequest>({
+      query: (credentials) => ({
+        url: `/auth/login`,
+        method: 'POST',
+        body: credentials,
+      }),
+      // transformResponse: (response: ApiResponse<UserResponse>) => response.data.user,
+      invalidatesTags: ['User'],
+    }),
+
   }),
 })
 export const {
@@ -79,5 +102,6 @@ export const {
   useVerifyOTPMutation,
   useCreateAccountMutation,
   useLoginMutation,
+  useLoginApiMutation
   // useGetNoteDataQuery,
 } = notesApi
