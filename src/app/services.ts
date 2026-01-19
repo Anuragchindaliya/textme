@@ -76,7 +76,7 @@ export const nodeBaseApi = createApi({
   baseQuery: nodeBaseQuery,
   reducerPath: "nodeBaseApi",
   endpoints: () => ({}),
-  tagTypes: ["User"],
+  tagTypes: ["User","ProjectList","Workspace"],
 })
 const endpointsUrl = {
   EMAIL_VALIDATION: "emailvalidation",

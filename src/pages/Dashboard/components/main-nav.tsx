@@ -21,7 +21,7 @@ export function MainNav({
       >
         Overview
       </NavLink>
-      <NavLink
+      {/* <NavLink
         to={ROUTES.PRODUCTS}
         className={({ isActive }) =>
           cn("text-sm font-medium  transition-colors hover:text-primary", {
@@ -30,7 +30,7 @@ export function MainNav({
         }
       >
         Products
-      </NavLink>
+      </NavLink> */}
       <NavLink
         to="/tasks"
         className={({ isActive }) =>

@@ -6,6 +6,7 @@ import authSlice from "./auth/authSlice"
 import dynamicFormSlice from "./dynamicForm/dynamicFormSlice"
 import cartSlice from "./products/cartSlice"
 import taskReducer from "./task/taskSlice"
+import workspacesReducer from "./workspaces/workspacesSlice"
 
 const rootReducer = combineReducers({
   counter: counterSlice,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   products:cartSlice,
   dynamicForm:dynamicFormSlice,
   tasks: taskReducer,
+  workspaces: workspacesReducer,
   // note: noteSlice,
 })
 export default rootReducer
