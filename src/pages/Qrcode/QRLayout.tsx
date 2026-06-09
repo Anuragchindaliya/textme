@@ -4,7 +4,7 @@ import QRSidebar from "./QRSidebar"
 export default function QRLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
-      <QRSidebar />
+      {/* <QRSidebar /> */}
       <main className="w-full h-full">{children}</main>
     </SidebarProvider>
   )

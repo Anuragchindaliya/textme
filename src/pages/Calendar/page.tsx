@@ -263,7 +263,7 @@ const MyCalendar = () => {
         </DialogContent>
       </Dialog>
 
-      <div className="app-h-screen flex-col flex">
+      <div className="h-[88vh] flex-col flex">
         <div className="container  flex flex-col items-start justify-between space-y-2 py-2 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
           <div className="  flex flex-1 space-x-2 sm:justify-end w-full">
             <Sidebar />

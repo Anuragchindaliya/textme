@@ -37,3 +37,4 @@ export default authSlice.reducer
 export const { setEmail, removeAuth } = authSlice.actions
 
 export const selectCurrentEmail = (state: RootState) => state.auth.email
+export const selectCurrentId = (state: RootState) => state.auth.id

@@ -1,24 +1,9 @@
 import { useEffect, useState } from "react"
-import { History, RefreshCcw, SendIcon, Terminal } from "lucide-react"
+import { History, RefreshCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card"
 import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
 
 import "./styles.css"
 import {
@@ -26,22 +11,17 @@ import {
   noteContentFormSchema,
   useCreateNoteQuery,
   useGetNoteDataQuery,
-  // useGetNoteMutation,
   usePostNoteContentMutation,
 } from "@/features/note/noteAPI"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ModeToggle } from "./components/mode-toggle"
 import NoteTitleInput from "./components/NoteTitleInput"
-import { formatDistance } from "date-fns"
 import { cn } from "@/lib/utils"
 import { useSearchParams } from "react-router-dom"
-import Sidebar from "./components/Sidebar"
 import { useToast } from "@/components/ui/use-toast"
+import ToolLayout from "@/components/ToolLayout"
 
 export default function Notes() {
-  // const [noteContent, setNoteContent] = useState("")
-  // const noteData = useGetNoteMutation({ fixedCacheKey: "get-note-data" })
   const [searchParams] = useSearchParams()
 
   const noteTitle = searchParams.get("t")
@@ -87,21 +67,7 @@ export default function Notes() {
       })
     }
   }, [isSuccess])
-  // const onNoteResult = ({
-  //   content,
-  //   title,
-  // }: {
-  //   content: string
-  //   title: string
-  // }) => {
-  //   console.log({ content })
-  //   // setNoteContent(content)
-  //   setValue("content", content)
-  //   setValue("title", title)
-  // }
-  // const onNoteContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-  //   setNoteContent(e.target.value)
-  // }
+
   useEffect(() => {
     const att = "data-section"
     document.body.setAttribute(att, "playground")
@@ -110,228 +76,120 @@ export default function Notes() {
       document.body.setAttribute(att, "")
     }
   }, [])
-  return (
-    <div className="">
-      <div className="app-h-screen flex-col flex">
-        <div className="container  flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-24">
-          {/* <h2 className="text-lg font-semibold">Playground</h2> */}
-          {/* <PresetSelector presets={presets}  /> */}
 
-          <div className="py-1 pt-3 flex flex-1 space-x-2 sm:justify-end w-full">
-            <Sidebar />
-            {/* <form
-              className="flex w-full space-x-2 "
-              onSubmit={handleSubmit(onNoteContentSubmit)}
-            >
-              <div className="w-full relative">
-                <Input
-                  // name="note"
-                  type="search"
-                  placeholder="Search..."
-                  className=" w-full"
-                  {...register("note")}
-                />
-                {errors?.note && (
-                  <p className="absolute -bottom-5 px-1 text-xs text-red-600">
-                    {errors?.note.message}
+  return (
+    <ToolLayout
+      title="Notes Playground"
+      description="Write summaries, save code snippets, and store persistent workspace notes."
+      actions={
+        <div className="flex items-center gap-2">
+          <NoteTitleInput />
+        </div>
+      }
+    >
+      <Tabs defaultValue="complete" className="flex-1 w-full">
+        <TabsList className="grid w-full grid-cols-3 max-w-[400px] mb-6">
+          <TabsTrigger value="complete">Complete</TabsTrigger>
+          <TabsTrigger value="insert">Insert Mode</TabsTrigger>
+          <TabsTrigger value="edit">Edit Mode</TabsTrigger>
+        </TabsList>
+        
+        <form
+          className="space-y-6"
+          onSubmit={handleSubmit(onNoteContentSubmit)}
+        >
+          <TabsContent
+            value="complete"
+            className="mt-0 border-0 p-0 h-full"
+          >
+            <div className="flex flex-col space-y-4 min-h-[300px]">
+              <Textarea
+                placeholder="Write description to save..."
+                className="flex-1 p-4 min-h-[320px] font-mono text-sm leading-relaxed"
+                {...register("content")}
+              />
+              <div className="flex items-center space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+                <Button
+                  type="submit"
+                  disabled={!noteTitle || !dirtyFields.content}
+                >
+                  Update Note
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={!noteTitle}
+                  onClick={() => {
+                    resetField("content", {
+                      defaultValue: noteContent,
+                    })
+                    refetch()
+                  }}
+                >
+                  <span className="sr-only">Refresh</span>
+                  <RefreshCcw
+                    className={cn("h-4 w-4", {
+                      "animate-spin": isLoadingUpdate,
+                    })}
+                  />
+                </Button>
+                {errors?.content && (
+                  <p className="px-1 text-sm text-red-600">
+                    {errors?.content.message}
                   </p>
                 )}
               </div>
-              <Button type="submit" variant="secondary" title="Submit">
-                <SendIcon className="block sm:hidden" />
-                <span className="hidden sm:block">Submit</span>
-              </Button>
-            </form> */}
-            <NoteTitleInput />
-            {/* <PresetSave /> */}
-            {/* <div className="hidden space-x-2 md:flex">
-              <CodeViewer />
-              <PresetShare />
             </div>
-            <PresetActions /> */}
-          </div>
-        </div>
-        <Separator />
-        <Tabs defaultValue="complete" className="flex-1">
-          <div className="container h-full py-6">
-            <div
-              className="grid h-full items-stretch gap-6 "
-              // md:grid-cols-[1fr_200px]"
-            >
-              {/* <div className="hidden flex-col space-y-4 sm:flex md:order-2">
-                <div className="grid gap-2">
-                  <HoverCard openDelay={200}>
-                    <HoverCardTrigger asChild>
-                      <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        Mode
-                      </span>
-                    </HoverCardTrigger>
-                    <HoverCardContent className="w-[320px] text-sm" side="left">
-                      Choose the interface that best suits your task. You can
-                      provide: a simple prompt to complete, starting and ending
-                      text to insert a completion within, or some text with
-                      instructions to edit it.
-                    </HoverCardContent>
-                  </HoverCard>
-                  <TabsList className="grid grid-cols-3">
-                    <TabsTrigger value="complete">
-                      <span className="sr-only">Complete</span>
-                      <Icons.completeMode className="h-5 w-5" />
-                    </TabsTrigger>
-                    <TabsTrigger value="insert">
-                      <span className="sr-only">Insert</span>
-                      <Icons.insertMode className="h-5 w-5" />
-                    </TabsTrigger>
-                    <TabsTrigger value="edit">
-                      <span className="sr-only">Edit</span>
-                      <Icons.editMode className="h-5 w-5" />
-                    </TabsTrigger>
-                  </TabsList>
+          </TabsContent>
+          
+          <TabsContent value="insert" className="mt-0 border-0 p-0">
+            <div className="flex flex-col space-y-4">
+              <div className="grid h-full grid-rows-2 gap-6 lg:grid-cols-2 lg:grid-rows-1">
+                <Textarea
+                  placeholder="We're writing to [insert]. Congrats from OpenAI!"
+                  className="h-full min-h-[300px]"
+                />
+                <div className="rounded-md border bg-slate-50 dark:bg-slate-900/60 p-4 text-xs text-slate-400 font-mono">
+                  Preview workspace
                 </div>
-                <ModelSelector types={types} models={models} />
-                <TemperatureSelector defaultValue={[0.56]} />
-                <MaxLengthSelector defaultValue={[256]} />
-                <TopPSelector defaultValue={[0.9]} />
-              </div> */}
-              <form
-                className="md:order-1"
-                onSubmit={handleSubmit(onNoteContentSubmit)}
-              >
-                <TabsContent
-                  value="complete"
-                  className="mt-0 border-0 p-0 h-full"
-                >
-                  <div className="flex h-full flex-col space-y-4">
-                    <Textarea
-                      placeholder="Write deescription to save"
-                      className=" flex-1 p-4 "
-                      // value={noteContent}
-                      // onChange={onNoteContentChange}
-                      {...register("content")}
-                    />
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        type="submit"
-                        disabled={!noteTitle || !dirtyFields.content}
-                      >
-                        Update
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={!noteTitle}
-                        onClick={() => {
-                          resetField("content", {
-                            defaultValue: noteContent,
-                          })
-                          refetch()
-                        }}
-                      >
-                        <span className="sr-only">Refresh</span>
-                        <RefreshCcw
-                          className={cn("h-4 w-4", {
-                            "animate-spin": isLoadingUpdate,
-                            // || noteData[1].isLoading,
-                          })}
-                        />
-                      </Button>
-                      {errors?.content && (
-                        <p className=" px-1 text-red-600">
-                          {errors?.content.message}
-                        </p>
-                      )}
-                      {/* <Button
-                        type="button"
-                        variant="secondary"
-                        disabled={!noteTitle}
-                        className="!ml-auto"
-                      >
-                        <span className="sr-only">Show history</span>
-                        <History
-                          className={cn("h-4 w-4", {
-                            "animate-spin":
-                              isLoadingUpdate || noteData[1].isLoading,
-                          })}
-                        />
-                      </Button> */}
-
-                      {/* <p>
-                        {noteData[1].data?.data.created_at &&
-                          formatDistance(
-                            new Date(noteData[1].data?.data.created_at),
-                            new Date(),
-                            {
-                              addSuffix: true,
-                            },
-                          )}
-                      </p> */}
-                      {/* <div className="!ml-auto ">
-                        {noteData[1].data?.data.updated_at &&
-                          formatDistance(
-                            new Date(noteData[1].data?.data.updated_at),
-                            new Date(),
-                            {
-                              addSuffix: true,
-                            },
-                          )}
-                      </div> */}
-                    </div>
-                  </div>
-                </TabsContent>
-                <TabsContent value="insert" className="mt-0 border-0 p-0">
-                  <div className="flex flex-col space-y-4">
-                    <div className="grid h-full grid-rows-2 gap-6 lg:grid-cols-2 lg:grid-rows-1">
-                      <Textarea
-                        placeholder="We're writing to [inset]. Congrats from OpenAI!"
-                        className="h-full min-h-[300px] lg:min-h-[700px] xl:min-h-[700px]"
-                      />
-                      <div className="rounded-md border bg-muted"></div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Button>Submit</Button>
-                      <Button variant="secondary">
-                        <span className="sr-only">Show history</span>
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </TabsContent>
-                <TabsContent value="edit" className="mt-0 border-0 p-0">
-                  <div className="flex flex-col space-y-4">
-                    <div className="grid h-full gap-6 lg:grid-cols-2">
-                      <div className="flex flex-col space-y-4">
-                        <div className="flex flex-1 flex-col space-y-2">
-                          <Label htmlFor="input">Input</Label>
-                          <Textarea
-                            id="input"
-                            placeholder="We is going to the market."
-                            className="flex-1 lg:min-h-[580px]"
-                          />
-                        </div>
-                        <div className="flex flex-col space-y-2">
-                          <Label htmlFor="instructions">Instructions</Label>
-                          <Textarea
-                            id="instructions"
-                            placeholder="Fix the grammar."
-                          />
-                        </div>
-                      </div>
-                      <div className="mt-[21px] min-h-[400px] rounded-md border bg-muted lg:min-h-[700px]" />
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Button>Submit</Button>
-                      <Button variant="secondary">
-                        <span className="sr-only">Show history</span>
-                        <History className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </TabsContent>
-              </form>
+              </div>
+              <div className="flex items-center space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+                <Button type="button">Submit</Button>
+              </div>
             </div>
-          </div>
-        </Tabs>
-      </div>
-    </div>
+          </TabsContent>
+          
+          <TabsContent value="edit" className="mt-0 border-0 p-0">
+            <div className="flex flex-col space-y-4">
+              <div className="grid h-full gap-6 lg:grid-cols-2">
+                <div className="flex flex-col space-y-4">
+                  <div className="flex flex-1 flex-col space-y-2">
+                    <Label htmlFor="input">Input Text</Label>
+                    <Textarea
+                      id="input"
+                      placeholder="We is going to the market."
+                      className="flex-1 min-h-[150px]"
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="instructions">Instructions</Label>
+                    <Textarea
+                      id="instructions"
+                      placeholder="Fix the grammar."
+                    />
+                  </div>
+                </div>
+                <div className="min-h-[200px] rounded-md border bg-slate-50 dark:bg-slate-900/60 p-4 text-xs text-slate-400 font-mono">
+                  Diff adjustments
+                </div>
+              </div>
+              <div className="flex items-center space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+                <Button type="button">Submit Changes</Button>
+              </div>
+            </div>
+          </TabsContent>
+        </form>
+      </Tabs>
+    </ToolLayout>
   )
 }

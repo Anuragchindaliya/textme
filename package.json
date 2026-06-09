@@ -111,6 +111,7 @@
     "remark-gfm": "^4.0.1",
     "sass": "^1.89.2",
     "sass-loader": "^16.0.5",
+    "socket.io-client": "^4.8.3",
     "svg2pdf.js": "^2.5.0",
     "tailwind-merge": "^1.13.1",
     "tailwindcss-animate": "^1.0.6",

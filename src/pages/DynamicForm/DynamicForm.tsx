@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/resizable"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useAddFormJsonMutation } from "@/features/dynamicForm/dynamicFormAPI"
-import { Eye, Grid, Loader, Plus } from "lucide-react"
+import { CheckCheck, CheckCircle, Eye, Grid, Loader, Plus } from "lucide-react"
 import { AiOutlineClear } from "react-icons/ai"
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
 import { toast } from "react-toastify"
@@ -30,7 +30,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import SuccessIcon from "@/components/ui/successIcon"
-import SuccessAnimation from "@/components/ui/successAnimation"
+// import SuccessAnimation from "@/components/ui/successAnimation"
 import { ROUTES } from "@/Router"
 import {
   Tooltip,
@@ -199,7 +199,7 @@ export const FormBuilderPage: React.FC = () => {
           {isSuccess ? (
             <div className="text-center m-auto">
               <div className="w-40 m-auto">
-                <SuccessAnimation />
+                <CheckCircle className="text-green-500 w-40 h-40 m-auto" />
               </div>
               <h2>🎉 Form Created Successfully!</h2>
               <p>Your form is now live. Click the link below to preview it:</p>
@@ -241,7 +241,7 @@ export const FormBuilderPage: React.FC = () => {
                     <Loader className="animate-spin" />
                   ) : (
                     <span className="flex items-center">
-                      <Plus className="mr-1" style={{ width: 14 }} /> Add Form
+                      <Plus className="mr-1" style={{ width: 14 }} /> Save Form
                     </span>
                   )}
                 </Button>

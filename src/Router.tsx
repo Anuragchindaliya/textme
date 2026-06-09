@@ -46,8 +46,11 @@ import PDFEditor from "./pages/PDFEditor/page"
 import ShareContent from "./pages/ShareContent/page"
 import AiPlayground from "./pages/AiPlayground/page"
 import FamilyTreePage from "./pages/FamilyTree/page"
+import AppShell from "./components/AppShell"
+import LandingPage from "./pages/Landing/LandingPage"
+
 export const ROUTES = {
-  NOTES: "/",
+  NOTES: "/notes",
   SHARE_CONTENT: "/share-content",
   TASK: "/task",
   ABOUT: "/about",
@@ -82,46 +85,54 @@ export const ROUTES = {
   AI_PLAYGROUND: "/ai-playground",
   FAMILY_TREE: "/family-tree",
 } as const
+
 const Router = () => {
   return (
     <Routes>
-      <Route path={ROUTES.NOTES} element={<Notes />} />
-      <Route path={ROUTES.AI_PLAYGROUND} element={<AiPlayground />} />
-      <Route path={ROUTES.FAMILY_TREE} element={<FamilyTreePage />} />
-      <Route path={ROUTES.SHARE_CONTENT} element={<ShareContent />} />
-      <Route path={ROUTES.EDITOR} element={<Editor />} />
-      <Route path={ROUTES.QR_CODE} element={<Qrcode />} />
-      <Route path={ROUTES.QR_SCAN} element={<QRCodeScanner />} />
-      <Route path={ROUTES.QR_UPLOAD} element={<QRCodeUploader />} />
-      <Route path={ROUTES.QRL_DYNAMIC} element={<QRLCodeScanner />} />
-      <Route path={ROUTES.QRL_DYNAMIC + "/add"} element={<AddRedirectUrl />} />
-      <Route path={ROUTES.DRAW} element={<Draw />} />
-      <Route path={ROUTES.LOCATION} element={<Location />} />
-      <Route path={ROUTES.CALENDAR} element={<MyCalendar />} />
-      <Route path={ROUTES.REACT_FLOW} element={<ReactFlow />} />
-      <Route path={ROUTES.WEATHER} element={<WeatherApp />} />
-      <Route path={ROUTES.WEATHER_SEARCH} element={<CityWeather />} />
-      <Route path={ROUTES.PDF_EDITOR} element={<PDFEditor />} />
-      <Route path={ROUTES.PDF} element={<ExportPdf />} />
+      {/* Unified SaaS Application Shell for all Utility Tools */}
+      <Route element={<AppShell />}>
+        <Route path="/" element={<LandingPage />} />
+        <Route path={ROUTES.NOTES} element={<Notes />} />
+        <Route path={ROUTES.TASK} element={<Home />} />
+        <Route path={ROUTES.AI_PLAYGROUND} element={<AiPlayground />} />
+        <Route path={ROUTES.FAMILY_TREE} element={<FamilyTreePage />} />
+        <Route path={ROUTES.SHARE_CONTENT} element={<ShareContent />} />
+        <Route path={ROUTES.EDITOR} element={<Editor />} />
+        <Route path={ROUTES.QR_CODE} element={<Qrcode />} />
+        <Route path={ROUTES.QR_SCAN} element={<QRCodeScanner />} />
+        <Route path={ROUTES.QR_UPLOAD} element={<QRCodeUploader />} />
+        <Route path={ROUTES.QRL_DYNAMIC} element={<QRLCodeScanner />} />
+        <Route path={ROUTES.QRL_DYNAMIC + "/add"} element={<AddRedirectUrl />} />
+        <Route path={ROUTES.DRAW} element={<Draw />} />
+        <Route path={ROUTES.LOCATION} element={<Location />} />
+        <Route path={ROUTES.CALENDAR} element={<MyCalendar />} />
+        <Route path={ROUTES.REACT_FLOW} element={<ReactFlow />} />
+        <Route path={ROUTES.WEATHER} element={<WeatherApp />} />
+        <Route path={ROUTES.WEATHER_SEARCH} element={<CityWeather />} />
+        <Route path={ROUTES.PDF_EDITOR} element={<PDFEditor />} />
+        <Route path={ROUTES.PDF} element={<ExportPdf />} />
         <Route path={ROUTES.FORMS} element={<FormList />} />
         <Route path={`${ROUTES.FORM_DATA}/:id`} element={<FormSubmissionList />} />
-      <Route element={<FormLayout />}>
-        <Route path={ROUTES.CREATE_FORMS} element={<FormBuilderPage />} />
-        <Route path="/form/:id" element={<PreviewForm />} />
+        
+        <Route element={<FormLayout />}>
+          <Route path={ROUTES.CREATE_FORMS} element={<FormBuilderPage />} />
+          <Route path="/form/:id" element={<PreviewForm />} />
+        </Route>
+
+        <Route path={ROUTES.TAX_CALCULATOR} element={<TaxPlan />} />
+        <Route path={ROUTES.OCR} element={<OcrApp />} />
+        <Route path={ROUTES.GOV_LINK} element={<GovLink />} />
+        <Route path={ROUTES.PRODUCTS} element={<Products />} />
+        <Route path={ROUTES.CART} element={<Cart />} />
       </Route>
 
-      {/* <Route path={"/sidebar"} element={<Sidebar />} /> */}
-      <Route path={ROUTES.TAX_CALCULATOR} element={<TaxPlan />} />
-      <Route path={ROUTES.OCR} element={<OcrApp />} />
-      <Route path={ROUTES.GOV_LINK} element={<GovLink />} />
-      <Route path={ROUTES.PRODUCTS} element={<Products />} />
-      <Route path={ROUTES.CART} element={<Cart />} />
       <Route element={<PublicLayout />}>
-        <Route path={ROUTES.TASK} element={<Home />} />
         <Route path={ROUTES.ABOUT} element={<About />} />
         <Route path={ROUTES.LOGIN} element={<LoginPage />} />
         <Route path={"/register"} element={<AuthenticationPage />} />
       </Route>
+
+
       <Route element={<DashboardLayout />}>
         <Route path={"/dashboard"} element={<DashboardPage />} />
         <Route path={"/tasks"} element={<TaskPage />} />

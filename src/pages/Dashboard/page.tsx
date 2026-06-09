@@ -1,10 +1,15 @@
-import { ActivityFeed } from "./components/ActivityFeed"
 import { DashboardHeader } from "./components/DashboardHeader"
 import { MetricsCards } from "./components/MetricsCards"
 import { MyPriorities } from "./components/MyPriorities"
 import { ProjectHealth } from "./components/ProjectHealth"
+import { ActivityFeed } from "./components/ActivityFeed"
+import { useSocket } from "@/hooks/useSocket"
 
 export default function DashboardPage() {
+  // Initialize Socket.io connection for real-time updates
+  // Assuming '1' is the current user ID for now
+  useSocket('1')
+
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
       <DashboardHeader />

@@ -703,8 +703,8 @@ const Qrcode = () => {
 
   return (
     <QRLayout>
-      <div className="">
-        <div className="app-h-screen flex-col flex">
+      <div className="flex-col flex">
+        <div className="h-[85svh] flex-col flex">
           <Menu
             onGrid={{
               checked: showGrid,
