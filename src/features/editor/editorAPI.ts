@@ -45,7 +45,7 @@ export const notesApi = textmeApi.injectEndpoints({
     }),
     createEditorFile: builder.query({
       query: (filename) => ({
-        url: `https://sheetdb.io/api/v1/l73k7anfjfai9?sheet=editor`,
+        url: "?sheet=editor",
         method: "POST",
         body:{
           id:"INCREMENT",

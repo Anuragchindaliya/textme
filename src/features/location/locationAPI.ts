@@ -1,8 +1,7 @@
 // src/features/sheetDbApi.ts
 import { textmeApi } from "@/app/services"
 
-const SHEETDB_BASE_URL =
-  "https://sheetdb.io/api/v1/l73k7anfjfai9?sheet=locations" // Replace with your SheetDB ID
+const SHEETDB_BASE_URL = "?sheet=locations"
 
 export interface Location {
   id?: string // SheetDB auto-generates an ID if not provided

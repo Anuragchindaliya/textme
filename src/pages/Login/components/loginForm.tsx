@@ -23,6 +23,7 @@ import { useLoginApiMutation, useLoginMutation } from "@/features/auth/authAPI"
 import PasswordInput from "@/features/auth/components/PasswordInput"
 import { useAppDispatch } from "@/app/hooks"
 import { setEmail } from "@/features/auth/authSlice"
+import { theme } from "@/lib/theme"
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>
 
@@ -142,108 +143,94 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   // }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className={cn("grid gap-4", className)} {...props}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid gap-2">
+        <div className="grid gap-3">
           <div className="grid gap-1">
-            <Label className="sr-only" htmlFor="email">
-              Email
+            <Label className={theme.classes.label} htmlFor="email">
+              Email Address
             </Label>
             <Input
               id="email"
-              placeholder="Email"
+              placeholder="name@example.com"
               type="email"
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
+              className={theme.classes.input}
               disabled={isLoading || isGitHubLoading}
               {...register("email")}
             />
             {errors?.email && (
-              <p className="px-1 text-xs text-red-600">
+              <p className="px-1 text-xs text-red-500 font-medium mt-1">
                 {errors.email.message}
               </p>
             )}
           </div>
           <div className="grid gap-1">
-            <Label className="sr-only" htmlFor="Password">
+            <Label className={theme.classes.label} htmlFor="Password">
               Password
             </Label>
             <PasswordInput
               id="Password"
-              placeholder="Password"
+              placeholder="••••••••"
               autoCapitalize="none"
               autoComplete="password"
               autoCorrect="off"
+              className={theme.classes.input}
               disabled={isLoading || isGitHubLoading}
               {...register("password")}
             />
             {errors?.password && (
-              <p className="px-1 text-xs text-red-600">
+              <p className="px-1 text-xs text-red-500 font-medium mt-1">
                 {errors.password.message}
               </p>
             )}
           </div>
-          <button className={cn(buttonVariants())} disabled={isLoading}>
+          <button className={cn(theme.classes.buttonPrimary, "w-full mt-2 py-2.5")} disabled={isLoading}>
             {isLoading && <Loader className="mr-2 h-4 w-4 animate-spin" />}
             Sign In with Email
           </button>
-
         </div>
       </form>
-      <div className="relative">
+      <div className="relative my-2">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
+          <span className="w-full border-t border-slate-200 dark:border-slate-800" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
+          <span className="bg-white dark:bg-slate-900 px-3 text-slate-400 dark:text-slate-500 font-medium">
             Or continue with
           </span>
         </div>
       </div>
-      <button
-        type="button"
-        className={cn(buttonVariants({ variant: "outline" }))}
-        onClick={() => {
-          setIsGitHubLoading(true)
-          // signIn("github")
-        }}
-        disabled={isLoading || isGitHubLoading}
-      >
-        {isGitHubLoading ? (
-          <Loader className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <GithubIcon className="mr-2 h-4 w-4" />
-        )}{" "}
-        Github
-      </button>
-      <button
-        type="button"
-        className={cn(buttonVariants({ variant: "outline" }))}
-        onClick={() => {
-          // setIsGitHubLoading(true)
-          login()
-          // signIn("github")
-        }}
-        disabled={isLoading || isGitHubLoading}
-      >
-        {isGitHubLoading ? (
-          <Loader className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <FcGoogle className="mr-2 h-4 w-4" />
-        )}{" "}
-        Google
-      </button>
-      {/* <GoogleLogin
-        onSuccess={(credentialResponse) => {
-          console.log(credentialResponse)
-          navigate(ROUTES.DASHBOARD);
-        }}
-        onError={() => {
-          console.log("Login Failed")
-        }}
-        useOneTap
-      /> */}
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          type="button"
+          className={cn(theme.classes.buttonOutline, "w-full gap-2 py-2.5")}
+          onClick={() => {
+            setIsGitHubLoading(true)
+          }}
+          disabled={isLoading || isGitHubLoading}
+        >
+          {isGitHubLoading ? (
+            <Loader className="h-4 w-4 animate-spin" />
+          ) : (
+            <GithubIcon className="h-4 w-4 text-slate-800 dark:text-slate-200" />
+          )}{" "}
+          Github
+        </button>
+        <button
+          type="button"
+          className={cn(theme.classes.buttonOutline, "w-full gap-2 py-2.5")}
+          onClick={() => {
+            login()
+          }}
+          disabled={isLoading || isGitHubLoading}
+        >
+          <FcGoogle className="h-4 w-4" />{" "}
+          Google
+        </button>
+      </div>
     </div>
   )
 }

@@ -85,7 +85,7 @@ export const notesApi = textmeApi.injectEndpoints({
     }),
     createNote: builder.query({
       query: (title) => ({
-        url: `https://sheetdb.io/api/v1/l73k7anfjfai9`,
+        url: "",
         method: "POST",
         body:{
           id:"INCREMENT",
@@ -93,6 +93,7 @@ export const notesApi = textmeApi.injectEndpoints({
         }
       }),
     }),
+
     postNoteContent: builder.mutation<any, NoteContentForm>({
       query: (body) => ({
         // url: endpoints.NOTES,

@@ -113,7 +113,7 @@ const PdfAnnotator = () => {
         </div>
         <div className="flex space-x-2 w-full items-center">
           <h1 className="text-xl font-semibold mb-4">PDF Annotator</h1>
-          <Input type="file" onChange={handleFileChange} className="mb-4 w-full flex-1" />
+          <Input type="file" accept=".pdf" onChange={handleFileChange} className="mb-4 w-full flex-1" />
         </div>
       </div>
 

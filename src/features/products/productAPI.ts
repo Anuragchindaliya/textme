@@ -33,10 +33,11 @@ export const govApi = textmeApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllProduct: builder.query<Product[], void>({
       query: () => ({
-        url: `https://sheetdb.io/api/v1/l73k7anfjfai9?sheet=products`,
+        url: "?sheet=products",
         method: "GET",
       }),
     }),
+
   }),
 })
 export const { useGetAllProductQuery } = govApi

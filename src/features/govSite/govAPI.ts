@@ -10,10 +10,11 @@ export const govApi = textmeApi.injectEndpoints({
   endpoints: (builder) => ({
     getGovLinks: builder.query<GovLinksRes[], void>({
       query: () => ({
-        url: `https://sheetdb.io/api/v1/l73k7anfjfai9?sheet=gov`,
+        url: "?sheet=gov",
         method: "GET",
       }),
     }),
+
   }),
 })
 export const {

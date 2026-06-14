@@ -1,12 +1,10 @@
 import React, { useState } from "react"
 import { useGetFormJsonListQuery } from "@/features/dynamicForm/dynamicFormAPI"
-import Sidebar from "../Notes/components/Sidebar"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Link, useNavigate } from "react-router-dom"
 import Skeleton from "react-loading-skeleton"
 import "react-loading-skeleton/dist/skeleton.css"
-import "./formList.css"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ROUTES } from "@/Router"
@@ -14,16 +12,17 @@ import { Database, Plus } from "lucide-react"
 import { FcDocument } from "react-icons/fc"
 import { startTourActive } from "@/features/dynamicForm/dynamicFormSlice"
 import { useAppDispatch } from "@/app/hooks"
+import ToolLayout from "@/components/ToolLayout"
+import { theme } from "@/lib/theme"
+import { cn } from "@/lib/utils"
 
 const FormList = () => {
-  // State for filters
   const [searchTerm, setSearchTerm] = useState("")
   const [sortOrder, setSortOrder] = useState("newest")
   const { data, isLoading } = useGetFormJsonListQuery()
-  console.log({ data }, "formList")
   const navigate = useNavigate()
-    const dispatch = useAppDispatch()
-  // Filter & sort logic
+  const dispatch = useAppDispatch()
+
   const filteredForms = (data || [])
     .filter((form) =>
       form.formname.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -36,115 +35,118 @@ const FormList = () => {
       date_modified_at: new Date(+item?.modified_at),
     }))
     .sort((a, b) => {
-      const dateA = a.date_created_at.getTime() // Convert to timestamp
+      const dateA = a.date_created_at.getTime()
       const dateB = b.date_created_at.getTime()
       return sortOrder === "newest" ? dateB - dateA : dateA - dateB
     })
+
   return (
-    <div className=" md:px-8">
-      <div className="flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-24">
-        <div className="py-1 pt-3 flex flex-1 space-x-2 w-full">
-          <Sidebar />
-          {/* <DrawInput /> */}
-          <div className=" w-full flex flex-col items-start space-y-4 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-24">
+    <ToolLayout
+      title="📋 Custom Form Builder"
+      description="Create, customize, and analyze interactive online forms and submission databases."
+      actions={
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            variant="outline"
+            className={theme.classes.buttonSecondary}
+            onClick={() => dispatch(startTourActive())}
+          >
+            Start onboarding tour
+          </Button>
+          <Link to={ROUTES.CREATE_FORMS} className="create-form-button">
+            <Button className={theme.classes.buttonPrimary}>
+              <Plus className="size-4 mr-1.5" />
+              Create Form
+            </Button>
+          </Link>
+        </div>
+      }
+    >
+      <div className="space-y-6">
+        {/* Search & Filter Bar */}
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+          <div className="relative w-full sm:max-w-md">
             <Input
               type="text"
-              placeholder="🔍 Search forms..."
+              placeholder="Search forms..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="form-search-input flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/3"
+              className={cn(theme.classes.input, "pl-9 form-search-input")}
             />
-            <select
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
-              className="form-sort-button p-2 border border-gray-300 rounded-lg ml-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="newest">📅 Newest First</option>
-              <option value="oldest">📜 Oldest First</option>
-            </select>
-            <Link to={ROUTES.CREATE_FORMS} className="create-form-button ml-4">
-              <Button>
-                <Plus className="size-4 mr-1" />
-                Create Form
-              </Button>
-            </Link>
+            <span className="absolute left-3 top-2 text-slate-400 dark:text-slate-500">
+              🔍
+            </span>
           </div>
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className={cn(theme.classes.input, "sm:w-48 bg-transparent cursor-pointer form-sort-button")}
+          >
+            <option value="newest" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">📅 Newest First</option>
+            <option value="oldest" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">📜 Oldest First</option>
+          </select>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="flex justify-between">
-        <h1 className="text-2xl font-semibold mb-4">📋 Your Forms</h1>
-        <Button onClick={()=>{
-          dispatch(startTourActive())
-        }}>Start onboarding tour</Button>
-        </div>
-        <div className="grid md:grid-cols-3 gap-6">
+        {/* Cards Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {isLoading ? (
-            // Show skeleton loader while loading
             Array(6)
               .fill(null)
               .map((_, index) => (
-                <Card key={index} className="p-4 border border-gray-200">
-                  <CardContent>
-                    <Skeleton
-                      height={20}
-                      width="60%"
-                      className="dark:bg-gray-600"
-                    />
-                    <Skeleton
-                      height={15}
-                      width="80%"
-                      className="mt-2 dark:bg-gray-700"
-                    />
-                    <Skeleton
-                      height={15}
-                      width="50%"
-                      className="mt-2 dark:bg-gray-700"
-                    />
-                    <Skeleton
-                      height={15}
-                      width="70%"
-                      className="mt-2 dark:bg-gray-700"
-                    />
+                <Card key={index} className="p-5 border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm">
+                  <CardContent className="p-0 space-y-3">
+                    <Skeleton height={20} width="60%" className="dark:bg-slate-800" />
+                    <Skeleton height={14} width="40%" className="dark:bg-slate-800" />
+                    <div className="space-y-2 pt-2">
+                      <Skeleton height={12} width="80%" className="dark:bg-slate-800" />
+                      <Skeleton height={12} width="70%" className="dark:bg-slate-800" />
+                    </div>
                   </CardContent>
                 </Card>
               ))
-          ) : // Show form list when loaded
-          filteredForms?.length ? (
+          ) : filteredForms?.length ? (
             filteredForms?.map((form, index) => (
               <motion.div
                 key={form.id}
-                whileHover={{
-                  scale: 1.05,
-                  backgroundColor: "rgba(255,255,255,0.1)",
-                }}
-                whileTap={{ scale: 0.97 }}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                // onClick={() => navigate(`/form/${form?.key}`)}
-                className="form-card-details glass-card"
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                className="group cursor-pointer form-card-details"
+                onClick={() => navigate(`/form/${form?.key}`)}
               >
-                <Card className="p-4 cursor-pointer  hover:shadow-lg transition-shadow duration-200">
-                  <CardContent>
-                    <h2 className="text-lg font-medium">{form.formname}</h2>
-                    <p className="text-sm text-gray-500">🆔 {form.key}</p>
-                    <p className="text-sm text-gray-400 mt-1">
-                      📅 Created: {form.format_created_at}
-                    </p>
-                    <p className="text-sm text-gray-400">
-                      ✏️ Modified: {form.format_modified_at}
-                    </p>
-                    <div className="flex gap-2 mt-2">
-                      <Link to={`/form/${form?.key}`} className="form-preview-button">
-                        <Button variant={"outline"} className="text-xs">
-                          <FcDocument className="mr-1 size-4" /> Preview Form
+                <Card className={theme.classes.cardInteractive}>
+                  <CardContent className="p-5 space-y-4">
+                    <div className="flex flex-col space-y-1.5">
+                      <h2 className={theme.typography.cardTitle}>
+                        {form.formname}
+                      </h2>
+                      <div>
+                        <span className={theme.classes.badgeIndigo}>
+                          Key: {form.key}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5 text-xs text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-3">
+                      <div className="flex justify-between">
+                        <span>Created:</span>
+                        <span className="font-medium">{form.format_created_at}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Modified:</span>
+                        <span className="font-medium">{form.format_modified_at}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 pt-3 border-t border-slate-100 dark:border-slate-800/80" onClick={(e) => e.stopPropagation()}>
+                      <Link to={`/form/${form?.key}`} className="flex-1 form-preview-button">
+                        <Button variant="outline" className="w-full text-xs gap-1.5">
+                          <FcDocument className="size-4" /> Preview
                         </Button>
                       </Link>
-                      <Link to={`${ROUTES.FORM_DATA}/${form?.key}`} className="form-submissions-button">
-                        <Button variant={"secondary"} className="text-xs">
-                          <Database className="mr-1 size-3" /> View Submission{" "}
+                      <Link to={`${ROUTES.FORM_DATA}/${form?.key}`} className="flex-1 form-submissions-button">
+                        <Button variant="secondary" className="w-full text-xs gap-1.5">
+                          <Database className="size-3 text-slate-500" /> Data
                         </Button>
                       </Link>
                     </div>
@@ -153,11 +155,13 @@ const FormList = () => {
               </motion.div>
             ))
           ) : (
-            <div>No Data Available</div>
+            <div className="col-span-full py-12 text-center text-slate-400 dark:text-slate-500">
+              No forms created yet. Click &quot;Create Form&quot; to get started!
+            </div>
           )}
         </div>
       </div>
-    </div>
+    </ToolLayout>
   )
 }
 

@@ -11,7 +11,7 @@ import { Toaster } from "./components/ui/toaster"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <GoogleOAuthProvider clientId="244577747421-d53sbnmu7b7nd3ps87h8glv3t2qspnd8.apps.googleusercontent.com">
+  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || ""}>
     {/* <React.StrictMode> */}
     <TooltipProvider>
       <ThemeProvider attribute="class">

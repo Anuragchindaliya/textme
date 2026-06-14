@@ -45,7 +45,7 @@ export const calendarApi = textmeApi.injectEndpoints({
     }),
     createEvent: builder.mutation<{ created: number }, CreateEventReq>({
       query: (body) => ({
-        url: `https://sheetdb.io/api/v1/l73k7anfjfai9?sheet=calendar`,
+        url: "?sheet=calendar",
         method: "POST",
         body: {
           id: "INCREMENT",
@@ -56,11 +56,12 @@ export const calendarApi = textmeApi.injectEndpoints({
     }),
     deleteEvent: builder.mutation<{ deleted: number }, {id:string}>({
       query: ({id}) => ({
-        url: `https://sheetdb.io/api/v1/l73k7anfjfai9/id/${id}?sheet=calendar`,
+        url: `/id/${id}?sheet=calendar`,
         method: "DELETE",
       }),
       invalidatesTags: ["AllEvents"],
     }),
+
     // postEditorFileContent: builder.mutation<any, {content:string,filename:string}>({
     //   query: (body) => ({
     //     url: `${endpoints.EDITOR_FILENAME}/${body.filename}?sheet=calendar`,

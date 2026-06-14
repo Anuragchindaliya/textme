@@ -52,7 +52,7 @@ export const qrApi = textmeApi.injectEndpoints({
 
     addRedirect: builder.mutation<any, { key: string; url: string}>({
       query: (body) => ({
-        url: `https://sheetdb.io/api/v1/l73k7anfjfai9?sheet=QR`,
+        url: "?sheet=QR",
         method: "POST",
         body: {
           id: "INCREMENT",
@@ -65,7 +65,7 @@ export const qrApi = textmeApi.injectEndpoints({
     }),
     updateRedirectUrl: builder.mutation<any, { id: string; url: string}>({
       query: (body) => ({
-        url: `https://sheetdb.io/api/v1/l73k7anfjfai9/id/${body.id}?sheet=QR`,
+        url: `/id/${body.id}?sheet=QR`,
         method: "PATCH",
         body: {
           url: body.url,
@@ -73,6 +73,7 @@ export const qrApi = textmeApi.injectEndpoints({
         },
       }),
     }),
+
 
   }),
 })

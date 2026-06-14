@@ -32,7 +32,7 @@ export const notesApi = textmeApi.injectEndpoints({
     }),
     createDrawFile: builder.query({
       query: (filename) => ({
-        url: `https://sheetdb.io/api/v1/l73k7anfjfai9?sheet=draw`,
+        url: "?sheet=draw",
         method: "POST",
         body:{
           id:"INCREMENT",

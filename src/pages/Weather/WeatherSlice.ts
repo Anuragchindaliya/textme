@@ -61,7 +61,7 @@ export interface Sys {
 
 
 
-type CountriesRes = {
+interface CountriesRes {
   id: number;
   name: string;
   iso2: string;
@@ -72,10 +72,11 @@ type CountriesRes = {
   native: string;
   emoji: string;
 }
+
 const COUNTRY_BASE_URL = "https://api.countrystatecity.in/v1/countries";
-const CSC_API_KEY = "dXRHa2l1QXZBMXNEUmxjdE9VZ2l5ejRudmZ4dVZwMUpTOTBOcnZtMg==";
+const CSC_API_KEY = import.meta.env.VITE_CSC_API_KEY || "dXRHa2l1QXZBMXNEUmxjdE9VZ2l5ejRudmZ4dVZwMUpTOTBOcnZtMg==";
 const WEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5";
-const WEATHER_API_KEY = "714e4f7af2ccc29175dfc4099ff59474";
+const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY || "714e4f7af2ccc29175dfc4099ff59474";
 
 export const weatherApi = textmeApi.injectEndpoints({
   endpoints: (builder) => ({

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { NavLink, Link, useLocation, Outlet } from "react-router-dom"
+import { useAppSelector, useAppDispatch } from "@/app/hooks"
+import { selectCurrentEmail, removeAuth } from "@/features/auth/authSlice"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Share2,
@@ -62,6 +64,8 @@ export const AppShell: React.FC = () => {
 
   // State for QR code dropdown expansion
   const [isQrExpanded, setIsQrExpanded] = useState(false)
+  const dispatch = useAppDispatch()
+  const email = useAppSelector(selectCurrentEmail)
 
   // Auto-expand QR menu if any QR page is active
   const qrPaths = ["/qrcode", "/qrscan", "/qrupload", "/qrl"]
@@ -353,7 +357,7 @@ export const AppShell: React.FC = () => {
                       <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center">
                         <Sparkles className="h-4 w-4 text-white" />
                       </div>
-                      <span className="font-bold text-base text-slate-900 dark:text-white">TextMe Tools</span>
+                      <span className="font-bold text-base text-slate-900 dark:text-white">ShareText Tools</span>
                     </SheetTitle>
                   </SheetHeader>
                   
@@ -493,49 +497,59 @@ export const AppShell: React.FC = () => {
               <div className="h-4 w-[1px] bg-slate-200 dark:bg-slate-800" />
 
               {/* Profile Avatar Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full p-0">
-                    <Avatar className="h-8 w-8 border border-slate-200 dark:border-slate-800">
-                      <AvatarImage src="" alt="User profile" />
-                      <AvatarFallback className="bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-xs font-semibold">
-                        JD
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-semibold text-slate-950 dark:text-slate-50">John Doe</p>
-                      <p className="text-xs text-slate-400 dark:text-slate-500">developer@textme.io</p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/settings" className="w-full flex items-center cursor-pointer">
-                      <User className="mr-2 h-4 w-4" />
-                      <span>My Profile</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/settings/appearance" className="w-full flex items-center cursor-pointer">
-                      <ExternalLink className="mr-2 h-4 w-4" />
-                      <span>Appearance Settings</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to={ROUTES.LOGIN} className="w-full flex items-center cursor-pointer text-red-600 dark:text-red-400">
+              {email ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full p-0">
+                      <Avatar className="h-8 w-8 border border-slate-200 dark:border-slate-800">
+                        <AvatarImage src="" alt="User profile" />
+                        <AvatarFallback className="bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-xs font-semibold">
+                          {email.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <DropdownMenuLabel className="font-normal">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-semibold text-slate-950 dark:text-slate-50">User Account</p>
+                        <p className="text-xs text-slate-400 dark:text-slate-500">{email}</p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/settings" className="w-full flex items-center cursor-pointer">
+                        <User className="mr-2 h-4 w-4" />
+                        <span>My Profile</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/settings/appearance" className="w-full flex items-center cursor-pointer">
+                        <ExternalLink className="mr-2 h-4 w-4" />
+                        <span>Appearance Settings</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={() => dispatch(removeAuth())}
+                      className="w-full flex items-center cursor-pointer text-red-600 dark:text-red-400"
+                    >
                       <LogIn className="mr-2 h-4 w-4" />
                       <span>Log Out</span>
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button asChild size="sm" className="bg-indigo-600 text-white hover:bg-indigo-700 text-xs py-1.5 px-3 rounded-lg font-medium">
+                  <Link to={ROUTES.LOGIN}>
+                    Sign In
+                  </Link>
+                </Button>
+              )}
             </div>
           </div>
         </header>
+
 
         {/* WORKSPACE & TRANSITIONAL OUTLET PAGE */}
         <main className="flex-1 overflow-y-auto flex flex-col relative bg-slate-50 dark:bg-slate-950">

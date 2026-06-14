@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react"
-import { useTheme } from "next-themes"
-import Sidebar from "../Notes/components/Sidebar"
+import React, { useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
 import {
   useCreateDrawFileQuery,
@@ -31,64 +29,52 @@ import {
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, Plus, Trash2, FileText, Check } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
+import ToolLayout from "@/components/ToolLayout"
+import { theme } from "@/lib/theme"
 
 const formSchema = z.object({
-  invoiceNumber: z.string().nonempty(),
+  invoiceNumber: z.string().nonempty("Invoice number is required"),
   date: z.date(),
   dueDate: z.date(),
-  custName: z.string(),
-  custAddress: z.string(),
+  custName: z.string().nonempty("Customer name is required"),
+  custAddress: z.string().nonempty("Customer address is required"),
   items: z.array(
     z.object({
-      description: z.string(),
-      quantity: z.number(),
-      price: z.number(),
+      description: z.string().nonempty("Description is required"),
+      quantity: z.number().min(1, "Qty must be at least 1"),
+      price: z.number().min(0.01, "Price must be at least 0.01"),
     }),
   ),
   logo: z.string(),
 })
-// Define your invoice data
+
 export type InvoiceSchemaType = z.infer<typeof formSchema>
-const invoiceData = {
-  invoiceNumber: "INV-001",
-  date: "2024-04-02",
-  dueDate: "2024-04-10",
-  customer: {
-    name: "John Doe",
-    address: "123 Main St, City, Country",
-  },
-  items: [
-    { description: "Item 1", quantity: 2, price: 10 },
-    { description: "Item 2", quantity: 3, price: 15 },
-  ],
-  logo: "https://example.com/logo.png", // Replace with your logo URL
-}
 
 const ExportPdf = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       invoiceNumber: "INV-001",
-      date: new Date("2024-04-02"),
-      dueDate: new Date("2024-04-10"),
+      date: new Date(),
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       custName: "John Doe",
       custAddress: "123 Main St, City, Country",
       items: [
-        { description: "Item 1", quantity: 2, price: 10 },
-        { description: "Item 2", quantity: 3, price: 15 },
+        { description: "Consulting Services", quantity: 2, price: 150 },
+        { description: "UI Design Handout", quantity: 1, price: 500 },
       ],
-      logo: "https://example.com/logo.png", // Replace with your logo URL
+      logo: "https://example.com/logo.png",
     },
   })
+
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "items",
   })
-  const invoiceDataRes = form.getValues()
-  console.log({ invoiceDataRes })
-  const { theme } = useTheme()
+
+  const invoiceDataRes = form.watch()
   const [drawData, setDrawData] = useState<any>()
   const [searchParams] = useSearchParams()
   const [excalidrawAPI, setExcalidrawAPI] =
@@ -104,72 +90,76 @@ const ExportPdf = () => {
   const { toast } = useToast()
   const [postDrawContent, { isLoading: isLoadingUpdate }] =
     usePostDrawFileContentMutation()
+
   const onSave = async () => {
-    console.log({ drawData })
     if (!fileName) {
+      toast({
+        title: "Local Invoice Updated",
+        description: "Invoice template state updated successfully.",
+      })
       return
     }
-    const resData = await postDrawContent({
-      filename: fileName,
-      content: JSON.stringify(drawData) || "",
-    }).unwrap()
-    console.log({ resData })
+    try {
+      const resData = await postDrawContent({
+        filename: fileName,
+        content: JSON.stringify(drawData) || "",
+      }).unwrap()
+      toast({
+        title: "Invoice Saved",
+        description: "Saved draft successfully.",
+      })
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   useEffect(() => {
     if (isSuccess) {
-      toast({
-        title: "File created",
-      })
-      // editorRef.current?.clear()
       setDrawData([])
     }
   }, [isSuccess])
+
   useEffect(() => {
     if (data?.[0]?.content) {
       try {
         const output = JSON.parse(data[0].content) || []
-        // setDrawData(output)
-        console.log({ output })
         excalidrawAPI?.updateScene({ elements: output })
-        // .then((data) => {
-        //   console.log("render", data)
-        // })
-        // .catch((data) => {
-        //   console.log(data)
-        // })
       } catch (error) {
-        // console.log(error)
+        // quiet error
       }
     }
   }, [data])
+
   return (
-    <div style={{ height: "87vh" }}>
-      <div className="container  flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-24">
-        <div className="py-1 pt-3 flex flex-1 space-x-2 sm:justify-end w-full">
-          <Sidebar />
-          {/* <DrawInput /> */}
-          <div className="flex-1"></div>
-        </div>
-      </div>
-      <div className="flex justify-center px-8 gap-4">
-        <div className="flex-1">
+    <ToolLayout
+      title="📄 Invoice PDF Generator"
+      description="Design dynamic PDF invoices and billing statements in real time."
+      className="p-0 md:p-0 bg-transparent dark:bg-transparent border-none shadow-none backdrop-blur-none"
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Form Column */}
+        <div className={cn(theme.classes.card, "lg:col-span-5 p-6 space-y-6 shadow-sm border border-slate-200/60 dark:border-slate-800 bg-white/90 dark:bg-slate-900/60 backdrop-blur-md")}>
+          <div className="border-b border-slate-100 dark:border-slate-800/80 pb-3 flex justify-between items-center">
+            <h3 className="text-base font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+              <FileText className="size-4 text-indigo-500" />
+              Invoice Details
+            </h3>
+          </div>
+
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSave)} className="space-y-4">
-              <div className="flex gap-4">
+            <form onSubmit={form.handleSubmit(onSave)} className="space-y-5">
+              {/* Invoice Number & Cust Name */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="invoiceNumber"
                   render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Invoice Number</FormLabel>
+                    <FormItem>
+                      <FormLabel className={theme.classes.label}>Invoice Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="Inoice No." {...field} />
+                        <Input className={theme.classes.input} placeholder="INV-001" {...field} />
                       </FormControl>
-                      {/* <FormDescription>
-                        This is your public display name.
-                      </FormDescription> */}
-                      <FormMessage />
+                      <FormMessage className="text-xs text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -177,42 +167,38 @@ const ExportPdf = () => {
                   control={form.control}
                   name="custName"
                   render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Customer Name</FormLabel>
+                    <FormItem>
+                      <FormLabel className={theme.classes.label}>Customer Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Customer Name" {...field} />
+                        <Input className={theme.classes.input} placeholder="John Doe" {...field} />
                       </FormControl>
-                      {/* <FormDescription>
-                        This is your public display name.
-                      </FormDescription> */}
-                      <FormMessage />
+                      <FormMessage className="text-xs text-red-500" />
                     </FormItem>
                   )}
                 />
               </div>
-              <div className="flex">
+
+              {/* Dates */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="date"
                   render={({ field }) => (
-                    <FormItem className="flex flex-col flex-1">
-                      <FormLabel>Date</FormLabel>
+                    <FormItem className="flex flex-col">
+                      <FormLabel className={theme.classes.label}>Issue Date</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
                             <Button
                               variant={"outline"}
                               className={cn(
-                                "w-[240px] pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground",
+                                theme.classes.input,
+                                "pl-3 text-left font-normal flex items-center justify-between w-full",
+                                !field.value && "text-slate-400"
                               )}
                             >
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              <span>{field.value ? format(field.value, "PPP") : "Pick issue date"}</span>
+                              <CalendarIcon className="h-4 w-4 opacity-50" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
@@ -221,17 +207,11 @@ const ExportPdf = () => {
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            // disabled={(date) =>
-                            //   date > new Date() || date < new Date("1900-01-01")
-                            // }
                             initialFocus
                           />
                         </PopoverContent>
                       </Popover>
-                      {/* <FormDescription>
-                Your date of birth is used to calculate your age.
-              </FormDescription> */}
-                      <FormMessage />
+                      <FormMessage className="text-xs text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -239,24 +219,21 @@ const ExportPdf = () => {
                   control={form.control}
                   name="dueDate"
                   render={({ field }) => (
-                    <FormItem className="flex flex-col flex-1">
-                      <FormLabel>Due Date</FormLabel>
+                    <FormItem className="flex flex-col">
+                      <FormLabel className={theme.classes.label}>Due Date</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
                             <Button
                               variant={"outline"}
                               className={cn(
-                                "w-[240px] pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground",
+                                theme.classes.input,
+                                "pl-3 text-left font-normal flex items-center justify-between w-full",
+                                !field.value && "text-slate-400"
                               )}
                             >
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              <span>{field.value ? format(field.value, "PPP") : "Pick due date"}</span>
+                              <CalendarIcon className="h-4 w-4 opacity-50" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
@@ -265,109 +242,117 @@ const ExportPdf = () => {
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            // disabled={(date) =>
-                            //   date > new Date() || date < new Date("1900-01-01")
-                            // }
                             initialFocus
                           />
                         </PopoverContent>
                       </Popover>
-                      {/* <FormDescription>
-                Your date of birth is used to calculate your age.
-              </FormDescription> */}
-                      <FormMessage />
+                      <FormMessage className="text-xs text-red-500" />
                     </FormItem>
                   )}
                 />
               </div>
+
+              {/* Customer Address */}
               <FormField
                 control={form.control}
                 name="custAddress"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Customer Address </FormLabel>
+                    <FormLabel className={theme.classes.label}>Billing Address</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Customer Address" {...field} />
+                      <Textarea className={theme.classes.textarea} placeholder="123 Main St, City, Country" {...field} />
                     </FormControl>
-                    {/* <FormDescription>
-                        This is your public display name.
-                      </FormDescription> */}
-                    <FormMessage />
+                    <FormMessage className="text-xs text-red-500" />
                   </FormItem>
                 )}
               />
 
-              <div className="flex justify-between">
-                <div>Items</div>
-                <Button
-                  type="button"
-                  onClick={() =>
-                    append({ description: "", quantity: 0, price: 0 })
-                  }
-                >
-                  Add Item
-                </Button>
-              </div>
-              <div className="flex gap-3">
-                <div className="flex-1 w-full">Description</div>
-                <div className="flex-1">Quantity</div>
-                <div className="flex-1">price</div>
-                <div className="flex-1"></div>
-              </div>
-              <div 
-              className="flex flex-col gap-3 h-32 p-3 overflow-y-auto" 
-              // className="h-24 overflow-y-auto"
-              >
-              {fields.map((item, index) => (
-                <div key={item.id} className="flex gap-3">
-                  <div className="flex-1">
-                    <Input
-                      {...form.register(`items.${index}.description` as const)}
-                      placeholder="Description"
-                    />
-                    {/* <div>{form.}</div> */}
-                    {form.formState.errors.items?.[index]?.description && (
-                      <span>
-                        {
-                          form.formState.errors?.items?.[index]?.description
-                            ?.message
-                        }
-                      </span>
-                    )}
-                  </div>
-                  <Input
-                    type="number"
-                    className="flex-1"
-                    {...form.register(`items.${index}.quantity` as const)}
-                    placeholder="Quantity"
-                  />
-                  <Input
-                    type="number"
-                    step="0.01"
-                    className="flex-1"
-                    {...form.register(`items.${index}.price` as const)}
-                    placeholder="Price"
-                  />
+              {/* Items Section Header */}
+              <div className="border-t border-slate-100 dark:border-slate-800/80 pt-4">
+                <div className="flex justify-between items-center mb-3">
+                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">Line Items</h4>
                   <Button
-                    variant={"destructive"}
                     type="button"
-                    onClick={() => remove(index)}
+                    variant="outline"
+                    className={cn(theme.classes.buttonSecondary, "py-1.5 px-3 h-8 text-xs gap-1")}
+                    onClick={() =>
+                      append({ description: "", quantity: 1, price: 10 })
+                    }
                   >
-                    Remove
+                    <Plus className="size-3.5" /> Add Item
                   </Button>
                 </div>
-              ))}
+
+                {/* Items List */}
+                <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
+                  {fields.map((item, index) => (
+                    <div key={item.id} className="flex flex-col md:flex-row gap-2.5 p-3 rounded-lg bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-800/50">
+                      <div className="flex-[3]">
+                        <Input
+                          {...form.register(`items.${index}.description` as const)}
+                          placeholder="Description"
+                          className={theme.classes.input}
+                        />
+                        {form.formState.errors.items?.[index]?.description && (
+                          <span className="text-xs text-red-500 mt-0.5 block">
+                            {form.formState.errors?.items?.[index]?.description?.message}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex-[1.5] flex gap-2">
+                        <Input
+                          type="number"
+                          placeholder="Qty"
+                          className={theme.classes.input}
+                          {...form.register(`items.${index}.quantity` as const, { valueAsNumber: true })}
+                        />
+                        <Input
+                          type="number"
+                          step="0.01"
+                          placeholder="Price"
+                          className={theme.classes.input}
+                          {...form.register(`items.${index}.price` as const, { valueAsNumber: true })}
+                        />
+                      </div>
+                      <Button
+                        variant="destructive"
+                        type="button"
+                        className="h-9 px-3 self-end md:self-auto"
+                        onClick={() => remove(index)}
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  {fields.length === 0 && (
+                    <div className="text-center py-6 text-sm text-slate-400 dark:text-slate-500 border border-dashed border-slate-200 dark:border-slate-800 rounded-lg">
+                      No items added yet. Click &quot;Add Item&quot; to build invoice.
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <Button type="submit">Update</Button>
+              <Button type="submit" className={cn(theme.classes.buttonPrimary, "w-full py-2.5 flex items-center justify-center gap-2")}>
+                <Check className="size-4" /> Apply Changes
+              </Button>
             </form>
           </Form>
         </div>
-        <div className="flex-1">
-          <PdfDocument invoiceData={invoiceDataRes} />
+
+        {/* Preview Column */}
+        <div className={cn(theme.classes.card, "lg:col-span-7 p-6 shadow-sm border border-slate-200/60 dark:border-slate-800 bg-white/95 dark:bg-slate-900/60 backdrop-blur-md min-h-[500px]")}>
+          <div className="border-b border-slate-100 dark:border-slate-800/80 pb-3 mb-4 flex justify-between items-center">
+            <h3 className="text-base font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+              <FileText className="size-4 text-emerald-500" />
+              Live PDF Document Preview
+            </h3>
+          </div>
+          <div className="border rounded-lg overflow-hidden border-slate-200 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-950/40 p-2 min-h-[480px]">
+            <PdfDocument invoiceData={invoiceDataRes} />
+          </div>
         </div>
       </div>
-    </div>
+    </ToolLayout>
   )
 }
 

@@ -35,7 +35,6 @@ import { FamilyNode, FamilyTree, ThemeId } from "./type"
 import { toast } from "react-toastify"
 import { themes } from "./utils/themes"
 import { exportToPDF } from "./utils/exportPdf"
-import Sidebar from "@/pages/Notes/components/Sidebar"
 import {
   useCreateFamilyTreeMutation,
   useGetFamilyTreeQuery,
@@ -43,6 +42,9 @@ import {
 } from "./familyTreeAPI"
 import { loadLocal, saveLocal } from "./utils/localStorage"
 import { autoRelation } from "./utils/relationship"
+import ToolLayout from "@/components/ToolLayout"
+import { theme } from "@/lib/theme"
+import { cn } from "@/lib/utils"
 
 const nodeTypes: NodeTypes = {
   familyCard: FamilyCardNode as any,
@@ -227,8 +229,17 @@ export const FamilyTreeBuilder: React.FC = () => {
         await updateTreeApi(payload).unwrap()
         toast.success("Tree updated in SheetDB")
       }
-    } catch (err) {
-      toast.error("Failed to save to SheetDB")
+    } catch (err: any) {
+      console.error("Save error:", err)
+      const errorMsg = err?.data?.error || err?.message || ""
+      if (errorMsg.includes("Spreadsheet is empty")) {
+        toast.error(
+          "Spreadsheet is empty! Please add column headers 'id', 'name', 'tree_json' to Row 1 of your Google Sheet 'family_tree' tab.",
+          { autoClose: 10000 }
+        )
+      } else {
+        toast.error("Failed to save to SheetDB")
+      }
     }
   }
 
@@ -559,119 +570,157 @@ export const FamilyTreeBuilder: React.FC = () => {
   }, [sheetTree]);
 
   return (
-    <div className="flex flex-col h-screen gap-2 p-3">
-      {/* Top bar */}
-      <div className="flex items-center gap-3">
-        <div className="">
-          <Sidebar />
+    <ToolLayout
+      title="🌳 Family Tree Builder"
+      description="Create, structure, and visualize your ancestral relationships and family history."
+      className="p-0 md:p-0 bg-transparent dark:bg-transparent border-none shadow-none backdrop-blur-none"
+      actions={
+        <div className="flex flex-wrap items-center gap-3">
+          <Input
+            className={cn(theme.classes.input, "w-44")}
+            placeholder="Family Tree Name"
+            value={treeName}
+            onChange={(e) => setTreeName(e.target.value)}
+          />
+          <Button
+            variant="outline"
+            className={theme.classes.buttonSecondary}
+            onClick={handleLoad}
+            disabled={isLoading}
+          >
+            {isLoading ? "Loading..." : "Load"}
+          </Button>
+          <Button
+            className={theme.classes.buttonPrimary}
+            onClick={handleSave}
+            disabled={isSaving || !treeName.trim()}
+          >
+            {isSaving ? "Saving..." : "Save to DB"}
+          </Button>
+
+          <Select value={tree.themeId} onValueChange={handleThemeChange}>
+            <SelectTrigger className={cn(theme.classes.input, "w-32 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800")}>
+              <SelectValue placeholder="Theme" />
+            </SelectTrigger>
+            <SelectContent>
+              {themes.map((t) => (
+                <SelectItem key={t.id} value={t.id}>
+                  {t.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Button
+            variant="outline"
+            className={theme.classes.buttonOutline}
+            onClick={handleExportPng}
+          >
+            Export PNG
+          </Button>
+          <Button
+            variant="outline"
+            className={theme.classes.buttonOutline}
+            onClick={handleExportPdf}
+          >
+            Export PDF
+          </Button>
+          <Button
+            variant="destructive"
+            className="inline-flex items-center justify-center font-medium text-sm rounded-lg px-3.5 py-2 bg-red-600 text-white hover:bg-red-700 shadow-sm hover:shadow-md active:scale-[0.98] transition-all duration-150"
+            onClick={handleReset}
+          >
+            Reset
+          </Button>
         </div>
-        <Input
-          className="max-w-xs"
-          placeholder="Family Tree Name"
-          value={treeName}
-          onChange={(e) => setTreeName(e.target.value)}
-        />
-        <Button variant="outline" onClick={handleLoad} disabled={isLoading}>
-          {isLoading ? "Loading..." : "Load"}
-        </Button>
-        <Button onClick={handleSave} disabled={isSaving || !treeName.trim()}>
-          {isSaving ? "Saving..." : "Save to SheetDB"}
-        </Button>
-
-        <Select value={tree.themeId} onValueChange={handleThemeChange}>
-          <SelectTrigger className="w-40">
-            <SelectValue placeholder="Theme" />
-          </SelectTrigger>
-          <SelectContent>
-            {themes.map((t) => (
-              <SelectItem key={t.id} value={t.id}>
-                {t.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Button variant="outline" onClick={handleExportPng}>
-          Export as PNG
-        </Button>
-        <Button variant="outline" onClick={handleExportPdf}>
-          Export PDF
-        </Button>
-        <Button variant="destructive" onClick={handleReset}>
-          Reset Tree
-        </Button>
-      </div>
-
-      {/* Canvas */}
-      <div
-        ref={flowWrapperRef}
-        className={`flex-1 rounded-lg border overflow-hidden ${wrapperThemeClass}`}
-      >
-        <ReactFlow
-          fitView
-          nodes={enhancedNodes}
-          edges={edges}
-          // onNodesChange={onNodesChangeWithPosition}
-          onNodesChange={onNodesChange}
-          onNodeDragStop={handleNodeDragStop}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          nodeTypes={nodeTypes}
-          panOnScroll
-          zoomOnScroll
-          panOnDrag
+      }
+    >
+      <div className="space-y-4">
+        {/* Canvas */}
+        <div
+          ref={flowWrapperRef}
+          className={cn(
+            "h-[68vh] rounded-xl border border-slate-200 dark:border-slate-800/80 overflow-hidden shadow-sm relative bg-slate-50/50 dark:bg-slate-950/20 backdrop-blur-md",
+            wrapperThemeClass
+          )}
         >
-          <Background />
-          <Controls />
-          <MiniMap />
-        </ReactFlow>
+          <ReactFlow
+            fitView
+            nodes={enhancedNodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onNodeDragStop={handleNodeDragStop}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            nodeTypes={nodeTypes}
+            panOnScroll
+            zoomOnScroll
+            panOnDrag
+          >
+            <Background />
+            <Controls className="!bg-white dark:!bg-slate-900 !border-slate-200 dark:!border-slate-800 !shadow-md rounded-lg" />
+            <MiniMap className="!bg-white/80 dark:!bg-slate-900/80 !border-slate-200/60 dark:!border-slate-800/60 !shadow-md rounded-lg" />
+          </ReactFlow>
+        </div>
+
+        {/* Edit Dialog */}
+        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+          <DialogContent className="sm:max-w-[425px] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl shadow-xl">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">Edit Family Member</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-2">
+              <div className="space-y-1">
+                <Label className={theme.classes.label}>Name</Label>
+                <Input
+                  className={theme.classes.input}
+                  value={editState.name}
+                  onChange={(e) =>
+                    setEditState((s) => ({ ...s, name: e.target.value }))
+                  }
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className={theme.classes.label}>Photo URL</Label>
+                <Input
+                  className={theme.classes.input}
+                  value={editState.photoUrl}
+                  onChange={(e) =>
+                    setEditState((s) => ({ ...s, photoUrl: e.target.value }))
+                  }
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className={theme.classes.label}>Relation Label</Label>
+                <Input
+                  className={theme.classes.input}
+                  placeholder="Father, Cousin, Nana ji..."
+                  value={editState?.relationLabel}
+                  onChange={(e) =>
+                    setEditState((s) => ({ ...s, relationLabel: e.target.value }))
+                  }
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800/80 mt-4">
+                <Button
+                  variant="outline"
+                  className={theme.classes.buttonSecondary}
+                  onClick={() => setIsEditOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className={theme.classes.buttonPrimary}
+                  onClick={handleEditSave}
+                >
+                  Save Changes
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
-
-      {/* Edit Dialog */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Member</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div className="space-y-1">
-              <Label>Name</Label>
-              <Input
-                value={editState.name}
-                onChange={(e) =>
-                  setEditState((s) => ({ ...s, name: e.target.value }))
-                }
-              />
-            </div>
-            <div className="space-y-1">
-              <Label>Photo URL</Label>
-              <Input
-                value={editState.photoUrl}
-                onChange={(e) =>
-                  setEditState((s) => ({ ...s, photoUrl: e.target.value }))
-                }
-              />
-            </div>
-            <div className="space-y-1">
-              <Label>Relation Label</Label>
-              <Input
-                placeholder="Father, Cousin, Nana ji..."
-                value={editState.relationLabel}
-                onChange={(e) =>
-                  setEditState((s) => ({ ...s, relationLabel: e.target.value }))
-                }
-              />
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setIsEditOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleEditSave}>Save</Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>
+    </ToolLayout>
   )
 }

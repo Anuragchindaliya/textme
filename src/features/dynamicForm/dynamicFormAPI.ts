@@ -1,7 +1,7 @@
 import { baseUrl, endpoints, textmeApi } from "@/app/services"
 import { FormType } from "@formio/react"
 
-const SHEETDB_BASE_URL = "https://sheetdb.io/api/v1/l73k7anfjfai9?sheet=forms" // Replace with your SheetDB ID
+const SHEETDB_BASE_URL = "?sheet=forms"
 const data = [
   {
     id: "1",

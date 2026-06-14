@@ -13,7 +13,7 @@ export interface ApiStandardResponse {
 // https://sheetdb.io/api/v1/l73k7anfjfai9/search_or?title=anurag
 export const allBaseUrls = {
   local: "http://localhost:5000",
-  prod: "https://sheetdb.io/api/v1/l73k7anfjfai9",
+  prod: `https://sheetdb.io/api/v1/${import.meta.env.VITE_SHEETDB_ID || "l73k7anfjfai9"}`,
   render: "https://textmen-backend.onrender.com",
   drizzleApi: "http://localhost:3000/api/v1",
   // "http://localhost:3000/api/v1"
@@ -24,14 +24,14 @@ export const baseQuery = fetchBaseQuery({
   baseUrl,
   // credentials: 'include',
   prepareHeaders: (headers, { endpoint }) => {
-    // const token = (getState() as RootState).auth.token
-
-    // // If we have a token set in state, let's assume that we should be passing it.
-    // if (token) {
-    //   headers.set("Authorization", `Bearer ${token}`)
-    // }
-    // console.log("endpoint", endpoint)
-    if (endpoint === "getWeatherByCity" || endpoint === "getWeatherByCoords") {
+    const weatherEndpoints = [
+      "getWeatherByCity",
+      "getWeatherByCoords",
+      "getCountries",
+      "getStates",
+      "getCities"
+    ]
+    if (weatherEndpoints.includes(endpoint)) {
       return headers
     }
     headers.set("Access-Control-Allow-Origin", "*")

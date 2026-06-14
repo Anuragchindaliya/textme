@@ -12,95 +12,37 @@ type PermissionStatus = "idle" | "granted" | "denied"
 const QRCodeScanner: React.FC = () => {
   const [result, setResult] = useState<string | null>(null)
   const qrCodeRef = useRef<HTMLDivElement | null>(null)
-  const [scanner, setScanner] = useState<Html5Qrcode | null>(null)
+  const scannerRef = useRef<Html5Qrcode | null>(null)
   const [isScanning, setIsScanning] = useState(false)
   const [permissionStatus, setPermissionStatus] =
     useState<PermissionStatus>("idle")
+
   useEffect(() => {
-    // Function to check permission and start scanner if permitted
-    const checkPermissions = async () => {
-      try {
-        const permissionStatus = await navigator.permissions.query({
-          name: "camera" as PermissionName,
-        })
-        setPermissionStatus(permissionStatus.state as PermissionStatus)
-
-        permissionStatus.onchange = () => {
-          setPermissionStatus(permissionStatus.state as PermissionStatus)
-        }
-
-        if (permissionStatus.state === "granted") {
-          const html5QrCode = new Html5Qrcode("qr-reader")
-          setScanner(html5QrCode)
-        }
-
-        // // Request camera permissions
-        // const stream = await navigator.mediaDevices.getUserMedia({
-        //   video: true,
-        // })
-        // stream.getTracks().forEach((track) => track.stop()) // Close stream after permission check
-        // setPermissionStatus("granted")
-      } catch (error) {
-        console.error("Camera permission denied:", error)
-        setPermissionStatus("denied")
-      }
-    }
-
-    // Initial permission check
-    checkPermissions()
-
     // Cleanup on component unmount
     return () => {
-      stopScanning()
+      if (scannerRef.current) {
+        if (scannerRef.current.getState() === Html5QrcodeScannerState.SCANNING) {
+          scannerRef.current.stop().catch((err) => console.error("Error stopping scanner:", err))
+        }
+      }
     }
   }, [])
 
-  //   useEffect(() => {
-  //     console.log({ scanner })
-  //     if (scanner && permissionStatus === "granted") {
-  //       startScanning()
-  //     }
-  //     return () => {
-  //       stopScanning()
-  //     }
-  //   }, [permissionStatus])
+  const startScanning = async () => {
+    if (!scannerRef.current) {
+      try {
+        scannerRef.current = new Html5Qrcode("qr-reader")
+      } catch (error) {
+        console.error("Failed to create Html5Qrcode instance:", error)
+        toast.error("Failed to initialize camera scanner.")
+        return
+      }
+    }
 
-  const startScanning = () => {
-    // toast(
-    //   <div className="">
-    //     <div>QR code details:</div>
-    //     <p className="m-4">Anurag</p>
-    //     <div className="flex flex-col sm:flex-row gap-4">
-    //       {/* <Button variant={"secondary"} className="flex-1">
-    //           Copy text
-    //         </Button> */}
-    //       <CopyButton
-    //         value={"anurag"}
-    //         className="bg-secondary text-secondary-foreground hover:bg-secondary/80 px-1  py-4 flex-[2]  w-full "
-    //         title="Copy"
-    //       />
-    //       <Button
-    //         variant={"outline"}
-    //         onClick={() => toast.dismiss()}
-    //         className="flex-1"
-    //       >
-    //         Okay <ChevronsRight />
-    //       </Button>
-    //     </div>
-    //   </div>,
-    //   {
-    //     position: "top-center",
-    //     autoClose: false,
-    //     className: "m-4",
-    //   },
-    // )
-    // return
-    if (!scanner) return
     try {
-      // Initialize the Html5Qrcode instance
-      const config = { fps: 1, qrbox: { width: 250, height: 250 } }
+      const config = { fps: 10, qrbox: { width: 250, height: 250 } }
 
-      scanner.start(
+      await scannerRef.current.start(
         { facingMode: "environment" },
         config,
         (decodedText: string) => {
@@ -109,20 +51,27 @@ const QRCodeScanner: React.FC = () => {
           stopScanning() // Stop scanning after successful scan
         },
         (error) => {
-          console.log("QR Code Scan Error: ", error)
+          // Verbose log: console.log("QR Code Scan Error: ", error)
         },
       )
       setIsScanning(true)
+      setPermissionStatus("granted")
     } catch (error) {
       console.error("Failed to start scanning:", error)
+      setPermissionStatus("denied")
+      toast.error("Camera access denied or unavailable.")
     }
   }
 
   const stopScanning = async () => {
-    if (scanner && scanner.getState() === Html5QrcodeScannerState.SCANNING) {
-      await scanner.stop()
-      setIsScanning(false)
+    if (scannerRef.current && scannerRef.current.getState() === Html5QrcodeScannerState.SCANNING) {
+      try {
+        await scannerRef.current.stop()
+      } catch (error) {
+        console.error("Failed to stop scanner:", error)
+      }
     }
+    setIsScanning(false)
   }
 
   // Handle actions based on the QR code content
@@ -186,17 +135,6 @@ const QRCodeScanner: React.FC = () => {
         <div className="relative  flex bg-gray-200 dark:bg-gray-700 h-[68vh] justify-center items-center">
           <SidebarTrigger className="absolute left-1 top-1" />
           <div className="absolute">
-            {/* {result && (
-              <>
-                <div className="m-5">
-                  Scanned Result:
-                  <div className="border rounded">{result}</div>
-                </div>
-              </>
-            )} */}
-            {permissionStatus === "idle" && (
-              <p>Requesting camera permissions...</p>
-            )}
             {permissionStatus === "denied" && (
               <div className="mx-auto justify-center flex flex-col items-center ">
                 <Camera className="w-32 h-32 " />
@@ -206,12 +144,11 @@ const QRCodeScanner: React.FC = () => {
                 </p>
               </div>
             )}
-            {permissionStatus === "granted" && !isScanning && (
-              <div>
-                <button onClick={startScanning}>Start Scanning</button>
-                <p>
-                  Click {result ? "Restart" : "Start"} Scanning to begin
-                  scanning QR codes
+            {!isScanning && permissionStatus !== "denied" && (
+              <div className="mx-auto justify-center flex flex-col items-center">
+                <Camera className="w-32 h-32 text-gray-400" />
+                <p className="mt-2 text-gray-500 dark:text-gray-400">
+                  {result ? "Scan complete. Click Restart Scanning to scan again." : "Camera is ready. Click Start Scanning to begin."}
                 </p>
               </div>
             )}
