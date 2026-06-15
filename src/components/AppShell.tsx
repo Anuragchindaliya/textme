@@ -36,7 +36,7 @@ import {
   ChevronUp,
   Scan,
   Upload,
-  ScanLine
+  ScanLine,
 } from "lucide-react"
 import { AiOutlineAntDesign } from "react-icons/ai"
 import { ROUTES } from "@/Router"
@@ -44,7 +44,13 @@ import { theme } from "@/lib/theme"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet"
 import { ModeToggle } from "@/pages/Notes/components/mode-toggle"
 import {
   DropdownMenu,
@@ -69,7 +75,9 @@ export const AppShell: React.FC = () => {
 
   // Auto-expand QR menu if any QR page is active
   const qrPaths = ["/qrcode", "/qrscan", "/qrupload", "/qrl"]
-  const isQrPageActive = qrPaths.some(path => location.pathname.startsWith(path))
+  const isQrPageActive = qrPaths.some((path) =>
+    location.pathname.startsWith(path),
+  )
 
   useEffect(() => {
     if (isQrPageActive) {
@@ -94,7 +102,7 @@ export const AppShell: React.FC = () => {
         { title: "Scan QR", icon: Scan, link: ROUTES.QR_SCAN },
         { title: "Upload QR", icon: Upload, link: ROUTES.QR_UPLOAD },
         { title: "Dynamic QRL", icon: ScanLine, link: ROUTES.QRL_DYNAMIC },
-      ]
+      ],
     },
     { title: "Draw & Sketch", icon: MousePointerClick, link: ROUTES.DRAW },
     { title: "Family Tree", icon: Users2, link: ROUTES.FAMILY_TREE },
@@ -115,8 +123,8 @@ export const AppShell: React.FC = () => {
   ]
 
   // Filter links based on search query in the sidebar
-  const filteredLinks = sidebarLinks.filter(item =>
-    item.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredLinks = sidebarLinks.filter((item) =>
+    item.title.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
   // Find current tool for Breadcrumb/Navbar Title
@@ -125,7 +133,9 @@ export const AppShell: React.FC = () => {
     for (const link of sidebarLinks) {
       if (link.link === location.pathname) return link
       if (link.children) {
-        const activeChild = link.children.find(c => c.link === location.pathname)
+        const activeChild = link.children.find(
+          (c) => c.link === location.pathname,
+        )
         if (activeChild) return activeChild
       }
     }
@@ -141,7 +151,7 @@ export const AppShell: React.FC = () => {
         animate={{ width: isCollapsed ? 76 : 260 }}
         transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
-          "hidden md:flex flex-col h-screen sticky top-0 border-r border-slate-200/50 dark:border-slate-900/60 bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl z-30 overflow-hidden"
+          "hidden md:flex flex-col h-screen sticky top-0 border-r border-slate-200/50 dark:border-slate-900/60 bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl z-30 overflow-hidden",
         )}
       >
         {/* Brand / Logo */}
@@ -171,7 +181,7 @@ export const AppShell: React.FC = () => {
                 type="text"
                 placeholder="Search tools..."
                 value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-lg pl-9 pr-4 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500/50 transition-all"
               />
             </div>
@@ -185,8 +195,11 @@ export const AppShell: React.FC = () => {
               const IconComponent = item.icon
 
               if (item.isDropdown) {
-                const isChildActive = item.children?.some(child => location.pathname.startsWith(child.link))
-                const isActive = isChildActive || location.pathname.startsWith(item.link)
+                const isChildActive = item.children?.some((child) =>
+                  location.pathname.startsWith(child.link),
+                )
+                const isActive =
+                  isChildActive || location.pathname.startsWith(item.link)
 
                 return (
                   <div key={index} className="space-y-1.5">
@@ -196,17 +209,21 @@ export const AppShell: React.FC = () => {
                         "flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-all group relative duration-200",
                         isActive
                           ? "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                          : "text-slate-600 dark:text-slate-400 hover:bg-slate-100/60 dark:hover:bg-slate-900/50 hover:text-slate-900 dark:hover:text-slate-200"
+                          : "text-slate-600 dark:text-slate-400 hover:bg-slate-100/60 dark:hover:bg-slate-900/50 hover:text-slate-900 dark:hover:text-slate-200",
                       )}
                     >
                       <Link
                         to={item.link}
                         className="flex items-center gap-3 flex-1 overflow-hidden"
                       >
-                        <IconComponent className={cn(
-                          "h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105",
-                          isActive ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400 dark:text-slate-600 group-hover:text-slate-700 dark:group-hover:text-slate-300"
-                        )} />
+                        <IconComponent
+                          className={cn(
+                            "h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105",
+                            isActive
+                              ? "text-indigo-600 dark:text-indigo-400"
+                              : "text-slate-400 dark:text-slate-600 group-hover:text-slate-700 dark:group-hover:text-slate-300",
+                          )}
+                        />
                         {!isCollapsed && (
                           <span className="truncate">{item.title}</span>
                         )}
@@ -247,7 +264,8 @@ export const AppShell: React.FC = () => {
                       >
                         {item.children.map((child, cIndex) => {
                           const ChildIcon = child.icon
-                          const isChildPageActive = location.pathname === child.link
+                          const isChildPageActive =
+                            location.pathname === child.link
 
                           return (
                             <NavLink
@@ -257,7 +275,7 @@ export const AppShell: React.FC = () => {
                                 "flex items-center gap-2.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200",
                                 isChildPageActive
                                   ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-950/20 font-semibold"
-                                  : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100/50 dark:hover:bg-slate-900/30"
+                                  : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100/50 dark:hover:bg-slate-900/30",
                               )}
                             >
                               <ChildIcon className="h-3.5 w-3.5 flex-shrink-0" />
@@ -284,14 +302,18 @@ export const AppShell: React.FC = () => {
                     "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group relative duration-200",
                     isActive
                       ? "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border-l-2 border-indigo-600 dark:border-indigo-400 shadow-sm"
-                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-100/60 dark:hover:bg-slate-900/50 hover:text-slate-900 dark:hover:text-slate-200"
+                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-100/60 dark:hover:bg-slate-900/50 hover:text-slate-900 dark:hover:text-slate-200",
                   )}
                 >
-                  <IconComponent className={cn(
-                    "h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105",
-                    isActive ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400 dark:text-slate-600 group-hover:text-slate-700 dark:group-hover:text-slate-300"
-                  )} />
-                  
+                  <IconComponent
+                    className={cn(
+                      "h-5 w-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105",
+                      isActive
+                        ? "text-indigo-600 dark:text-indigo-400"
+                        : "text-slate-400 dark:text-slate-600 group-hover:text-slate-700 dark:group-hover:text-slate-300",
+                    )}
+                  />
+
                   {!isCollapsed && (
                     <motion.span
                       initial={{ opacity: 0 }}
@@ -314,7 +336,6 @@ export const AppShell: React.FC = () => {
           </nav>
         </ScrollArea>
 
-
         {/* Collapse Toggle Footer */}
         <div className="p-3 border-t border-slate-200/40 dark:border-slate-900/40 flex items-center justify-between">
           <Button
@@ -323,21 +344,25 @@ export const AppShell: React.FC = () => {
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="hidden md:flex text-slate-400 hover:text-slate-900 dark:hover:text-white"
           >
-            {isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+            {isCollapsed ? (
+              <ChevronRight className="h-5 w-5" />
+            ) : (
+              <ChevronLeft className="h-5 w-5" />
+            )}
           </Button>
           {!isCollapsed && (
-            <div className="text-[10px] text-slate-400 font-mono">v1.2.0-SaaS</div>
+            <div className="text-[10px] text-slate-400 font-mono">
+              v1.2.0-SaaS
+            </div>
           )}
         </div>
       </motion.aside>
 
       {/* 2. MAIN LAYOUT SHELL CANVAS */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-        
         {/* TOP HEADER / NAVBAR */}
         <header className={theme.classes.glassNav}>
           <div className="h-16 flex items-center justify-between px-4 sm:px-6">
-            
             {/* Left: Mobile Navigation Trigger + Breadcrumbs */}
             <div className="flex items-center gap-3">
               {/* Mobile Drawer Trigger */}
@@ -351,16 +376,21 @@ export const AppShell: React.FC = () => {
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-[300px] p-0 flex flex-col h-full bg-white dark:bg-slate-950">
+                <SheetContent
+                  side="left"
+                  className="w-[300px] p-0 flex flex-col h-full bg-white dark:bg-slate-950"
+                >
                   <SheetHeader className="p-5 border-b border-slate-100 dark:border-slate-900">
                     <SheetTitle className="flex items-center gap-3">
                       <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center">
                         <Sparkles className="h-4 w-4 text-white" />
                       </div>
-                      <span className="font-bold text-base text-slate-900 dark:text-white">ShareText Tools</span>
+                      <span className="font-bold text-base text-slate-900 dark:text-white">
+                        ShareText Tools
+                      </span>
                     </SheetTitle>
                   </SheetHeader>
-                  
+
                   {/* Mobile Search */}
                   <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-900">
                     <div className="relative">
@@ -369,7 +399,7 @@ export const AppShell: React.FC = () => {
                         type="text"
                         placeholder="Search all utilities..."
                         value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg pl-9 pr-4 py-2 text-xs"
                       />
                     </div>
@@ -381,8 +411,12 @@ export const AppShell: React.FC = () => {
                         const IconComponent = item.icon
 
                         if (item.isDropdown) {
-                          const isChildActive = item.children?.some(child => location.pathname.startsWith(child.link))
-                          const isActive = isChildActive || location.pathname.startsWith(item.link)
+                          const isChildActive = item.children?.some((child) =>
+                            location.pathname.startsWith(child.link),
+                          )
+                          const isActive =
+                            isChildActive ||
+                            location.pathname.startsWith(item.link)
 
                           return (
                             <div key={index} className="space-y-1">
@@ -391,11 +425,14 @@ export const AppShell: React.FC = () => {
                                   "flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
                                   isActive
                                     ? "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400"
-                                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900"
+                                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900",
                                 )}
                               >
                                 <SheetTrigger asChild>
-                                  <Link to={item.link} className="flex items-center gap-3 flex-1">
+                                  <Link
+                                    to={item.link}
+                                    className="flex items-center gap-3 flex-1"
+                                  >
                                     <IconComponent className="h-5 w-5 text-slate-400" />
                                     <span>{item.title}</span>
                                   </Link>
@@ -419,7 +456,8 @@ export const AppShell: React.FC = () => {
                                 <div className="pl-7 space-y-1 border-l border-slate-150 dark:border-slate-800 ml-5">
                                   {item.children.map((child, cIdx) => {
                                     const ChildIcon = child.icon
-                                    const isChildPageActive = location.pathname === child.link
+                                    const isChildPageActive =
+                                      location.pathname === child.link
 
                                     return (
                                       <SheetTrigger asChild key={cIdx}>
@@ -429,7 +467,7 @@ export const AppShell: React.FC = () => {
                                             "flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-all",
                                             isChildPageActive
                                               ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50/40 dark:bg-indigo-950/20 font-semibold"
-                                              : "text-slate-500 dark:text-slate-400 hover:text-slate-900 hover:bg-slate-50 dark:hover:bg-slate-900/30"
+                                              : "text-slate-500 dark:text-slate-400 hover:text-slate-900 hover:bg-slate-50 dark:hover:bg-slate-900/30",
                                           )}
                                         >
                                           <ChildIcon className="h-3.5 w-3.5" />
@@ -457,7 +495,7 @@ export const AppShell: React.FC = () => {
                                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
                                 isActive
                                   ? "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border-l-2 border-indigo-600 dark:border-indigo-400"
-                                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200"
+                                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-200",
                               )}
                             >
                               <IconComponent className="h-5 w-5 text-slate-400" />
@@ -466,7 +504,6 @@ export const AppShell: React.FC = () => {
                           </SheetTrigger>
                         )
                       })}
-
                     </nav>
                   </ScrollArea>
                 </SheetContent>
@@ -474,9 +511,16 @@ export const AppShell: React.FC = () => {
 
               {/* Breadcrumbs */}
               <div className="hidden sm:flex items-center gap-2 text-sm text-slate-400 dark:text-slate-500 font-sans">
-                <Link to="/" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Suite</Link>
+                <Link
+                  to="/"
+                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Suite
+                </Link>
                 <span>/</span>
-                <span className="font-medium text-slate-700 dark:text-slate-300">{activeTitle}</span>
+                <span className="font-medium text-slate-700 dark:text-slate-300">
+                  {activeTitle}
+                </span>
               </div>
             </div>
 
@@ -500,7 +544,10 @@ export const AppShell: React.FC = () => {
               {email ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full p-0">
+                    <Button
+                      variant="ghost"
+                      className="relative h-8 w-8 rounded-full p-0"
+                    >
                       <Avatar className="h-8 w-8 border border-slate-200 dark:border-slate-800">
                         <AvatarImage src="" alt="User profile" />
                         <AvatarFallback className="bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 text-xs font-semibold">
@@ -512,25 +559,35 @@ export const AppShell: React.FC = () => {
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-semibold text-slate-950 dark:text-slate-50">User Account</p>
-                        <p className="text-xs text-slate-400 dark:text-slate-500">{email}</p>
+                        <p className="text-sm font-semibold text-slate-950 dark:text-slate-50">
+                          User Account
+                        </p>
+                        <p className="text-xs text-slate-400 dark:text-slate-500">
+                          {email}
+                        </p>
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link to="/settings" className="w-full flex items-center cursor-pointer">
+                      <Link
+                        to="/settings"
+                        className="w-full flex items-center cursor-pointer"
+                      >
                         <User className="mr-2 h-4 w-4" />
                         <span>My Profile</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/settings/appearance" className="w-full flex items-center cursor-pointer">
+                      <Link
+                        to="/settings/appearance"
+                        className="w-full flex items-center cursor-pointer"
+                      >
                         <ExternalLink className="mr-2 h-4 w-4" />
                         <span>Appearance Settings</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       onClick={() => dispatch(removeAuth())}
                       className="w-full flex items-center cursor-pointer text-red-600 dark:text-red-400"
                     >
@@ -540,16 +597,17 @@ export const AppShell: React.FC = () => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Button asChild size="sm" className="bg-indigo-600 text-white hover:bg-indigo-700 text-xs py-1.5 px-3 rounded-lg font-medium">
-                  <Link to={ROUTES.LOGIN}>
-                    Sign In
-                  </Link>
+                <Button
+                  asChild
+                  size="sm"
+                  className="bg-indigo-600 text-white hover:bg-indigo-700 text-xs py-1.5 px-3 rounded-lg font-medium"
+                >
+                  <Link to={ROUTES.LOGIN}>Sign In</Link>
                 </Button>
               )}
             </div>
           </div>
         </header>
-
 
         {/* WORKSPACE & TRANSITIONAL OUTLET PAGE */}
         <main className="flex-1 overflow-y-auto flex flex-col relative bg-slate-50 dark:bg-slate-950">

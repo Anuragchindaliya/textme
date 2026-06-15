@@ -1,14 +1,22 @@
 // components/CodeEditor.tsx
-"use client";
+"use client"
 
-import React, { useState } from "react";
-import dynamic from "next/dynamic";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Select, SelectTrigger, SelectItem, SelectContent, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import React, { useState } from "react"
+import dynamic from "next/dynamic"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import {
+  Select,
+  SelectTrigger,
+  SelectItem,
+  SelectContent,
+  SelectValue,
+} from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
 
 // Monaco editor must be dynamically loaded
-const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
+const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
+  ssr: false,
+})
 
 const languages = [
   { value: "javascript", label: "JavaScript" },
@@ -17,26 +25,33 @@ const languages = [
   { value: "html", label: "HTML" },
   { value: "css", label: "CSS" },
   { value: "json", label: "JSON" },
-];
+]
 type CodeEditorProps = {
-  initialText?: string;
-  initialTab?: string;
-  setValue?: any;
-};
+  initialText?: string
+  initialTab?: string
+  setValue?: any
+}
 
-export default function CodeEditor({initialText = "",initialTab = "text",setValue}:CodeEditorProps) {
-  console.log("CodeEditor props:", {setValue});
-  const [tab, setTab] = useState(initialTab);
-  const [language, setLanguage] = useState("javascript");
-  const [textContent, setTextContent] = useState(initialText);
+export default function CodeEditor({
+  initialText = "",
+  initialTab = "text",
+  setValue,
+}: CodeEditorProps) {
+  console.log("CodeEditor props:", { setValue })
+  const [tab, setTab] = useState(initialTab)
+  const [language, setLanguage] = useState("javascript")
+  const [textContent, setTextContent] = useState(initialText)
   // const [codeContent, setCodeContent] = useState("// Write your code here");
-  const handleTextChange = (value:string) => {
-    setTextContent(value || "");
-    setValue?.("content",value || "",{shouldDirty:true});
-  };
+  const handleTextChange = (value: string) => {
+    setTextContent(value || "")
+    setValue?.("content", value || "", { shouldDirty: true })
+  }
   const handleTabChange = (newTab: string) => {
-    setTab(newTab);
-    setValue?.("tab",newTab || "text",{shouldDirty:true, shouldTouch:true});
+    setTab(newTab)
+    setValue?.("tab", newTab || "text", {
+      shouldDirty: true,
+      shouldTouch: true,
+    })
   }
 
   return (
@@ -53,7 +68,6 @@ export default function CodeEditor({initialText = "",initialTab = "text",setValu
             value={textContent}
             onChange={(e) => handleTextChange(e.target.value)}
             placeholder="Enter your message or notes..."
-            
           />
         </TabsContent>
 
@@ -91,5 +105,5 @@ export default function CodeEditor({initialText = "",initialTab = "text",setValu
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

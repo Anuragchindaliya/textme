@@ -93,15 +93,12 @@ export default function Notes() {
           <TabsTrigger value="insert">Insert Mode</TabsTrigger>
           <TabsTrigger value="edit">Edit Mode</TabsTrigger>
         </TabsList>
-        
+
         <form
           className="space-y-6"
           onSubmit={handleSubmit(onNoteContentSubmit)}
         >
-          <TabsContent
-            value="complete"
-            className="mt-0 border-0 p-0 h-full"
-          >
+          <TabsContent value="complete" className="mt-0 border-0 p-0 h-full">
             <div className="flex flex-col space-y-4 min-h-[300px]">
               <Textarea
                 placeholder="Write description to save..."
@@ -141,7 +138,7 @@ export default function Notes() {
               </div>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="insert" className="mt-0 border-0 p-0">
             <div className="flex flex-col space-y-4">
               <div className="grid h-full grid-rows-2 gap-6 lg:grid-cols-2 lg:grid-rows-1">
@@ -158,7 +155,7 @@ export default function Notes() {
               </div>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="edit" className="mt-0 border-0 p-0">
             <div className="flex flex-col space-y-4">
               <div className="grid h-full gap-6 lg:grid-cols-2">

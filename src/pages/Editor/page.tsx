@@ -114,12 +114,15 @@ export default function Editor() {
         list: List,
         checklist: Checklist,
       },
-      onChange:(api,event)=>{
-        editorRef.current?.save().then((data:OutputData)=>{
-          setValue("content",JSON.stringify(data),{shouldValidate:true,shouldDirty:true})
+      onChange: (api, event) => {
+        editorRef.current?.save().then((data: OutputData) => {
+          setValue("content", JSON.stringify(data), {
+            shouldValidate: true,
+            shouldDirty: true,
+          })
         })
         // console.log({api,event},api.save)
-      }
+      },
     })
   }
   useEffect(() => {
@@ -140,8 +143,7 @@ export default function Editor() {
     if (data?.[0]?.content && editorRef.current?.isReady) {
       try {
         const output = JSON.parse(data[0].content)
-      editorRef.current
-        ?.render?.(output)
+        editorRef.current?.render?.(output)
         // .then((data) => {
         //   console.log("render", data)
         // })
@@ -151,7 +153,6 @@ export default function Editor() {
       } catch (error) {
         // console.log(error)
       }
-      
     }
   }, [data])
 

@@ -1,8 +1,6 @@
 // SortableItem.tsx
 import React, { PropsWithChildren } from "react"
-import {
-  useSortable,
-} from "@dnd-kit/sortable"
+import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { UniqueIdentifier } from "@dnd-kit/core"
 

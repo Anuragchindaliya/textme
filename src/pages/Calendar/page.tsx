@@ -162,21 +162,21 @@ const MyCalendar = () => {
     try {
       const result = await deleteEvent({ id }).unwrap()
       console.log({ result })
-      if(result.deleted){
+      if (result.deleted) {
         toast({
-          title:"Event deleted successfully"
+          title: "Event deleted successfully",
         })
-        setEventModal(null);
-      }else{
+        setEventModal(null)
+      } else {
         toast({
-          variant:"destructive",
-          title:"Event deletion failed"
+          variant: "destructive",
+          title: "Event deletion failed",
         })
       }
     } catch (error: any) {
       toast({
-        variant:"destructive",
-        title:"Event deletion failed"
+        variant: "destructive",
+        title: "Event deletion failed",
       })
       console.log({ error })
     }
@@ -242,7 +242,6 @@ const MyCalendar = () => {
         onOpenChange={() => {
           setEventModal(null)
         }}
-
       >
         {/* <DialogTrigger>Open</DialogTrigger> */}
         <DialogContent>
@@ -255,8 +254,11 @@ const MyCalendar = () => {
                 onClick={() => handleDeleteEvent(showEventModal?.id)}
                 className="ml-auto"
               >
-                {isDeleting?  <Loader className="mr-2 h-4 w-4 animate-spin" />:
-                <Trash className="text-xs w-4 h-4" />}
+                {isDeleting ? (
+                  <Loader className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash className="text-xs w-4 h-4" />
+                )}
               </Button>
             )}
           </DialogHeader>

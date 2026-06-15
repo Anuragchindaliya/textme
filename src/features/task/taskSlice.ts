@@ -19,19 +19,31 @@ const taskSlice = createSlice({
       }
       state.unshift(newTask)
     },
-    updateTaskStatus(state, action: PayloadAction<{ id: string; status: string }>) {
+    updateTaskStatus(
+      state,
+      action: PayloadAction<{ id: string; status: string }>,
+    ) {
       const task = state.find((t) => t.id === action.payload.id)
       if (task) task.status = action.payload.status
     },
     deleteTask(state, action: PayloadAction<string>) {
       return state.filter((t) => t.id !== action.payload)
     },
-    reorderTasks(state, action: PayloadAction<{ oldIndex: number; newIndex: number }>) {
+    reorderTasks(
+      state,
+      action: PayloadAction<{ oldIndex: number; newIndex: number }>,
+    ) {
       const [movedTask] = state.splice(action.payload.oldIndex, 1)
       state.splice(action.payload.newIndex, 0, movedTask)
     },
   },
 })
 
-export const { addTask, updateTaskStatus, deleteTask, reorderTasks, loadTasks } = taskSlice.actions
+export const {
+  addTask,
+  updateTaskStatus,
+  deleteTask,
+  reorderTasks,
+  loadTasks,
+} = taskSlice.actions
 export default taskSlice.reducer

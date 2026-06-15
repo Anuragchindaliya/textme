@@ -1,10 +1,10 @@
-import { textmeApi } from "@/app/services";
+import { textmeApi } from "@/app/services"
 
 export type GovLinksRes = {
-  Category: string | "Document" | "Job";
-  Name: string;
-  URL: string;
-  Services: string;
+  Category: string | "Document" | "Job"
+  Name: string
+  URL: string
+  Services: string
 }
 export const govApi = textmeApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -14,9 +14,6 @@ export const govApi = textmeApi.injectEndpoints({
         method: "GET",
       }),
     }),
-
   }),
 })
-export const {
-  useGetGovLinksQuery,
-} = govApi
+export const { useGetGovLinksQuery } = govApi

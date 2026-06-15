@@ -21,8 +21,12 @@ const QRCodeScanner: React.FC = () => {
     // Cleanup on component unmount
     return () => {
       if (scannerRef.current) {
-        if (scannerRef.current.getState() === Html5QrcodeScannerState.SCANNING) {
-          scannerRef.current.stop().catch((err) => console.error("Error stopping scanner:", err))
+        if (
+          scannerRef.current.getState() === Html5QrcodeScannerState.SCANNING
+        ) {
+          scannerRef.current
+            .stop()
+            .catch((err) => console.error("Error stopping scanner:", err))
         }
       }
     }
@@ -64,7 +68,10 @@ const QRCodeScanner: React.FC = () => {
   }
 
   const stopScanning = async () => {
-    if (scannerRef.current && scannerRef.current.getState() === Html5QrcodeScannerState.SCANNING) {
+    if (
+      scannerRef.current &&
+      scannerRef.current.getState() === Html5QrcodeScannerState.SCANNING
+    ) {
       try {
         await scannerRef.current.stop()
       } catch (error) {
@@ -148,7 +155,9 @@ const QRCodeScanner: React.FC = () => {
               <div className="mx-auto justify-center flex flex-col items-center">
                 <Camera className="w-32 h-32 text-gray-400" />
                 <p className="mt-2 text-gray-500 dark:text-gray-400">
-                  {result ? "Scan complete. Click Restart Scanning to scan again." : "Camera is ready. Click Start Scanning to begin."}
+                  {result
+                    ? "Scan complete. Click Restart Scanning to scan again."
+                    : "Camera is ready. Click Start Scanning to begin."}
                 </p>
               </div>
             )}

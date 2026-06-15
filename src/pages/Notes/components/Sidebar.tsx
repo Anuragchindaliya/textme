@@ -29,7 +29,7 @@ import {
   Terminal,
   TextCursor,
   TextCursorInput,
-  Users2
+  Users2,
 } from "lucide-react"
 import React, { useMemo } from "react"
 import { AiOutlineAntDesign } from "react-icons/ai"
@@ -184,7 +184,7 @@ const Sidebar = () => {
               aria-label="Sidenav"
               id="drawer-navigation"
             > */}
-            <ScrollArea  className="overflow-y-auto py-2 px-3 h-[84vh] ">
+            <ScrollArea className="overflow-y-auto py-2 px-3 h-[84vh] ">
               {/* <form action="#" method="GET" className=" mb-2">
                   <label htmlFor="sidebar-search" className="sr-only">
                     Search

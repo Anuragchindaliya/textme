@@ -1,11 +1,11 @@
 export interface Business {
-  id: number;
-  name: string;
-  type: string;
-  latitude: number;
-  longitude: number;
-  address: string;
-  contact: string;
+  id: number
+  name: string
+  type: string
+  latitude: number
+  longitude: number
+  address: string
+  contact: string
 }
 
 export const businesses: Business[] = [
@@ -23,7 +23,7 @@ export const businesses: Business[] = [
     name: "Bookworm Heaven",
     type: "Bookstore",
     latitude: 28.5355,
-    longitude: 77.3910,
+    longitude: 77.391,
     address: "Sector 18, Noida",
     contact: "9876543211",
   },
@@ -36,4 +36,4 @@ export const businesses: Business[] = [
     address: "MG Road, Gurgaon",
     contact: "9876543212",
   },
-];
+]

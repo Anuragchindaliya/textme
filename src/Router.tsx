@@ -63,7 +63,7 @@ export const ROUTES = {
   SETTINGS_ACCOUNT: "",
   EDITOR: "/editor",
   DRAW: "/draw",
-  LOCATION:"/location",
+  LOCATION: "/location",
   CALENDAR: "/calendar",
   PDF: "/invoice-pdf",
   GOV_LINK: "/gov-link",
@@ -73,12 +73,12 @@ export const ROUTES = {
   QR_SCAN: QR_ROUTES.QR_SCAN,
   QR_UPLOAD: QR_ROUTES.QR_UPLOAD,
   QRL_DYNAMIC: QR_ROUTES.QRL_DYNAMIC,
-  FORMS:"/form-list",
-  FORM_DATA:"/formdata-list",
-  CREATE_FORMS:"/create-form",
-  TAX_CALCULATOR:"/calculate-tax",
-  OCR:"/ocr",
-  REACT_FLOW:"/react-flow",
+  FORMS: "/form-list",
+  FORM_DATA: "/formdata-list",
+  CREATE_FORMS: "/create-form",
+  TAX_CALCULATOR: "/calculate-tax",
+  OCR: "/ocr",
+  REACT_FLOW: "/react-flow",
   WEATHER: "/weather",
   WEATHER_SEARCH: "/weather-search",
   PDF_EDITOR: "/pdf-editor",
@@ -102,7 +102,10 @@ const Router = () => {
         <Route path={ROUTES.QR_SCAN} element={<QRCodeScanner />} />
         <Route path={ROUTES.QR_UPLOAD} element={<QRCodeUploader />} />
         <Route path={ROUTES.QRL_DYNAMIC} element={<QRLCodeScanner />} />
-        <Route path={ROUTES.QRL_DYNAMIC + "/add"} element={<AddRedirectUrl />} />
+        <Route
+          path={ROUTES.QRL_DYNAMIC + "/add"}
+          element={<AddRedirectUrl />}
+        />
         <Route path={ROUTES.DRAW} element={<Draw />} />
         <Route path={ROUTES.LOCATION} element={<Location />} />
         <Route path={ROUTES.CALENDAR} element={<MyCalendar />} />
@@ -112,8 +115,11 @@ const Router = () => {
         <Route path={ROUTES.PDF_EDITOR} element={<PDFEditor />} />
         <Route path={ROUTES.PDF} element={<ExportPdf />} />
         <Route path={ROUTES.FORMS} element={<FormList />} />
-        <Route path={`${ROUTES.FORM_DATA}/:id`} element={<FormSubmissionList />} />
-        
+        <Route
+          path={`${ROUTES.FORM_DATA}/:id`}
+          element={<FormSubmissionList />}
+        />
+
         <Route element={<FormLayout />}>
           <Route path={ROUTES.CREATE_FORMS} element={<FormBuilderPage />} />
           <Route path="/form/:id" element={<PreviewForm />} />
@@ -131,7 +137,6 @@ const Router = () => {
         <Route path={ROUTES.LOGIN} element={<LoginPage />} />
         <Route path={"/register"} element={<AuthenticationPage />} />
       </Route>
-
 
       <Route element={<DashboardLayout />}>
         <Route path={"/dashboard"} element={<DashboardPage />} />

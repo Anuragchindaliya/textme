@@ -23,7 +23,7 @@ type QRInputType = {
   onNoteSubmit: (formData: noteFormType) => Promise<void>
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
-const QRInput = ({ form, onNoteSubmit,onChange }: QRInputType) => {
+const QRInput = ({ form, onNoteSubmit, onChange }: QRInputType) => {
   const qrText = form.watch("note")
   return (
     <form
@@ -35,7 +35,7 @@ const QRInput = ({ form, onNoteSubmit,onChange }: QRInputType) => {
           type="text"
           placeholder="Enter text to generate QR Code..."
           className=" w-full"
-          {...form.register("note",{onChange:onChange})}
+          {...form.register("note", { onChange: onChange })}
         />
         {form.formState.errors?.note && (
           <p className="absolute -bottom-[18px] px-1 text-xs text-red-600">

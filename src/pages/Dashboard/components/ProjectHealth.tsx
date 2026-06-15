@@ -4,16 +4,17 @@ import { Progress } from "@/components/ui/progress"
 import { useGetProjectHealthQuery } from "@/features/task/tasksApi"
 
 export function ProjectHealth() {
-  const workspaceId = '1'
-  const { data: healthMetrics, isLoading } = useGetProjectHealthQuery(workspaceId)
+  const workspaceId = "1"
+  const { data: healthMetrics, isLoading } =
+    useGetProjectHealthQuery(workspaceId)
 
   // Fallback data if API not ready
   const projects = healthMetrics || [
-      {
-        projectId: "1",
-        completed: 12,
-        total: 20,
-      }
+    {
+      projectId: "1",
+      completed: 12,
+      total: 20,
+    },
   ]
 
   return (
@@ -27,7 +28,7 @@ export function ProjectHealth() {
             <div key={index} className="space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                    <div className="font-medium">Project {project.projectId}</div>
+                  <div className="font-medium">Project {project.projectId}</div>
                 </div>
                 <div className="text-xs text-muted-foreground">
                   {project.completed}/{project.total} Tasks
@@ -35,9 +36,9 @@ export function ProjectHealth() {
               </div>
               <Progress value={(project.completed / project.total) * 100} />
               <div className="flex items-center -space-x-2 overflow-hidden">
-                    <Avatar className="inline-block h-6 w-6 ring-2 ring-background">
-                        <AvatarFallback>U</AvatarFallback>
-                    </Avatar>
+                <Avatar className="inline-block h-6 w-6 ring-2 ring-background">
+                  <AvatarFallback>U</AvatarFallback>
+                </Avatar>
               </div>
             </div>
           ))}

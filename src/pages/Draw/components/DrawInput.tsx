@@ -87,7 +87,7 @@ const DrawInput = () => {
         />
       </Button> */}
       <div className="hidden sm:block">
-        <PresetShare  />
+        <PresetShare />
       </div>
     </form>
   )

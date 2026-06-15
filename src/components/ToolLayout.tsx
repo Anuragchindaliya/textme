@@ -30,19 +30,13 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({
         {/* Tool Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/50 dark:border-slate-800/40 pb-5">
           <div className="space-y-1">
-            <h1 className={theme.typography.sectionTitle}>
-              {title}
-            </h1>
+            <h1 className={theme.typography.sectionTitle}>{title}</h1>
             {description && (
-              <p className={theme.typography.body}>
-                {description}
-              </p>
+              <p className={theme.typography.body}>{description}</p>
             )}
           </div>
           {actions && (
-            <div className="flex flex-wrap items-center gap-3">
-              {actions}
-            </div>
+            <div className="flex flex-wrap items-center gap-3">{actions}</div>
           )}
         </div>
 
@@ -51,7 +45,7 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({
           className={cn(
             theme.classes.card,
             "p-6 md:p-8 bg-white/70 dark:bg-slate-900/40 backdrop-blur-md shadow-sm border border-slate-200/55 dark:border-slate-800/60",
-            className
+            className,
           )}
         >
           {children}

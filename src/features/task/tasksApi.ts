@@ -27,7 +27,10 @@ export const tasksApi = nodeBaseApi.injectEndpoints({
         body: patch,
       }),
       // Optimistic Update
-      onQueryStarted: async ({ id, ...patch }, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async (
+        { id, ...patch },
+        { dispatch, queryFulfilled },
+      ) => {
         const patchResult = dispatch(
           tasksApi.util.updateQueryData(
             "getAssignedTasks",
@@ -37,15 +40,15 @@ export const tasksApi = nodeBaseApi.injectEndpoints({
             // A safer approach for this mock: update specific cache entry if possible.
             // Since we don't have the arg (userId) easily accessbile without passing it,
             // we will try to match any 'getAssignedTasks' query.
-             // @ts-ignore
-            undefined, 
+            // @ts-ignore
+            undefined,
             (draft) => {
               const task = draft.find((t) => t.id === id)
               if (task) {
                 Object.assign(task, patch)
               }
-            }
-          )
+            },
+          ),
         )
         try {
           await queryFulfilled

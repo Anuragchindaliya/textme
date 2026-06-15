@@ -17,15 +17,15 @@ export const useSocket = (userId: string) => {
     // })
     // Mocking socket for now as backend is not real
     const mockSocket = {
-        on: (event: string, callback: any) => {
-            console.log(`Listening for ${event}`)
-        },
-        off: (event: string) => {
-            console.log(`Stopped listening for ${event}`)
-        },
-        disconnect: () => {
-            console.log("Disconnected")
-        }
+      on: (event: string, callback: any) => {
+        console.log(`Listening for ${event}`)
+      },
+      off: (event: string) => {
+        console.log(`Stopped listening for ${event}`)
+      },
+      disconnect: () => {
+        console.log("Disconnected")
+      },
     }
 
     // socket.on("connect", () => {
@@ -35,7 +35,7 @@ export const useSocket = (userId: string) => {
     // Listen for task updates
     // socket.on("task_updated", (data: any) => {
     //   console.log("Task updated event received:", data)
-      
+
     //   // Invalidate relevant tags to trigger refetch
     //   dispatch(nodeBaseApi.util.invalidateTags(["Task", "ProjectList"]))
     // })

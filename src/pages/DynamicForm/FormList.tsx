@@ -80,10 +80,23 @@ const FormList = () => {
           <select
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value)}
-            className={cn(theme.classes.input, "sm:w-48 bg-transparent cursor-pointer form-sort-button")}
+            className={cn(
+              theme.classes.input,
+              "sm:w-48 bg-transparent cursor-pointer form-sort-button",
+            )}
           >
-            <option value="newest" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">📅 Newest First</option>
-            <option value="oldest" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">📜 Oldest First</option>
+            <option
+              value="newest"
+              className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+            >
+              📅 Newest First
+            </option>
+            <option
+              value="oldest"
+              className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
+            >
+              📜 Oldest First
+            </option>
           </select>
         </div>
 
@@ -93,13 +106,32 @@ const FormList = () => {
             Array(6)
               .fill(null)
               .map((_, index) => (
-                <Card key={index} className="p-5 border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm">
+                <Card
+                  key={index}
+                  className="p-5 border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm"
+                >
                   <CardContent className="p-0 space-y-3">
-                    <Skeleton height={20} width="60%" className="dark:bg-slate-800" />
-                    <Skeleton height={14} width="40%" className="dark:bg-slate-800" />
+                    <Skeleton
+                      height={20}
+                      width="60%"
+                      className="dark:bg-slate-800"
+                    />
+                    <Skeleton
+                      height={14}
+                      width="40%"
+                      className="dark:bg-slate-800"
+                    />
                     <div className="space-y-2 pt-2">
-                      <Skeleton height={12} width="80%" className="dark:bg-slate-800" />
-                      <Skeleton height={12} width="70%" className="dark:bg-slate-800" />
+                      <Skeleton
+                        height={12}
+                        width="80%"
+                        className="dark:bg-slate-800"
+                      />
+                      <Skeleton
+                        height={12}
+                        width="70%"
+                        className="dark:bg-slate-800"
+                      />
                     </div>
                   </CardContent>
                 </Card>
@@ -130,22 +162,41 @@ const FormList = () => {
                     <div className="space-y-1.5 text-xs text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800/80 pt-3">
                       <div className="flex justify-between">
                         <span>Created:</span>
-                        <span className="font-medium">{form.format_created_at}</span>
+                        <span className="font-medium">
+                          {form.format_created_at}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span>Modified:</span>
-                        <span className="font-medium">{form.format_modified_at}</span>
+                        <span className="font-medium">
+                          {form.format_modified_at}
+                        </span>
                       </div>
                     </div>
 
-                    <div className="flex gap-2 pt-3 border-t border-slate-100 dark:border-slate-800/80" onClick={(e) => e.stopPropagation()}>
-                      <Link to={`/form/${form?.key}`} className="flex-1 form-preview-button">
-                        <Button variant="outline" className="w-full text-xs gap-1.5">
+                    <div
+                      className="flex gap-2 pt-3 border-t border-slate-100 dark:border-slate-800/80"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Link
+                        to={`/form/${form?.key}`}
+                        className="flex-1 form-preview-button"
+                      >
+                        <Button
+                          variant="outline"
+                          className="w-full text-xs gap-1.5"
+                        >
                           <FcDocument className="size-4" /> Preview
                         </Button>
                       </Link>
-                      <Link to={`${ROUTES.FORM_DATA}/${form?.key}`} className="flex-1 form-submissions-button">
-                        <Button variant="secondary" className="w-full text-xs gap-1.5">
+                      <Link
+                        to={`${ROUTES.FORM_DATA}/${form?.key}`}
+                        className="flex-1 form-submissions-button"
+                      >
+                        <Button
+                          variant="secondary"
+                          className="w-full text-xs gap-1.5"
+                        >
                           <Database className="size-3 text-slate-500" /> Data
                         </Button>
                       </Link>
@@ -156,7 +207,8 @@ const FormList = () => {
             ))
           ) : (
             <div className="col-span-full py-12 text-center text-slate-400 dark:text-slate-500">
-              No forms created yet. Click &quot;Create Form&quot; to get started!
+              No forms created yet. Click &quot;Create Form&quot; to get
+              started!
             </div>
           )}
         </div>

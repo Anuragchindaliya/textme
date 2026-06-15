@@ -8,7 +8,7 @@ import { MainNav } from "./Dashboard/components/main-nav"
 const DashboardLayout = () => {
   return (
     <>
-    <div className="border-b">
+      <div className="border-b">
         <div className="flex h-16 items-center px-4">
           <TeamSwitcher />
           <MainNav className="mx-6" />
@@ -18,12 +18,12 @@ const DashboardLayout = () => {
           </div>
         </div>
       </div>
-    <div className="flex h-[90vh] overflow-hidden">
-      <Sidebar className="w-64 hidden md:block" />
-      <div className="flex-1 flex flex-col overflow-y-auto">
-        <Outlet />
+      <div className="flex h-[90vh] overflow-hidden">
+        <Sidebar className="w-64 hidden md:block" />
+        <div className="flex-1 flex flex-col overflow-y-auto">
+          <Outlet />
+        </div>
       </div>
-    </div>
     </>
   )
 }

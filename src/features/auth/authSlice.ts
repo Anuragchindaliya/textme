@@ -2,12 +2,12 @@ import { RootState } from "@/app/store"
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 const authKey = "userInfo"
 const getLocalData = () => {
-  const item = localStorage?.getItem(authKey);
+  const item = localStorage?.getItem(authKey)
   try {
-    return item ? JSON.parse(item) : null;
+    return item ? JSON.parse(item) : null
   } catch (e) {
-    console.error("Failed to parse JSON from localStorage:", e);
-    return null;
+    console.error("Failed to parse JSON from localStorage:", e)
+    return null
   }
 }
 const localData = getLocalData() || {}

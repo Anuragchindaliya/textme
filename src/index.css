@@ -2,23 +2,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-h1.ce-header{
-  @apply text-3xl font-bold
+h1.ce-header {
+  @apply text-3xl font-bold;
 }
-h2.ce-header{
-  @apply text-2xl font-semibold
+h2.ce-header {
+  @apply text-2xl font-semibold;
 }
-h3.ce-header{
-  @apply text-xl font-semibold
+h3.ce-header {
+  @apply text-xl font-semibold;
 }
-h4.ce-header{
-  @apply text-lg font-semibold
+h4.ce-header {
+  @apply text-lg font-semibold;
 }
-h5.ce-header{
-  @apply text-base font-semibold
+h5.ce-header {
+  @apply text-base font-semibold;
 }
-h6.ce-header{
-  @apply text-base font-semibold
+h6.ce-header {
+  @apply text-base font-semibold;
 }
 @layer base {
   :root {
@@ -67,7 +67,7 @@ input:-webkit-autofill {
   box-shadow: inset 0 0 20px 20px #23232329;
 }
 .Toastify__toast-container--top-center {
-  top: 35%!important;
+  top: 35% !important;
   left: 50%;
   transform: translate(-50%, -50%);
 }

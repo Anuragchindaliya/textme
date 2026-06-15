@@ -4,11 +4,14 @@ import { useTheme } from "next-themes"
 import { useEffect, useRef, useState } from "react"
 import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
-import { oneDark, oneLight } from "react-syntax-highlighter/dist/esm/styles/prism"
+import {
+  oneDark,
+  oneLight,
+} from "react-syntax-highlighter/dist/esm/styles/prism"
 import remarkGfm from "remark-gfm"
 import Sidebar from "../Notes/components/Sidebar"
 
-const GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY
 // const GEMINI_KEY = "";
 
 interface Message {
@@ -17,8 +20,8 @@ interface Message {
 }
 
 export default function App() {
-  const {theme}=useTheme();
-  const syntaxTheme = theme === "dark" ? oneDark : oneLight; // Dynamically set the theme
+  const { theme } = useTheme()
+  const syntaxTheme = theme === "dark" ? oneDark : oneLight // Dynamically set the theme
   const [apiKey, setApiKey] = useState<string | null>(() => {
     return GEMINI_KEY || localStorage.getItem("ai_key")
   })
@@ -28,7 +31,7 @@ export default function App() {
   const [showKeyModal, setShowKeyModal] = useState(!apiKey)
 
   const [ai, setAi] = useState<GoogleGenAI | null>(
-    apiKey ? new GoogleGenAI({ apiKey }) : null
+    apiKey ? new GoogleGenAI({ apiKey }) : null,
   )
 
   const [messages, setMessages] = useState<Message[]>(() => {
@@ -109,7 +112,6 @@ export default function App() {
       <div className="absolute top-4 left-4 z-9">
         <Sidebar />
       </div>
-      
 
       {/* Header */}
       <header className="p-4 text-center text-2xl font-bold border-b dark:border-gray-700">
@@ -222,7 +224,9 @@ export default function App() {
             <h2 className="text-xl font-bold mb-4 text-center">
               🔑 Enter AI API Key
             </h2>
-            <label className="block mb-2 text-sm dark:text-gray-300">Platform</label>
+            <label className="block mb-2 text-sm dark:text-gray-300">
+              Platform
+            </label>
             <select
               value={platform}
               onChange={(e) => setPlatform(e.target.value)}
@@ -234,7 +238,9 @@ export default function App() {
               </option>
             </select>
 
-            <label className="block mb-2 text-sm dark:text-gray-300">API Key</label>
+            <label className="block mb-2 text-sm dark:text-gray-300">
+              API Key
+            </label>
             <input
               type="password"
               value={apiKey || ""}

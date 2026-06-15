@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
+import React, { useEffect } from "react"
+import { Outlet } from "react-router-dom"
 
 const FormLayout = () => {
   useEffect(() => {
@@ -21,9 +21,7 @@ const FormLayout = () => {
       document.head.removeChild(formioLink)
     }
   }, [])
-  return (
-    <Outlet />
-  )
+  return <Outlet />
 }
 
 export default FormLayout

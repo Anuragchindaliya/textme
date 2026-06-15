@@ -25,17 +25,28 @@ interface TaskListProps {
   onToggleStatus: (taskId: string) => (statusValue: string) => void
 }
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, onDragEnd, onToggleStatus }) => {
+const TaskList: React.FC<TaskListProps> = ({
+  tasks,
+  onDragEnd,
+  onToggleStatus,
+}) => {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   )
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-      <SortableContext items={tasks.map((task) => task.id)} strategy={verticalListSortingStrategy}>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={onDragEnd}
+    >
+      <SortableContext
+        items={tasks.map((task) => task.id)}
+        strategy={verticalListSortingStrategy}
+      >
         <ul className="space-y-4">
           {tasks.map((task) => (
             <SortableItem key={task.id} id={task.id}>

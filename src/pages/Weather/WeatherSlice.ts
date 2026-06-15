@@ -1,4 +1,4 @@
-import { textmeApi } from "@/app/services";
+import { textmeApi } from "@/app/services"
 
 // const initialState = {
 //   coords: { lat: 28.6139, lon: 77.209 }, // Delhi default
@@ -59,40 +59,42 @@ export interface Sys {
   sunset: number
 }
 
-
-
 interface CountriesRes {
-  id: number;
-  name: string;
-  iso2: string;
-  iso3: string;
-  phonecode: string;
-  capital: string;
-  currency: string;
-  native: string;
-  emoji: string;
+  id: number
+  name: string
+  iso2: string
+  iso3: string
+  phonecode: string
+  capital: string
+  currency: string
+  native: string
+  emoji: string
 }
 
-const COUNTRY_BASE_URL = "https://api.countrystatecity.in/v1/countries";
-const CSC_API_KEY = import.meta.env.VITE_CSC_API_KEY || "dXRHa2l1QXZBMXNEUmxjdE9VZ2l5ejRudmZ4dVZwMUpTOTBOcnZtMg==";
-const WEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5";
-const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY || "714e4f7af2ccc29175dfc4099ff59474";
+const COUNTRY_BASE_URL = "https://api.countrystatecity.in/v1/countries"
+const CSC_API_KEY =
+  import.meta.env.VITE_CSC_API_KEY ||
+  "dXRHa2l1QXZBMXNEUmxjdE9VZ2l5ejRudmZ4dVZwMUpTOTBOcnZtMg=="
+const WEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5"
+const WEATHER_API_KEY =
+  import.meta.env.VITE_WEATHER_API_KEY || "714e4f7af2ccc29175dfc4099ff59474"
 
 export const weatherApi = textmeApi.injectEndpoints({
   endpoints: (builder) => ({
-    getWeatherByCity: builder.mutation<WeatherResponse, { city: string; countryCode: string; units?: string }>({
-      query: ({ city, countryCode, units = "metric" }) =>({
-        url:
-        `${WEATHER_BASE_URL}/weather?q=${city},${countryCode.toLowerCase()}&APPID=${WEATHER_API_KEY}&units=${units}`,
+    getWeatherByCity: builder.mutation<
+      WeatherResponse,
+      { city: string; countryCode: string; units?: string }
+    >({
+      query: ({ city, countryCode, units = "metric" }) => ({
+        url: `${WEATHER_BASE_URL}/weather?q=${city},${countryCode.toLowerCase()}&APPID=${WEATHER_API_KEY}&units=${units}`,
         method: "GET",
-      })
+      }),
     }),
     getWeatherByCoords: builder.query<WeatherResponse, { units?: string }>({
-      query: ({ units = "metric" }) =>({
-        url:
-        `${WEATHER_BASE_URL}/weather?lat=28.3735651&lon=77.2834679&APPID=${WEATHER_API_KEY}&units=${units}`,
+      query: ({ units = "metric" }) => ({
+        url: `${WEATHER_BASE_URL}/weather?lat=28.3735651&lon=77.2834679&APPID=${WEATHER_API_KEY}&units=${units}`,
         method: "GET",
-      })
+      }),
     }),
     getCountries: builder.query<CountriesRes[], void>({
       query: () => ({
@@ -106,14 +108,22 @@ export const weatherApi = textmeApi.injectEndpoints({
         headers: { "X-CSCAPI-KEY": CSC_API_KEY },
       }),
     }),
-    getCities: builder.mutation<any[], { countryCode: string; stateCode: string }>({
+    getCities: builder.mutation<
+      any[],
+      { countryCode: string; stateCode: string }
+    >({
       query: ({ countryCode, stateCode }) => ({
         url: `${COUNTRY_BASE_URL}/${countryCode}/states/${stateCode}/cities`,
         headers: { "X-CSCAPI-KEY": CSC_API_KEY },
       }),
     }),
-
   }),
-});
+})
 
-export const { useGetWeatherByCityMutation,useGetCountriesQuery,useGetStatesMutation,useGetCitiesMutation,useGetWeatherByCoordsQuery } = weatherApi;
+export const {
+  useGetWeatherByCityMutation,
+  useGetCountriesQuery,
+  useGetStatesMutation,
+  useGetCitiesMutation,
+  useGetWeatherByCoordsQuery,
+} = weatherApi

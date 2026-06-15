@@ -34,13 +34,16 @@ export const notesApi = textmeApi.injectEndpoints({
       query: (filename) => ({
         url: "?sheet=draw",
         method: "POST",
-        body:{
-          id:"INCREMENT",
+        body: {
+          id: "INCREMENT",
           filename,
-        }
+        },
       }),
     }),
-    postDrawFileContent: builder.mutation<any, {content:string,filename:string}>({
+    postDrawFileContent: builder.mutation<
+      any,
+      { content: string; filename: string }
+    >({
       query: (body) => ({
         // url: endpoints.NOTES,
         url: `${endpoints.EDITOR_FILENAME}/${body.filename}?sheet=draw`,
@@ -54,5 +57,5 @@ export const {
   // useGetNoteMutation,
   useCreateDrawFileQuery,
   useGetDrawFileDataQuery,
-  usePostDrawFileContentMutation
+  usePostDrawFileContentMutation,
 } = notesApi

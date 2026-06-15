@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "framer-motion"
 
 const SuccessIcon = () => {
   return (
@@ -10,7 +10,14 @@ const SuccessIcon = () => {
       animate={{ scale: 1 }}
       transition={{ type: "spring", stiffness: 100, damping: 10 }}
     >
-      <circle cx="50" cy="50" r="45" stroke="green" strokeWidth="5" fill="none" />
+      <circle
+        cx="50"
+        cy="50"
+        r="45"
+        stroke="green"
+        strokeWidth="5"
+        fill="none"
+      />
       <motion.path
         d="M30 50 L45 65 L70 35"
         stroke="green"
@@ -22,7 +29,7 @@ const SuccessIcon = () => {
         transition={{ duration: 0.5, ease: "easeOut" }}
       />
     </motion.svg>
-  );
-};
+  )
+}
 
-export default SuccessIcon;
+export default SuccessIcon

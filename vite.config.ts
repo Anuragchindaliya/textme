@@ -33,6 +33,6 @@ export default defineConfig({
     },
   },
   define: {
-    'process.env.IS_PREACT': JSON.stringify('true'),
+    "process.env.IS_PREACT": JSON.stringify("true"),
   },
 })

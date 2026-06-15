@@ -1,8 +1,8 @@
-import React from "react";
-import { FloatingDock } from "@/components/ui/floating-dock";
-import Image from "next/image";
-import { Github, Home, LogInIcon, Newspaper, Terminal } from "lucide-react";
-import { FcCurrencyExchange, FcFactoryBreakdown, FcHome } from "react-icons/fc";
+import React from "react"
+import { FloatingDock } from "@/components/ui/floating-dock"
+import Image from "next/image"
+import { Github, Home, LogInIcon, Newspaper, Terminal } from "lucide-react"
+import { FcCurrencyExchange, FcFactoryBreakdown, FcHome } from "react-icons/fc"
 
 export function MapFloatingDock() {
   const links = [
@@ -30,9 +30,7 @@ export function MapFloatingDock() {
     },
     {
       title: "Aceternity UI",
-      icon: (
-       <LogInIcon />
-      ),
+      icon: <LogInIcon />,
       href: "#",
     },
     {
@@ -57,7 +55,7 @@ export function MapFloatingDock() {
       ),
       href: "#",
     },
-  ];
+  ]
   return (
     <div className="flex items-center justify-center h-[8rem] w-full z-30">
       <FloatingDock
@@ -65,5 +63,5 @@ export function MapFloatingDock() {
         items={links}
       />
     </div>
-  );
+  )
 }

@@ -194,10 +194,7 @@ const MapComponent: React.FC = () => {
           <SearchBox
             onSelectLocation={(lat, lon) => {
               // setPosition([lat, lon])
-              handleLocationClick(
-                lat,
-                lon,
-              )
+              handleLocationClick(lat, lon)
             }}
           />
         </div>

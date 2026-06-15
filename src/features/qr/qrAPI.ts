@@ -8,13 +8,14 @@ import { z } from "zod"
 //   )
 // }
 
-
-const DynamicQrItemType = [{ id: "1", title: "anurag", content: "test content" }]
+const DynamicQrItemType = [
+  { id: "1", title: "anurag", content: "test content" },
+]
 export type DynamicQrItemType = {
   id: string
   key: string
   url: string
-  created_at:string;
+  created_at: string
 }
 
 export const editorContentFormSchema = z.object({
@@ -50,7 +51,7 @@ export const qrApi = textmeApi.injectEndpoints({
       }),
     }),
 
-    addRedirect: builder.mutation<any, { key: string; url: string}>({
+    addRedirect: builder.mutation<any, { key: string; url: string }>({
       query: (body) => ({
         url: "?sheet=QR",
         method: "POST",
@@ -58,23 +59,21 @@ export const qrApi = textmeApi.injectEndpoints({
           id: "INCREMENT",
           key: body.key,
           url: body.url,
-          created_at:"TIMESTAMP",
-          modified_at:"TIMESTAMP"
+          created_at: "TIMESTAMP",
+          modified_at: "TIMESTAMP",
         },
       }),
     }),
-    updateRedirectUrl: builder.mutation<any, { id: string; url: string}>({
+    updateRedirectUrl: builder.mutation<any, { id: string; url: string }>({
       query: (body) => ({
         url: `/id/${body.id}?sheet=QR`,
         method: "PATCH",
         body: {
           url: body.url,
-          modified_at:"TIMESTAMP"
+          modified_at: "TIMESTAMP",
         },
       }),
     }),
-
-
   }),
 })
 export const {
@@ -83,5 +82,5 @@ export const {
   useGetQrUrlMutation,
   useAddRedirectMutation,
   useGetQrDataListQuery,
-  useUpdateRedirectUrlMutation
+  useUpdateRedirectUrlMutation,
 } = qrApi

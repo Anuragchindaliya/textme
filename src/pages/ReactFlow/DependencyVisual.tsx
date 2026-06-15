@@ -8,7 +8,7 @@ import ReactFlow, {
   MiniMap,
   Node,
   useEdgesState,
-  useNodesState
+  useNodesState,
 } from "reactflow"
 import "reactflow/dist/style.css"
 import { Input } from "@/components/ui/input"
@@ -139,12 +139,14 @@ export default function DependencyGraphViewer() {
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
   const [jsonContent, setJsonContent] = useState<string>("")
-  const [selectedTheme, setSelectedTheme] = useState<any>(themeOptionsConfig[syntaxStyleName[0]]);
-  const [codeStyle, setCodeStyle] = useState<string>(syntaxStyleName[0]);
+  const [selectedTheme, setSelectedTheme] = useState<any>(
+    themeOptionsConfig[syntaxStyleName[0]],
+  )
+  const [codeStyle, setCodeStyle] = useState<string>(syntaxStyleName[0])
   const onThemeChange = useCallback(
     async (value: string) => {
       setCodeStyle(value)
-      setSelectedTheme(themeOptionsConfig[value]);
+      setSelectedTheme(themeOptionsConfig[value])
     },
     [setSelectedTheme, setCodeStyle],
   )
@@ -171,7 +173,6 @@ export default function DependencyGraphViewer() {
     },
     [setNodes, setEdges],
   )
-  
 
   return (
     <div className="w-screen h-[calc(100vh-3rem)] flex">
@@ -238,7 +239,7 @@ export default function DependencyGraphViewer() {
               // onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               fitView
-                  proOptions={{hideAttribution:true}}
+              proOptions={{ hideAttribution: true }}
             >
               <MiniMap />
               <Controls />

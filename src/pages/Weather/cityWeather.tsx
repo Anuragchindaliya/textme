@@ -45,8 +45,11 @@ import {
 //   return res.json();
 // };
 
-const getDateTimeFromOffset = (timestamp: number, timeZoneOffsetSeconds: number) => {
-  const localTime = new Date((timestamp + timeZoneOffsetSeconds) * 1000);
+const getDateTimeFromOffset = (
+  timestamp: number,
+  timeZoneOffsetSeconds: number,
+) => {
+  const localTime = new Date((timestamp + timeZoneOffsetSeconds) * 1000)
   return localTime.toLocaleString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -55,9 +58,8 @@ const getDateTimeFromOffset = (timestamp: number, timeZoneOffsetSeconds: number)
     minute: "2-digit",
     hour: "2-digit",
     hour12: true,
-  });
-};
-
+  })
+}
 
 const CityWeather = () => {
   const { isLoading: countryLoading, data: countries } = useGetCountriesQuery()
@@ -67,18 +69,21 @@ const CityWeather = () => {
     useGetWeatherByCityMutation()
   const [states, setStates] = useState<any[]>([])
   const [cities, setCities] = useState<any[]>([])
-  const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined)
-  const [selectedState, setSelectedState] = useState<string | undefined>(undefined)
-  const [selectedCity, setSelectedCity] = useState<string | undefined>(undefined)
+  const [selectedCountry, setSelectedCountry] = useState<string | undefined>(
+    undefined,
+  )
+  const [selectedState, setSelectedState] = useState<string | undefined>(
+    undefined,
+  )
+  const [selectedCity, setSelectedCity] = useState<string | undefined>(
+    undefined,
+  )
   const [weather, setWeather] = useState<any | null>(null)
   const [unit, setUnit] = useState("metric")
-  const [coords, setCoords] = useState({ lat: 28.6139, lon: 77.209 });
+  const [coords, setCoords] = useState({ lat: 28.6139, lon: 77.209 })
   // const useGetWeatherQuery({ lat: 28.6139, lon: 77.209 }); // Default to Delhi coordinates
-  const {data:coordsWeather,isLoading:cWeatherLoading}=useGetWeatherByCoordsQuery({
-    
-  })
-
-  
+  const { data: coordsWeather, isLoading: cWeatherLoading } =
+    useGetWeatherByCoordsQuery({})
 
   const handleCountryChange = async (code: string) => {
     setSelectedCountry(code)
@@ -87,10 +92,10 @@ const CityWeather = () => {
     setCities([])
     setWeather(null)
     const res = await getStateApi(code).unwrap()
-    if(res.length === 0) {
+    if (res.length === 0) {
       toast.error("No states found for this country.")
       setStates([])
-    }else{
+    } else {
       setStates(res)
     }
   }
@@ -99,7 +104,7 @@ const CityWeather = () => {
     setSelectedState(code)
     setSelectedCity(undefined)
     setWeather(null)
-    if(!selectedCountry) {
+    if (!selectedCountry) {
       toast.error("Please select a country first.")
       return
     }
@@ -111,10 +116,10 @@ const CityWeather = () => {
       toast.error("No cities found for this state.")
       setCities([])
       return
-    }else if (res.length === 1 && res[0].name === "Unknown") {
+    } else if (res.length === 1 && res[0].name === "Unknown") {
       setCities([])
       return
-    }else{
+    } else {
       setCities(res)
     }
   }
@@ -150,35 +155,47 @@ const CityWeather = () => {
       setWeather(data)
     }
   }
-  console.log({ countries, states, cities, weather,coords,selectedCountry, selectedState, selectedCity, unit });
+  console.log({
+    countries,
+    states,
+    cities,
+    weather,
+    coords,
+    selectedCountry,
+    selectedState,
+    selectedCity,
+    unit,
+  })
   // console.log("Weather data:", weather);
-   const getUserLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            console.log("User location access granted.");
-            const { latitude, longitude } = pos.coords;
-            console.log("User location:", latitude, longitude);
-            setCoords({ lat: latitude, lon: longitude });
-          },
-          (err) => {
-            console.warn("Location access denied.", err);
-          }
-        );
-      }
-    };
-  
-    useEffect(() => {
-      getUserLocation();
-    }, []);
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          console.log("User location access granted.")
+          const { latitude, longitude } = pos.coords
+          console.log("User location:", latitude, longitude)
+          setCoords({ lat: latitude, lon: longitude })
+        },
+        (err) => {
+          console.warn("Location access denied.", err)
+        },
+      )
+    }
+  }
+
+  useEffect(() => {
+    getUserLocation()
+  }, [])
 
   return (
     <div className="container mx-auto p-4 space-y-4">
       <div className="flex items-center justify-between mb-4">
         <div>
-      <Sidebar />
+          <Sidebar />
         </div>
-      <h1 className=" flex-1 text-3xl font-bold text-center mb-4">🌤️ Weather App</h1>
+        <h1 className=" flex-1 text-3xl font-bold text-center mb-4">
+          🌤️ Weather App
+        </h1>
       </div>
       <div className="grid grid-cols-3 gap-3">
         <Select onValueChange={handleCountryChange} value={selectedCountry}>
@@ -251,29 +268,29 @@ const CityWeather = () => {
           <Card className="p-4 bg-gradient-to-br from-blue-200 to-blue-500 text-white shadow-lg">
             <CardContent className="space-y-2 md:flex md:justify-between items-center">
               <div>
-              <div className="text-xl font-semibold">
-                {weather.name}, {weather.sys.country}
-              </div>
-              <div>{getDateTimeFromOffset(weather.dt,weather.timezone)}</div>
+                <div className="text-xl font-semibold">
+                  {weather.name}, {weather.sys.country}
+                </div>
+                <div>{getDateTimeFromOffset(weather.dt, weather.timezone)}</div>
               </div>
               <div>
-              <div className="text-2xl font-bold">
-                {weather.main.temp}°{unit === "metric" ? "C" : "F"}
-              </div>
-              <div className="flex gap-2 mt-2">
-                <Button
-                  variant={unit === "metric" ? "default" : "secondary"}
-                  onClick={() => switchUnit("metric")}
-                >
-                  °C
-                </Button>
-                <Button
-                  variant={unit === "imperial" ? "default" : "secondary"}
-                  onClick={() => switchUnit("imperial")}
-                >
-                  °F
-                </Button>
-              </div>
+                <div className="text-2xl font-bold">
+                  {weather.main.temp}°{unit === "metric" ? "C" : "F"}
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    variant={unit === "metric" ? "default" : "secondary"}
+                    onClick={() => switchUnit("metric")}
+                  >
+                    °C
+                  </Button>
+                  <Button
+                    variant={unit === "imperial" ? "default" : "secondary"}
+                    onClick={() => switchUnit("imperial")}
+                  >
+                    °F
+                  </Button>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <img
@@ -285,10 +302,9 @@ const CityWeather = () => {
                 </span>
               </div>
               <div>
-              <div className="text-sm">
-                Min: {weather.main.temp_min}°, Max: {weather.main.temp_max}°
-              </div>
-              
+                <div className="text-sm">
+                  Min: {weather.main.temp_min}°, Max: {weather.main.temp_max}°
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -299,7 +315,8 @@ const CityWeather = () => {
                 <p>Current: {weather?.main?.temp}°C</p>
                 <p>Feels Like: {weather?.main?.feels_like}°C</p>
                 <p>
-                  Min: {weather?.main?.temp_min}°C / Max: {weather?.main?.temp_max}°C
+                  Min: {weather?.main?.temp_min}°C / Max:{" "}
+                  {weather?.main?.temp_max}°C
                 </p>
               </CardContent>
             </Card>
@@ -325,14 +342,16 @@ const CityWeather = () => {
                 <p>
                   Sunrise:{" "}
                   {/* {new Date(weather?.sys?.sunrise * 1000).toLocaleTimeString()} */}
-                  {new Date(weather?.sys?.sunrise * 1000).toLocaleTimeString("en-US")}
-
+                  {new Date(weather?.sys?.sunrise * 1000).toLocaleTimeString(
+                    "en-US",
+                  )}
                 </p>
                 <p>
                   Sunset:{" "}
                   {/* {new Date(weather?.sys?.sunset * 1000).toLocaleTimeString()} */}
-                   {new Date(weather?.sys?.sunset * 1000).toLocaleTimeString("en-US")}
-
+                  {new Date(weather?.sys?.sunset * 1000).toLocaleTimeString(
+                    "en-US",
+                  )}
                 </p>
               </CardContent>
             </Card>

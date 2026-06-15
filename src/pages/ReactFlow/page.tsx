@@ -5,12 +5,12 @@ import DependencyGraphViewer from "./DependencyVisual"
 const ReactFlowPage = () => {
   return (
     <div className="container mx-auto p-4 h-screen">
-        <div className="flex">
-          <div className="flex pr-2 absolute left-8">
-            <Sidebar />
-          </div>
-          <DependencyGraphViewer />
+      <div className="flex">
+        <div className="flex pr-2 absolute left-8">
+          <Sidebar />
         </div>
+        <DependencyGraphViewer />
+      </div>
       {/* <ReactFlow>
           <Background />
           <Controls />

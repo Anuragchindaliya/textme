@@ -71,31 +71,31 @@ const Task = () => {
             <TaskForm onAddTask={handleAddTask} />
           </div>
           <div className="flex-1 flex items-center space-x-2 mt-4">
-          <Input
-            placeholder="Filter tasks..."
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-            className="h-8 w-[150px] lg:w-[250px] flex-1"
-          />
-          <DataTableFacetedFilter
-            selectedValues={selectedStatus}
-            setSelectedStatus={setSelectedStatus}
-            tasks={tasks.filter((task) =>
-              task.title.toLowerCase().includes(searchTerm.toLowerCase()),
-            )}
-            title="Status"
-            options={statuses}
-          />
-          {selectedStatus?.length ? (
-            <Button
-              variant="ghost"
-              onClick={() => setSelectedStatus([])}
-              className="h-8 px-2 lg:px-3"
-            >
-              Reset
-              <X className="ml-2 h-4 w-4" />
-            </Button>
-          ) : null}
+            <Input
+              placeholder="Filter tasks..."
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              className="h-8 w-[150px] lg:w-[250px] flex-1"
+            />
+            <DataTableFacetedFilter
+              selectedValues={selectedStatus}
+              setSelectedStatus={setSelectedStatus}
+              tasks={tasks.filter((task) =>
+                task.title.toLowerCase().includes(searchTerm.toLowerCase()),
+              )}
+              title="Status"
+              options={statuses}
+            />
+            {selectedStatus?.length ? (
+              <Button
+                variant="ghost"
+                onClick={() => setSelectedStatus([])}
+                className="h-8 px-2 lg:px-3"
+              >
+                Reset
+                <X className="ml-2 h-4 w-4" />
+              </Button>
+            ) : null}
           </div>
         </div>
       </div>

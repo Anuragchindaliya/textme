@@ -5,8 +5,8 @@ import { Link } from "lucide-react"
 import React from "react"
 
 const FilterUI = () => {
-    const carts = useAppSelector(selectCarts)
-  
+  const carts = useAppSelector(selectCarts)
+
   return (
     <div>
       <div className="flex items-center space-x-4">

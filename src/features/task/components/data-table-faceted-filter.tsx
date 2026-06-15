@@ -22,13 +22,13 @@ import { Separator } from "@/components/ui/separator"
 import { TaskType } from "../task.types"
 
 interface DataTableFacetedFilter {
-  selectedValues: string[],
+  selectedValues: string[]
   setSelectedStatus: React.Dispatch<React.SetStateAction<string[]>>
-  tasks:TaskType[]
+  tasks: TaskType[]
   // column?: Column<TData, TValue>
   title?: string
   options: {
-    id:string;
+    id: string
     label: string
     value: string
     icon?: LucideIcon
@@ -90,27 +90,26 @@ export function DataTableFacetedFilter<TData, TValue>({
           <CommandInput placeholder={title} />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup >
+            <CommandGroup>
               {options.map((option) => {
                 // const isSelected = selectedValues.includes(option.value)
-                const isSelected = selectedValues?.includes(option.id) 
+                const isSelected = selectedValues?.includes(option.id)
                 return (
                   <CommandItem
                     key={option.id}
                     onSelect={() => {
-                      
                       if (isSelected) {
-                        setSelectedStatus(selectedValues.filter((op)=>op!=option.id))
+                        setSelectedStatus(
+                          selectedValues.filter((op) => op != option.id),
+                        )
                       } else {
-                        setSelectedStatus([...selectedValues,option.id])
+                        setSelectedStatus([...selectedValues, option.id])
                       }
                       // const filterValues = Array.from(selectedValues)
                       // console.log("Selected values after toggle:", isSelected,selectedValues)
                       // column?.setFilterValue(
                       //   filterValues.length ? filterValues : undefined,
                       // )
-
-
                     }}
                   >
                     <div
@@ -129,7 +128,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                     <span>{option.label}</span>
                     {tasks?.length > 0 && (
                       <span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
-                        {tasks.filter((op)=>op.status===option.id).length}
+                        {tasks.filter((op) => op.status === option.id).length}
                       </span>
                     )}
                   </CommandItem>

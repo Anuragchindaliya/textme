@@ -5,7 +5,7 @@ const SuccessAnimation = () => {
     <div className="success-container">
       {/* <Lottie animationData={successAnimation} loop={false} /> */}
     </div>
-  );
-};
+  )
+}
 
-export default SuccessAnimation;
+export default SuccessAnimation

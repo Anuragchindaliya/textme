@@ -18,11 +18,11 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks"
 import { selectCurrentEmail, setEmail } from "@/features/auth/authSlice"
 
 export function UserNav() {
-  const email = useAppSelector(selectCurrentEmail);
-  const dispatch = useAppDispatch();
+  const email = useAppSelector(selectCurrentEmail)
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const handleLogout = () => {
-    dispatch(setEmail({email:"",id:""}))
+    dispatch(setEmail({ email: "", id: "" }))
     localStorage.removeItem("userInfo")
     googleLogout()
     navigate("/")
@@ -42,7 +42,7 @@ export function UserNav() {
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">shadcn</p>
             <p className="text-xs leading-none text-muted-foreground">
-             {email}
+              {email}
             </p>
           </div>
         </DropdownMenuLabel>

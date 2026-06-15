@@ -41,7 +41,7 @@ const buttonVariants = cva(
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
+  asChild?: boolean
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -57,11 +57,17 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   },
 )
 Button.displayName = "Button"
-interface ButtonTooltipProps extends ButtonProps{
-  tooltipContent:React.ReactNode
+interface ButtonTooltipProps extends ButtonProps {
+  tooltipContent: React.ReactNode
 }
-export const ButtonTooltip = React.forwardRef<HTMLButtonElement, ButtonTooltipProps>(
-  ({ className, variant, size, asChild = false,tooltipContent, ...props }, ref) => {
+export const ButtonTooltip = React.forwardRef<
+  HTMLButtonElement,
+  ButtonTooltipProps
+>(
+  (
+    { className, variant, size, asChild = false, tooltipContent, ...props },
+    ref,
+  ) => {
     const Comp = asChild ? Slot : "button"
     return (
       <Tooltip>
@@ -72,9 +78,7 @@ export const ButtonTooltip = React.forwardRef<HTMLButtonElement, ButtonTooltipPr
             {...props}
           />
         </TooltipTrigger>
-        <TooltipContent>
-            {tooltipContent}
-        </TooltipContent>
+        <TooltipContent>{tooltipContent}</TooltipContent>
       </Tooltip>
     )
   },

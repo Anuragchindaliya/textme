@@ -1,6 +1,5 @@
-import Sidebar from '../Notes/components/Sidebar';
-import PdfAnnotator from './PdfAnnotator';
-
+import Sidebar from "../Notes/components/Sidebar"
+import PdfAnnotator from "./PdfAnnotator"
 
 const PDFEditor = () => {
   return (
@@ -13,8 +12,8 @@ const PDFEditor = () => {
       <div className="p-6"> */}
       {/* <h1 className="text-xl font-bold mb-4">React PDF Editor</h1> */}
       <PdfAnnotator />
-    {/* </div> */}
-      </div>
+      {/* </div> */}
+    </div>
   )
 }
 

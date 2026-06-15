@@ -138,7 +138,12 @@ const ExportPdf = () => {
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Form Column */}
-        <div className={cn(theme.classes.card, "lg:col-span-5 p-6 space-y-6 shadow-sm border border-slate-200/60 dark:border-slate-800 bg-white/90 dark:bg-slate-900/60 backdrop-blur-md")}>
+        <div
+          className={cn(
+            theme.classes.card,
+            "lg:col-span-5 p-6 space-y-6 shadow-sm border border-slate-200/60 dark:border-slate-800 bg-white/90 dark:bg-slate-900/60 backdrop-blur-md",
+          )}
+        >
           <div className="border-b border-slate-100 dark:border-slate-800/80 pb-3 flex justify-between items-center">
             <h3 className="text-base font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
               <FileText className="size-4 text-indigo-500" />
@@ -155,9 +160,15 @@ const ExportPdf = () => {
                   name="invoiceNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={theme.classes.label}>Invoice Number</FormLabel>
+                      <FormLabel className={theme.classes.label}>
+                        Invoice Number
+                      </FormLabel>
                       <FormControl>
-                        <Input className={theme.classes.input} placeholder="INV-001" {...field} />
+                        <Input
+                          className={theme.classes.input}
+                          placeholder="INV-001"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage className="text-xs text-red-500" />
                     </FormItem>
@@ -168,9 +179,15 @@ const ExportPdf = () => {
                   name="custName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={theme.classes.label}>Customer Name</FormLabel>
+                      <FormLabel className={theme.classes.label}>
+                        Customer Name
+                      </FormLabel>
                       <FormControl>
-                        <Input className={theme.classes.input} placeholder="John Doe" {...field} />
+                        <Input
+                          className={theme.classes.input}
+                          placeholder="John Doe"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage className="text-xs text-red-500" />
                     </FormItem>
@@ -185,7 +202,9 @@ const ExportPdf = () => {
                   name="date"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel className={theme.classes.label}>Issue Date</FormLabel>
+                      <FormLabel className={theme.classes.label}>
+                        Issue Date
+                      </FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -194,10 +213,14 @@ const ExportPdf = () => {
                               className={cn(
                                 theme.classes.input,
                                 "pl-3 text-left font-normal flex items-center justify-between w-full",
-                                !field.value && "text-slate-400"
+                                !field.value && "text-slate-400",
                               )}
                             >
-                              <span>{field.value ? format(field.value, "PPP") : "Pick issue date"}</span>
+                              <span>
+                                {field.value
+                                  ? format(field.value, "PPP")
+                                  : "Pick issue date"}
+                              </span>
                               <CalendarIcon className="h-4 w-4 opacity-50" />
                             </Button>
                           </FormControl>
@@ -220,7 +243,9 @@ const ExportPdf = () => {
                   name="dueDate"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel className={theme.classes.label}>Due Date</FormLabel>
+                      <FormLabel className={theme.classes.label}>
+                        Due Date
+                      </FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -229,10 +254,14 @@ const ExportPdf = () => {
                               className={cn(
                                 theme.classes.input,
                                 "pl-3 text-left font-normal flex items-center justify-between w-full",
-                                !field.value && "text-slate-400"
+                                !field.value && "text-slate-400",
                               )}
                             >
-                              <span>{field.value ? format(field.value, "PPP") : "Pick due date"}</span>
+                              <span>
+                                {field.value
+                                  ? format(field.value, "PPP")
+                                  : "Pick due date"}
+                              </span>
                               <CalendarIcon className="h-4 w-4 opacity-50" />
                             </Button>
                           </FormControl>
@@ -258,9 +287,15 @@ const ExportPdf = () => {
                 name="custAddress"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className={theme.classes.label}>Billing Address</FormLabel>
+                    <FormLabel className={theme.classes.label}>
+                      Billing Address
+                    </FormLabel>
                     <FormControl>
-                      <Textarea className={theme.classes.textarea} placeholder="123 Main St, City, Country" {...field} />
+                      <Textarea
+                        className={theme.classes.textarea}
+                        placeholder="123 Main St, City, Country"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage className="text-xs text-red-500" />
                   </FormItem>
@@ -270,11 +305,16 @@ const ExportPdf = () => {
               {/* Items Section Header */}
               <div className="border-t border-slate-100 dark:border-slate-800/80 pt-4">
                 <div className="flex justify-between items-center mb-3">
-                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">Line Items</h4>
+                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                    Line Items
+                  </h4>
                   <Button
                     type="button"
                     variant="outline"
-                    className={cn(theme.classes.buttonSecondary, "py-1.5 px-3 h-8 text-xs gap-1")}
+                    className={cn(
+                      theme.classes.buttonSecondary,
+                      "py-1.5 px-3 h-8 text-xs gap-1",
+                    )}
                     onClick={() =>
                       append({ description: "", quantity: 1, price: 10 })
                     }
@@ -286,16 +326,24 @@ const ExportPdf = () => {
                 {/* Items List */}
                 <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
                   {fields.map((item, index) => (
-                    <div key={item.id} className="flex flex-col md:flex-row gap-2.5 p-3 rounded-lg bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-800/50">
+                    <div
+                      key={item.id}
+                      className="flex flex-col md:flex-row gap-2.5 p-3 rounded-lg bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-800/50"
+                    >
                       <div className="flex-[3]">
                         <Input
-                          {...form.register(`items.${index}.description` as const)}
+                          {...form.register(
+                            `items.${index}.description` as const,
+                          )}
                           placeholder="Description"
                           className={theme.classes.input}
                         />
                         {form.formState.errors.items?.[index]?.description && (
                           <span className="text-xs text-red-500 mt-0.5 block">
-                            {form.formState.errors?.items?.[index]?.description?.message}
+                            {
+                              form.formState.errors?.items?.[index]?.description
+                                ?.message
+                            }
                           </span>
                         )}
                       </div>
@@ -304,14 +352,19 @@ const ExportPdf = () => {
                           type="number"
                           placeholder="Qty"
                           className={theme.classes.input}
-                          {...form.register(`items.${index}.quantity` as const, { valueAsNumber: true })}
+                          {...form.register(
+                            `items.${index}.quantity` as const,
+                            { valueAsNumber: true },
+                          )}
                         />
                         <Input
                           type="number"
                           step="0.01"
                           placeholder="Price"
                           className={theme.classes.input}
-                          {...form.register(`items.${index}.price` as const, { valueAsNumber: true })}
+                          {...form.register(`items.${index}.price` as const, {
+                            valueAsNumber: true,
+                          })}
                         />
                       </div>
                       <Button
@@ -326,13 +379,20 @@ const ExportPdf = () => {
                   ))}
                   {fields.length === 0 && (
                     <div className="text-center py-6 text-sm text-slate-400 dark:text-slate-500 border border-dashed border-slate-200 dark:border-slate-800 rounded-lg">
-                      No items added yet. Click &quot;Add Item&quot; to build invoice.
+                      No items added yet. Click &quot;Add Item&quot; to build
+                      invoice.
                     </div>
                   )}
                 </div>
               </div>
 
-              <Button type="submit" className={cn(theme.classes.buttonPrimary, "w-full py-2.5 flex items-center justify-center gap-2")}>
+              <Button
+                type="submit"
+                className={cn(
+                  theme.classes.buttonPrimary,
+                  "w-full py-2.5 flex items-center justify-center gap-2",
+                )}
+              >
                 <Check className="size-4" /> Apply Changes
               </Button>
             </form>
@@ -340,7 +400,12 @@ const ExportPdf = () => {
         </div>
 
         {/* Preview Column */}
-        <div className={cn(theme.classes.card, "lg:col-span-7 p-6 shadow-sm border border-slate-200/60 dark:border-slate-800 bg-white/95 dark:bg-slate-900/60 backdrop-blur-md min-h-[500px]")}>
+        <div
+          className={cn(
+            theme.classes.card,
+            "lg:col-span-7 p-6 shadow-sm border border-slate-200/60 dark:border-slate-800 bg-white/95 dark:bg-slate-900/60 backdrop-blur-md min-h-[500px]",
+          )}
+        >
           <div className="border-b border-slate-100 dark:border-slate-800/80 pb-3 mb-4 flex justify-between items-center">
             <h3 className="text-base font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
               <FileText className="size-4 text-emerald-500" />

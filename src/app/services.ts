@@ -13,7 +13,9 @@ export interface ApiStandardResponse {
 // https://sheetdb.io/api/v1/l73k7anfjfai9/search_or?title=anurag
 export const allBaseUrls = {
   local: "http://localhost:5000",
-  prod: `https://sheetdb.io/api/v1/${import.meta.env.VITE_SHEETDB_ID || "l73k7anfjfai9"}`,
+  prod: `https://sheetdb.io/api/v1/${
+    import.meta.env.VITE_SHEETDB_ID || "l73k7anfjfai9"
+  }`,
   render: "https://textmen-backend.onrender.com",
   drizzleApi: "http://localhost:3000/api/v1",
   // "http://localhost:3000/api/v1"
@@ -29,7 +31,7 @@ export const baseQuery = fetchBaseQuery({
       "getWeatherByCoords",
       "getCountries",
       "getStates",
-      "getCities"
+      "getCities",
     ]
     if (weatherEndpoints.includes(endpoint)) {
       return headers
@@ -43,9 +45,8 @@ export const baseQuery = fetchBaseQuery({
 
 export const nodeBaseQuery = fetchBaseQuery({
   // baseUrl,
-    baseUrl: allBaseUrls.drizzleApi,
+  baseUrl: allBaseUrls.drizzleApi,
   credentials: "include",
-  
 })
 
 const baseQueryWithReauth: BaseQueryFn<
@@ -76,7 +77,7 @@ export const nodeBaseApi = createApi({
   baseQuery: nodeBaseQuery,
   reducerPath: "nodeBaseApi",
   endpoints: () => ({}),
-  tagTypes: ["User","ProjectList","Workspace", "Task"],
+  tagTypes: ["User", "ProjectList", "Workspace", "Task"],
 })
 const endpointsUrl = {
   EMAIL_VALIDATION: "emailvalidation",

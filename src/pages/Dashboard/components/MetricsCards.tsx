@@ -11,7 +11,8 @@ export function MetricsCards() {
   const { data: tasks } = useGetAssignedTasksQuery(userId)
 
   const activeProjectsCount = 12 // Placeholder until project API connected
-  const pendingTasksCount = tasks?.filter(t => t.status !== 'done').length || 0
+  const pendingTasksCount =
+    tasks?.filter((t) => t.status !== "done").length || 0
   const overdueTasksCount = 3 // Logic needs due date comparison
   const velocity = 87 // Placeholder
 
@@ -43,7 +44,9 @@ export function MetricsCards() {
           <AlertCircle className="h-4 w-4 text-red-500" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-red-500">{overdueTasksCount}</div>
+          <div className="text-2xl font-bold text-red-500">
+            {overdueTasksCount}
+          </div>
           <p className="text-xs text-muted-foreground">Action required</p>
         </CardContent>
       </Card>

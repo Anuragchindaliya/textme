@@ -69,33 +69,34 @@ export function ComboboxPopover({
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
                 {statuses.map((status) => {
-                const Icon = status?.icon as any;
+                  const Icon = status?.icon as any
 
-                  return(
-                  <CommandItem
-                    key={status.value}
-                    onSelect={(value) => {
-                      setSelectedStatus(value)
-                      // setSelectedStatus(
-                      //     statuses.find((priority) => priority.value === value) ||
-                      //     null
-                      // )
-                      setOpen(false)
-                    }}
-                  >
-                    {Icon ? (
-                      <Icon
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          status.value === selectedStatus?.value
-                            ? "opacity-100"
-                            : "opacity-40",
-                        )}
-                      />
-                    ):null}
-                    <span>{status.label}</span>
-                  </CommandItem>
-                )})}
+                  return (
+                    <CommandItem
+                      key={status.value}
+                      onSelect={(value) => {
+                        setSelectedStatus(value)
+                        // setSelectedStatus(
+                        //     statuses.find((priority) => priority.value === value) ||
+                        //     null
+                        // )
+                        setOpen(false)
+                      }}
+                    >
+                      {Icon ? (
+                        <Icon
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            status.value === selectedStatus?.value
+                              ? "opacity-100"
+                              : "opacity-40",
+                          )}
+                        />
+                      ) : null}
+                      <span>{status.label}</span>
+                    </CommandItem>
+                  )
+                })}
               </CommandGroup>
             </CommandList>
           </Command>

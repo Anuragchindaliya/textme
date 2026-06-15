@@ -56,9 +56,9 @@ export const ShareContentFormSchema = z.object({
 })
 
 export type ShareContentForm = {
-  title: string;
-  content: string;
-  tab: string;
+  title: string
+  content: string
+  tab: string
 }
 
 export const notesApi = textmeApi.injectEndpoints({
@@ -87,10 +87,10 @@ export const notesApi = textmeApi.injectEndpoints({
       query: (title) => ({
         url: "",
         method: "POST",
-        body:{
-          id:"INCREMENT",
+        body: {
+          id: "INCREMENT",
           title,
-        }
+        },
       }),
     }),
 
@@ -107,7 +107,7 @@ export const notesApi = textmeApi.injectEndpoints({
         // url: endpoints.NOTES,
         url: `${endpoints.NOTE_TITLE}/${body.title}?sheet=shareContent`,
         method: "PATCH",
-        body: { data: { content: body.content,tab:body.tab } },
+        body: { data: { content: body.content, tab: body.tab } },
       }),
     }),
   }),

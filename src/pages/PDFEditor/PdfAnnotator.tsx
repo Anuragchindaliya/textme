@@ -113,7 +113,12 @@ const PdfAnnotator = () => {
         </div>
         <div className="flex space-x-2 w-full items-center">
           <h1 className="text-xl font-semibold mb-4">PDF Annotator</h1>
-          <Input type="file" accept=".pdf" onChange={handleFileChange} className="mb-4 w-full flex-1" />
+          <Input
+            type="file"
+            accept=".pdf"
+            onChange={handleFileChange}
+            className="mb-4 w-full flex-1"
+          />
         </div>
       </div>
 
@@ -193,32 +198,33 @@ const PdfAnnotator = () => {
 
       {/* Controls */}
       {file && (
-      <div className="mt-4 flex justify-between items-center">
-        <div className="space-x-2">
-          <button
-            onClick={goToPrevPage}
-            disabled={pageNumber === 1}
-            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <button
-            onClick={goToNextPage}
-            disabled={pageNumber === numPages}
-            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-          >
-            Next
-          </button>
+        <div className="mt-4 flex justify-between items-center">
+          <div className="space-x-2">
+            <button
+              onClick={goToPrevPage}
+              disabled={pageNumber === 1}
+              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <button
+              onClick={goToNextPage}
+              disabled={pageNumber === numPages}
+              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+          <div className="space-x-2">
+            <button onClick={undo} className="px-3 py-1 bg-orange-200 rounded">
+              Undo
+            </button>
+            <button onClick={redo} className="px-3 py-1 bg-orange-300 rounded">
+              Redo
+            </button>
+          </div>
         </div>
-        <div className="space-x-2">
-          <button onClick={undo} className="px-3 py-1 bg-orange-200 rounded">
-            Undo
-          </button>
-          <button onClick={redo} className="px-3 py-1 bg-orange-300 rounded">
-            Redo
-          </button>
-        </div>
-      </div>)}
+      )}
     </div>
   )
 }

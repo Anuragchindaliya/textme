@@ -17,13 +17,12 @@ type SubmissionData = {
 }
 const PreviewForm = () => {
   const { id } = useParams<{ id: string }>()
-  const { data, isLoading } = useGetFormJsonQuery(id || "",{
-    refetchOnMountOrArgChange:false,
-    refetchOnFocus:false,
+  const { data, isLoading } = useGetFormJsonQuery(id || "", {
+    refetchOnMountOrArgChange: false,
+    refetchOnFocus: false,
   })
 
   const currentFormData = data?.[0]
-  
 
   return (
     <div className="container md:px-8">
@@ -45,11 +44,7 @@ const PreviewForm = () => {
     </div>
   )
 }
-const FormUI = ({
-  currentFormData,
-}: {
-  currentFormData: any
-}) => {
+const FormUI = ({ currentFormData }: { currentFormData: any }) => {
   const [formKey, setFormKey] = useState(uuidv4())
   const [addFormData, { isLoading }] = useAddFormDataMutation()
   const [formJson, setFormJson] = useState<any>(null)

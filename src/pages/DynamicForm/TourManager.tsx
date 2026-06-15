@@ -1,13 +1,12 @@
-import React, { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import Joyride, { CallBackProps, STATUS, Step } from "react-joyride";
-import { ROUTES } from "@/Router";
+import React, { useEffect } from "react"
+import { useLocation, useNavigate } from "react-router-dom"
+import Joyride, { CallBackProps, STATUS, Step } from "react-joyride"
+import { ROUTES } from "@/Router"
 
 export interface TourStep extends Step {
-  path: string;
-  action?:({navigate}:{navigate:any})=>void;
+  path: string
+  action?: ({ navigate }: { navigate: any }) => void
 }
-
 
 export const tourSteps: TourStep[] = [
   // Search Input for Forms
@@ -44,7 +43,7 @@ export const tourSteps: TourStep[] = [
     target: ".create-form-button",
     content: "Let's go to the Form Builder page!",
     path: ROUTES.FORMS,
-    action: ({navigate}) => navigate(ROUTES.CREATE_FORMS),
+    action: ({ navigate }) => navigate(ROUTES.CREATE_FORMS),
   },
   {
     target: "#formbuilder",
@@ -55,7 +54,7 @@ export const tourSteps: TourStep[] = [
     target: "#formjson",
     content: "This is the JSON representation of your form.",
     path: ROUTES.FORMS,
-    placement:"left-start"
+    placement: "left-start",
   },
   {
     target: "#viewForms",
@@ -64,9 +63,10 @@ export const tourSteps: TourStep[] = [
   },
   {
     target: "#viewForms",
-    content: "Click here to view the list of forms you have created. let's go to the form list page",
+    content:
+      "Click here to view the list of forms you have created. let's go to the form list page",
     path: ROUTES.FORMS,
-    action: ({navigate}) => navigate(ROUTES.FORMS),
+    action: ({ navigate }) => navigate(ROUTES.FORMS),
   },
   // Form Details Card
   {
@@ -86,15 +86,18 @@ export const tourSteps: TourStep[] = [
     content: "Click here to view the submissions for this form.",
     path: ROUTES.FORMS,
   },
-];
+]
 interface TourManagerProps {
-  isTourActive: boolean;
-  setIsTourActive: (value: boolean) => void;
+  isTourActive: boolean
+  setIsTourActive: (value: boolean) => void
 }
 
-const TourManager: React.FC<TourManagerProps> = ({ isTourActive, setIsTourActive }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
+const TourManager: React.FC<TourManagerProps> = ({
+  isTourActive,
+  setIsTourActive,
+}) => {
+  const navigate = useNavigate()
+  const location = useLocation()
 
   // Activate the tour only on the FORMS page
   // useEffect(() => {
@@ -106,16 +109,16 @@ const TourManager: React.FC<TourManagerProps> = ({ isTourActive, setIsTourActive
   // }, [location.pathname, setIsTourActive]);
 
   const handleTourCallback = (data: CallBackProps) => {
-    const { status, action, index } = data;
+    const { status, action, index } = data
 
     if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
-      setIsTourActive(false);
+      setIsTourActive(false)
     } else if (action === "next" && index < tourSteps.length) {
-      const nextStep = tourSteps[index];
+      const nextStep = tourSteps[index]
       if (nextStep.action) {
-        nextStep.action({navigate});
+        nextStep.action({ navigate })
       }
-      
+
       // Handle navigation for the "Create Form" button to Form Builder page
       // if (nextStep.path === ROUTES.CREATE_FORMS) {
       //   navigate(ROUTES.CREATE_FORMS);
@@ -123,11 +126,11 @@ const TourManager: React.FC<TourManagerProps> = ({ isTourActive, setIsTourActive
       //   navigate(nextStep.path);
       // }
     }
-  };
+  }
 
-  const steps: Step[] = tourSteps.map(({path,action,...step}) => ({
-    ...step
-  }));
+  const steps: Step[] = tourSteps.map(({ path, action, ...step }) => ({
+    ...step,
+  }))
 
   return (
     <Joyride
@@ -180,7 +183,7 @@ const TourManager: React.FC<TourManagerProps> = ({ isTourActive, setIsTourActive
         },
       }}
     />
-  );
-};
+  )
+}
 
-export default TourManager;
+export default TourManager

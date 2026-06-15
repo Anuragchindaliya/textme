@@ -15,7 +15,8 @@ const Draw = () => {
   const { theme } = useTheme()
   const [drawData, setDrawData] = useState<any>()
   const [searchParams] = useSearchParams()
-  const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawImperativeAPI | null>(null);
+  const [excalidrawAPI, setExcalidrawAPI] =
+    useState<ExcalidrawImperativeAPI | null>(null)
   const fileName = searchParams.get("t")
   const { data, refetch } = useGetDrawFileDataQuery(fileName || "", {
     skip: !fileName,
@@ -27,16 +28,16 @@ const Draw = () => {
   const { toast } = useToast()
   const [postDrawContent, { isLoading: isLoadingUpdate }] =
     usePostDrawFileContentMutation()
-  const onSave = async ()=>{
-    console.log({drawData})
-    if(!fileName){
-      return;
+  const onSave = async () => {
+    console.log({ drawData })
+    if (!fileName) {
+      return
     }
     const resData = await postDrawContent({
-      filename:fileName,
-      content:JSON.stringify(drawData) || ""
+      filename: fileName,
+      content: JSON.stringify(drawData) || "",
     }).unwrap()
-    console.log({resData})
+    console.log({ resData })
   }
 
   useEffect(() => {
@@ -53,8 +54,8 @@ const Draw = () => {
       try {
         const output = JSON.parse(data[0].content) || []
         // setDrawData(output)
-        console.log({output})
-        excalidrawAPI?.updateScene({elements:output})
+        console.log({ output })
+        excalidrawAPI?.updateScene({ elements: output })
         // .then((data) => {
         //   console.log("render", data)
         // })
@@ -64,7 +65,6 @@ const Draw = () => {
       } catch (error) {
         // console.log(error)
       }
-      
     }
   }, [data])
   return (
@@ -77,7 +77,7 @@ const Draw = () => {
       </div>
 
       <Excalidraw
-      excalidrawAPI={(api) => setExcalidrawAPI(api)}
+        excalidrawAPI={(api) => setExcalidrawAPI(api)}
         theme={theme as any}
         onChange={(data) => {
           // console.log(rest,"draw")

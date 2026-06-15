@@ -13,9 +13,11 @@ import {
   useGetWeatherByCoordsQuery,
 } from "./WeatherSlice"
 
-
-const getDateTimeFromOffset = (timestamp: number, timeZoneOffsetSeconds: number) => {
-  const localTime = new Date((timestamp + timeZoneOffsetSeconds) * 1000);
+const getDateTimeFromOffset = (
+  timestamp: number,
+  timeZoneOffsetSeconds: number,
+) => {
+  const localTime = new Date((timestamp + timeZoneOffsetSeconds) * 1000)
   return localTime.toLocaleString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -24,9 +26,8 @@ const getDateTimeFromOffset = (timestamp: number, timeZoneOffsetSeconds: number)
     minute: "2-digit",
     hour: "2-digit",
     hour12: true,
-  });
-};
-
+  })
+}
 
 const WeatherApp = () => {
   const { isLoading: countryLoading, data: countries } = useGetCountriesQuery()
@@ -36,16 +37,21 @@ const WeatherApp = () => {
     useGetWeatherByCityMutation()
   const [states, setStates] = useState<any[]>([])
   const [cities, setCities] = useState<any[]>([])
-  const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined)
-  const [selectedState, setSelectedState] = useState<string | undefined>(undefined)
-  const [selectedCity, setSelectedCity] = useState<string | undefined>(undefined)
+  const [selectedCountry, setSelectedCountry] = useState<string | undefined>(
+    undefined,
+  )
+  const [selectedState, setSelectedState] = useState<string | undefined>(
+    undefined,
+  )
+  const [selectedCity, setSelectedCity] = useState<string | undefined>(
+    undefined,
+  )
   const [weather, setWeather] = useState<any | null>(null)
   const [unit, setUnit] = useState("metric")
-  const [coords, setCoords] = useState({ lat: 28.6139, lon: 77.209 });
+  const [coords, setCoords] = useState({ lat: 28.6139, lon: 77.209 })
   // const useGetWeatherQuery({ lat: 28.6139, lon: 77.209 }); // Default to Delhi coordinates
-  const {data:coordsWeather,isLoading:cWeatherLoading}=useGetWeatherByCoordsQuery({})
-
-  
+  const { data: coordsWeather, isLoading: cWeatherLoading } =
+    useGetWeatherByCoordsQuery({})
 
   const handleCountryChange = async (code: string) => {
     setSelectedCountry(code)
@@ -54,10 +60,10 @@ const WeatherApp = () => {
     setCities([])
     setWeather(null)
     const res = await getStateApi(code).unwrap()
-    if(res.length === 0) {
+    if (res.length === 0) {
       toast.error("No states found for this country.")
       setStates([])
-    }else{
+    } else {
       setStates(res)
     }
   }
@@ -66,7 +72,7 @@ const WeatherApp = () => {
     setSelectedState(code)
     setSelectedCity(undefined)
     setWeather(null)
-    if(!selectedCountry) {
+    if (!selectedCountry) {
       toast.error("Please select a country first.")
       return
     }
@@ -78,10 +84,10 @@ const WeatherApp = () => {
       toast.error("No cities found for this state.")
       setCities([])
       return
-    }else if (res.length === 1 && res[0].name === "Unknown") {
+    } else if (res.length === 1 && res[0].name === "Unknown") {
       setCities([])
       return
-    }else{
+    } else {
       setCities(res)
     }
   }
@@ -117,42 +123,53 @@ const WeatherApp = () => {
       setWeather(data)
     }
   }
-  console.log({ countries, states, cities, weather,coords,selectedCountry, selectedState, selectedCity, unit });
+  console.log({
+    countries,
+    states,
+    cities,
+    weather,
+    coords,
+    selectedCountry,
+    selectedState,
+    selectedCity,
+    unit,
+  })
   // console.log("Weather data:", weather);
-   const getUserLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            console.log("User location access granted.");
-            const { latitude, longitude } = pos.coords;
-            console.log("User location:", latitude, longitude);
-            setCoords({ lat: latitude, lon: longitude });
-          },
-          (err) => {
-            console.warn("Location access denied.", err);
-          }
-        );
-      }
-    };
-  
-    useEffect(() => {
-      getUserLocation();
-    }, []);
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          console.log("User location access granted.")
+          const { latitude, longitude } = pos.coords
+          console.log("User location:", latitude, longitude)
+          setCoords({ lat: latitude, lon: longitude })
+        },
+        (err) => {
+          console.warn("Location access denied.", err)
+        },
+      )
+    }
+  }
+
+  useEffect(() => {
+    getUserLocation()
+  }, [])
 
   return (
     <div className="container mx-auto p-4 space-y-4">
       <div className="flex items-center justify-between mb-4">
         <div>
-      <Sidebar />
+          <Sidebar />
         </div>
-      <h1 className=" flex-1 text-3xl font-bold text-center mb-4">🌤️ Weather App</h1>
-      <Link to="/weather-search">
-        <Button variant="outline" className="ml-4">
-          Search by City
-        </Button>
-      </Link>
+        <h1 className=" flex-1 text-3xl font-bold text-center mb-4">
+          🌤️ Weather App
+        </h1>
+        <Link to="/weather-search">
+          <Button variant="outline" className="ml-4">
+            Search by City
+          </Button>
+        </Link>
       </div>
-
 
       {cWeatherLoading ? (
         <Card className="p-4 animate-pulse">
@@ -165,29 +182,34 @@ const WeatherApp = () => {
           <Card className="p-4 bg-gradient-to-br from-blue-200 to-blue-500 text-white shadow-lg">
             <CardContent className="space-y-2 md:flex md:justify-between items-center">
               <div>
-              <div className="text-xl font-semibold">
-                {coordsWeather.name}, {coordsWeather.sys.country}
-              </div>
-              <div>{getDateTimeFromOffset(coordsWeather.dt,coordsWeather.timezone)}</div>
+                <div className="text-xl font-semibold">
+                  {coordsWeather.name}, {coordsWeather.sys.country}
+                </div>
+                <div>
+                  {getDateTimeFromOffset(
+                    coordsWeather.dt,
+                    coordsWeather.timezone,
+                  )}
+                </div>
               </div>
               <div>
-              <div className="text-2xl font-bold">
-                {coordsWeather.main.temp}°{unit === "metric" ? "C" : "F"}
-              </div>
-              <div className="flex gap-2 mt-2">
-                <Button
-                  variant={unit === "metric" ? "default" : "secondary"}
-                  onClick={() => switchUnit("metric")}
-                >
-                  °C
-                </Button>
-                <Button
-                  variant={unit === "imperial" ? "default" : "secondary"}
-                  onClick={() => switchUnit("imperial")}
-                >
-                  °F
-                </Button>
-              </div>
+                <div className="text-2xl font-bold">
+                  {coordsWeather.main.temp}°{unit === "metric" ? "C" : "F"}
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    variant={unit === "metric" ? "default" : "secondary"}
+                    onClick={() => switchUnit("metric")}
+                  >
+                    °C
+                  </Button>
+                  <Button
+                    variant={unit === "imperial" ? "default" : "secondary"}
+                    onClick={() => switchUnit("imperial")}
+                  >
+                    °F
+                  </Button>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <img
@@ -199,10 +221,10 @@ const WeatherApp = () => {
                 </span>
               </div>
               <div>
-              <div className="text-sm">
-                Min: {coordsWeather.main.temp_min}°, Max: {coordsWeather.main.temp_max}°
-              </div>
-              
+                <div className="text-sm">
+                  Min: {coordsWeather.main.temp_min}°, Max:{" "}
+                  {coordsWeather.main.temp_max}°
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -213,7 +235,8 @@ const WeatherApp = () => {
                 <p>Current: {coordsWeather?.main?.temp}°C</p>
                 <p>Feels Like: {coordsWeather?.main?.feels_like}°C</p>
                 <p>
-                  Min: {coordsWeather?.main?.temp_min}°C / Max: {coordsWeather?.main?.temp_max}°C
+                  Min: {coordsWeather?.main?.temp_min}°C / Max:{" "}
+                  {coordsWeather?.main?.temp_max}°C
                 </p>
               </CardContent>
             </Card>
@@ -239,14 +262,16 @@ const WeatherApp = () => {
                 <p>
                   Sunrise:{" "}
                   {/* {new Date(coordsWeather?.sys?.sunrise * 1000).toLocaleTimeString()} */}
-                  {new Date(coordsWeather?.sys?.sunrise * 1000).toLocaleTimeString("en-US")}
-
+                  {new Date(
+                    coordsWeather?.sys?.sunrise * 1000,
+                  ).toLocaleTimeString("en-US")}
                 </p>
                 <p>
                   Sunset:{" "}
                   {/* {new Date(coordsWeather?.sys?.sunset * 1000).toLocaleTimeString()} */}
-                   {new Date(coordsWeather?.sys?.sunset * 1000).toLocaleTimeString("en-US")}
-
+                  {new Date(
+                    coordsWeather?.sys?.sunset * 1000,
+                  ).toLocaleTimeString("en-US")}
                 </p>
               </CardContent>
             </Card>

@@ -1,40 +1,46 @@
 import { RootState } from "@/app/store"
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
-import { Product } from "./productAPI";
+import { Product } from "./productAPI"
 type InitialStateType = {
-  carts: (Product & {qty:number} )[];
+  carts: (Product & { qty: number })[]
 }
 
 const CART_KEY = "carts"
 const initialCart = (() => {
   try {
-    const storedCart = localStorage?.getItem(CART_KEY);
-    return storedCart ? JSON.parse(storedCart) : [];
+    const storedCart = localStorage?.getItem(CART_KEY)
+    return storedCart ? JSON.parse(storedCart) : []
   } catch (error) {
-    console.error("Error parsing cart data from localStorage:", error);
-    return [];
+    console.error("Error parsing cart data from localStorage:", error)
+    return []
   }
-})();
-const initialState:InitialStateType = {
+})()
+const initialState: InitialStateType = {
   carts: initialCart,
 }
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addToCart:(state,{payload:{cart}}:PayloadAction<{ cart: Product }>)=>{
-      const foundIndex = state.carts.findIndex((item)=>item.ID === cart.ID);
-      if(foundIndex>=0){
+    addToCart: (
+      state,
+      { payload: { cart } }: PayloadAction<{ cart: Product }>,
+    ) => {
+      const foundIndex = state.carts.findIndex((item) => item.ID === cart.ID)
+      if (foundIndex >= 0) {
         state.carts[foundIndex].qty = state.carts[foundIndex].qty + 1
-      }else{
-        state.carts.push({...cart,qty:1})
+      } else {
+        state.carts.push({ ...cart, qty: 1 })
       }
       // state.carts.push(cart)
-      localStorage.setItem(CART_KEY,JSON.stringify(state?.carts))
+      localStorage.setItem(CART_KEY, JSON.stringify(state?.carts))
     },
-    removeFromCart:(state,{payload:{cart}}:PayloadAction<{ cart: Product }>)=>{
-        state.carts = state.carts.filter(item=>item.ID !== cart.ID);
-    }
+    removeFromCart: (
+      state,
+      { payload: { cart } }: PayloadAction<{ cart: Product }>,
+    ) => {
+      state.carts = state.carts.filter((item) => item.ID !== cart.ID)
+    },
     // setEmail: (
     //   state,
     //   { payload: { email } }: PayloadAction<{ email: string }>,
@@ -44,6 +50,6 @@ const cartSlice = createSlice({
   },
 })
 export default cartSlice.reducer
-export const { addToCart , removeFromCart} = cartSlice.actions
+export const { addToCart, removeFromCart } = cartSlice.actions
 
 export const selectCarts = (state: RootState) => state.products.carts

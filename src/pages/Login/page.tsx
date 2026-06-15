@@ -17,17 +17,19 @@ export const LoginPage = () => {
         to="/"
         className={cn(
           theme.classes.buttonGhost,
-          "absolute left-4 top-4 md:left-8 md:top-8 gap-2 z-10"
+          "absolute left-4 top-4 md:left-8 md:top-8 gap-2 z-10",
         )}
       >
         <ChevronLeft className="h-4 w-4" />
         Back to Home
       </Link>
 
-      <div className={cn(
-        theme.classes.cardGlass,
-        "relative w-full max-w-[420px] p-8 md:p-10 shadow-2xl rounded-2xl flex flex-col space-y-6 border border-white/20 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl"
-      )}>
+      <div
+        className={cn(
+          theme.classes.cardGlass,
+          "relative w-full max-w-[420px] p-8 md:p-10 shadow-2xl rounded-2xl flex flex-col space-y-6 border border-white/20 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl",
+        )}
+      >
         <div className="flex flex-col space-y-2 text-center">
           <div className="mx-auto bg-indigo-600/10 dark:bg-indigo-400/10 p-3 rounded-2xl w-fit mb-2 border border-indigo-500/20">
             <Icons.logo className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
@@ -54,4 +56,3 @@ export const LoginPage = () => {
     </div>
   )
 }
-

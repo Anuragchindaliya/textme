@@ -1,22 +1,22 @@
 // src/components/FamilyCardNode.tsx
-import { memo } from "react";
-import { Handle, Position, NodeProps } from "reactflow";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Pencil, Plus, Trash, Users, UserPlus } from "lucide-react";
-import { FamilyNode } from "./type";
-import { theme } from "@/lib/theme";
-import { cn } from "@/lib/utils";
+import { memo } from "react"
+import { Handle, Position, NodeProps } from "reactflow"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Pencil, Plus, Trash, Users, UserPlus } from "lucide-react"
+import { FamilyNode } from "./type"
+import { theme } from "@/lib/theme"
+import { cn } from "@/lib/utils"
 
 export interface FamilyCardNodeData {
-  node: FamilyNode;
-  onEdit: (nodeId: string) => void;
-  onAddSibling: (nodeId: string) => void;
-  onAddPartner: (nodeId: string) => void;
-  onAddChild: (nodeId: string) => void;
-  onAddParent: (nodeId: string) => void;
-  onDelete: (nodeId: string) => void;
+  node: FamilyNode
+  onEdit: (nodeId: string) => void
+  onAddSibling: (nodeId: string) => void
+  onAddPartner: (nodeId: string) => void
+  onAddChild: (nodeId: string) => void
+  onAddParent: (nodeId: string) => void
+  onDelete: (nodeId: string) => void
 }
 
 function getInitials(name: string) {
@@ -25,25 +25,47 @@ function getInitials(name: string) {
     .map((n) => n[0])
     .join("")
     .toUpperCase()
-    .slice(0, 2);
+    .slice(0, 2)
 }
 
 const FamilyCardNode = memo((props: NodeProps<FamilyCardNodeData>) => {
-  const { data } = props;
-  const { node } = data;
+  const { data } = props
+  const { node } = data
 
   return (
     <>
-      <Handle type="target" position={Position.Top} id="parent" className="!bg-indigo-500 !w-3 !h-3 !border-2 !border-white dark:!border-slate-900" />
-      <Handle type="source" position={Position.Bottom} id="child" className="!bg-indigo-500 !w-3 !h-3 !border-2 !border-white dark:!border-slate-900" />
-      <Handle type="source" position={Position.Left} id="partner-left" className="!bg-purple-500 !w-2.5 !h-2.5 !border-2 !border-white dark:!border-slate-900" />
-      <Handle type="source" position={Position.Right} id="partner-right" className="!bg-purple-500 !w-2.5 !h-2.5 !border-2 !border-white dark:!border-slate-900" />
+      <Handle
+        type="target"
+        position={Position.Top}
+        id="parent"
+        className="!bg-indigo-500 !w-3 !h-3 !border-2 !border-white dark:!border-slate-900"
+      />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="child"
+        className="!bg-indigo-500 !w-3 !h-3 !border-2 !border-white dark:!border-slate-900"
+      />
+      <Handle
+        type="source"
+        position={Position.Left}
+        id="partner-left"
+        className="!bg-purple-500 !w-2.5 !h-2.5 !border-2 !border-white dark:!border-slate-900"
+      />
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="partner-right"
+        className="!bg-purple-500 !w-2.5 !h-2.5 !border-2 !border-white dark:!border-slate-900"
+      />
 
       <Card className="w-60 shadow-xl border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md hover:border-indigo-500/50 dark:hover:border-indigo-400/50 transition-all duration-300 rounded-xl overflow-hidden">
         <CardContent className="p-4 flex flex-col gap-3">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10 border border-slate-100 dark:border-slate-800">
-              {node?.photoUrl && <AvatarImage src={node.photoUrl} alt={node.name} />}
+              {node?.photoUrl && (
+                <AvatarImage src={node.photoUrl} alt={node.name} />
+              )}
               <AvatarFallback className="bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-bold">
                 {getInitials(node?.name || "")}
               </AvatarFallback>
@@ -125,7 +147,7 @@ const FamilyCardNode = memo((props: NodeProps<FamilyCardNodeData>) => {
         </CardContent>
       </Card>
     </>
-  );
-});
+  )
+})
 
-export default FamilyCardNode;
+export default FamilyCardNode

@@ -38,7 +38,7 @@ const labels = [
   "maintenance",
 ]
 
-export function ComboboxDropdownMenu({id}:{id:string}) {
+export function ComboboxDropdownMenu({ id }: { id: string }) {
   // const [label, setLabel] = React.useState("feature")
   const [open, setOpen] = React.useState(false)
   const dispatch = useAppDispatch()

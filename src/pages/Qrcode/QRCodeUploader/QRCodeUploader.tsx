@@ -37,19 +37,24 @@ const QRCodeUploader: React.FC = () => {
 
   // Handle QR code scanning from uploaded file
   const handleFileUpload = async (file: File) => {
-    const validImageTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+    const validImageTypes = [
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+      "image/webp",
+    ]
 
-  if (!validImageTypes.includes(file.type)) {
-    appToast({
-      title: "Invalid File",
-      description: "Please upload a valid image file (PNG, JPEG, WEBP).",
-      onBlurCapture: () => {
-        setPreview(null);
-      },
-      className:"bg-red-800 border  border-red-900 text-white"
-    });
-    return;
-  }
+    if (!validImageTypes.includes(file.type)) {
+      appToast({
+        title: "Invalid File",
+        description: "Please upload a valid image file (PNG, JPEG, WEBP).",
+        onBlurCapture: () => {
+          setPreview(null)
+        },
+        className: "bg-red-800 border  border-red-900 text-white",
+      })
+      return
+    }
     try {
       const html5QrCode = new Html5Qrcode("qr-reader-temp")
       const decodedText = await html5QrCode.scanFile(file, true)
@@ -61,7 +66,7 @@ const QRCodeUploader: React.FC = () => {
       // Clean up
       await html5QrCode.clear()
     } catch (error) {
-      console.error("Failed to scan QR code from file:", {error})
+      console.error("Failed to scan QR code from file:", { error })
       appToast({
         title: "Error",
         description: "Failed to scan the uploaded QR code image.",
@@ -73,7 +78,15 @@ const QRCodeUploader: React.FC = () => {
   const handleAction = (data: string) => {
     if (data.startsWith("http://") || data.startsWith("https://")) {
       window.open(data, "_blank", "noopener,noreferrer")
-    } else if (data.startsWith("tel:") || data.startsWith("sms:") || data.startsWith("mailto:") || data.startsWith("geo:") || data.startsWith("BEGIN:VCARD") || data.startsWith("BEGIN:VEVENT") || data.startsWith("WIFI:")) {
+    } else if (
+      data.startsWith("tel:") ||
+      data.startsWith("sms:") ||
+      data.startsWith("mailto:") ||
+      data.startsWith("geo:") ||
+      data.startsWith("BEGIN:VCARD") ||
+      data.startsWith("BEGIN:VEVENT") ||
+      data.startsWith("WIFI:")
+    ) {
       window.location.href = data
     } else {
       toast(
@@ -109,16 +122,16 @@ const QRCodeUploader: React.FC = () => {
     }
   }
   const handlePaste = (e: React.ClipboardEvent) => {
-    const items = e.clipboardData.items;
+    const items = e.clipboardData.items
     for (const item of items) {
       if (item.type.includes("image")) {
-        const file = item.getAsFile();
-        if(file){
-          onDrop([file]);
+        const file = item.getAsFile()
+        if (file) {
+          onDrop([file])
         }
       }
     }
-  };
+  }
 
   return (
     <QRLayout>
@@ -136,16 +149,18 @@ const QRCodeUploader: React.FC = () => {
             {...getRootProps()}
             onPaste={handlePaste}
             className={`p-5 w-[90%] h-[90%] flex flex-col justify-center items-center m-auto border-dashed border-gray-200 dark:border-gray-700 border-2 rounded-lg cursor-pointer ${
-                 isDragActive ? "border-blue-500" : "border-gray-300"
-               } text-center`}
+              isDragActive ? "border-blue-500" : "border-gray-300"
+            } text-center`}
           >
             {preview ? (
               <div style={{ marginTop: "20px" }}>
                 <h3>Image Preview:</h3>
-                <img src={preview} alt="QR Code Preview" 
-                // width="200"
-                className="w-[90%] h-[90%] object-contain"
-                 />
+                <img
+                  src={preview}
+                  alt="QR Code Preview"
+                  // width="200"
+                  className="w-[90%] h-[90%] object-contain"
+                />
               </div>
             ) : (
               <>
@@ -153,15 +168,14 @@ const QRCodeUploader: React.FC = () => {
                 {isDragActive ? (
                   <p>Drop the image here ...</p>
                 ) : (
-                    <p>
-                    Drag and drop a QR code image here, click to select one, or paste an image.
-                    </p>
+                  <p>
+                    Drag and drop a QR code image here, click to select one, or
+                    paste an image.
+                  </p>
                 )}
               </>
             )}
-            <input {...getInputProps()} 
-              accept="image/*"
-             />
+            <input {...getInputProps()} accept="image/*" />
             <Button className="mt-4">Choose Image</Button>
           </div>
           {preview && (

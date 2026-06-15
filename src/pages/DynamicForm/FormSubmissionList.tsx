@@ -21,7 +21,7 @@ const FormSubmissionList = () => {
   const [sortOrder, setSortOrder] = useState("newest")
   console.log({ data }, "formList")
   const navigate = useNavigate()
-  const [formData,setFormData]=useState<any>(null)
+  const [formData, setFormData] = useState<any>(null)
   // Filter & sort logic
   const filteredForms = (data || [])
     .filter((form) =>
@@ -39,7 +39,7 @@ const FormSubmissionList = () => {
       const dateB = b.date_created_at.getTime()
       return sortOrder === "newest" ? dateB - dateA : dateA - dateB
     })
-    console.log({formData})
+  console.log({ formData })
   return (
     <div className=" md:px-8">
       <div className="flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-24">
@@ -137,11 +137,18 @@ const FormSubmissionList = () => {
                           <FcDocument className="mr-1 size-4" /> Preview Form
                         </Button>
                       </Link>
-                        <Button onClick={()=>{
-                          setFormData({...form,formdata:JSON.parse(form?.formdata)})
-                        }} variant={"secondary"} className="text-xs">
-                          <Database className="mr-1 size-3" /> View Details{" "}
-                        </Button>
+                      <Button
+                        onClick={() => {
+                          setFormData({
+                            ...form,
+                            formdata: JSON.parse(form?.formdata),
+                          })
+                        }}
+                        variant={"secondary"}
+                        className="text-xs"
+                      >
+                        <Database className="mr-1 size-3" /> View Details{" "}
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -155,19 +162,15 @@ const FormSubmissionList = () => {
 
       <Dialog
         open={!!formData}
-        onOpenChange={()=>{
+        onOpenChange={() => {
           setFormData(null)
         }}
       >
         {/* <DialogTrigger>Open</DialogTrigger> */}
-        <DialogContent
-          className=" sm:max-w-[80%] h-[70vh]"
-          aria-describedby=""
-        >
+        <DialogContent className=" sm:max-w-[80%] h-[70vh]" aria-describedby="">
           <ViewFormDataModal formData={formData} />
         </DialogContent>
       </Dialog>
-
     </div>
   )
 }

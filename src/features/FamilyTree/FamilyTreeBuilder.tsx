@@ -235,7 +235,7 @@ export const FamilyTreeBuilder: React.FC = () => {
       if (errorMsg.includes("Spreadsheet is empty")) {
         toast.error(
           "Spreadsheet is empty! Please add column headers 'id', 'name', 'tree_json' to Row 1 of your Google Sheet 'family_tree' tab.",
-          { autoClose: 10000 }
+          { autoClose: 10000 },
         )
       } else {
         toast.error("Failed to save to SheetDB")
@@ -247,7 +247,6 @@ export const FamilyTreeBuilder: React.FC = () => {
 
   const [nodes, setNodes, onNodesChange] = useNodesState<FamilyCardNodeData>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
-
 
   const handleNodeDragStop: (
     event: React.MouseEvent,
@@ -566,8 +565,8 @@ export const FamilyTreeBuilder: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (sheetTree) setTree(sheetTree);
-  }, [sheetTree]);
+    if (sheetTree) setTree(sheetTree)
+  }, [sheetTree])
 
   return (
     <ToolLayout
@@ -599,7 +598,12 @@ export const FamilyTreeBuilder: React.FC = () => {
           </Button>
 
           <Select value={tree.themeId} onValueChange={handleThemeChange}>
-            <SelectTrigger className={cn(theme.classes.input, "w-32 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800")}>
+            <SelectTrigger
+              className={cn(
+                theme.classes.input,
+                "w-32 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800",
+              )}
+            >
               <SelectValue placeholder="Theme" />
             </SelectTrigger>
             <SelectContent>
@@ -641,7 +645,7 @@ export const FamilyTreeBuilder: React.FC = () => {
           ref={flowWrapperRef}
           className={cn(
             "h-[68vh] rounded-xl border border-slate-200 dark:border-slate-800/80 overflow-hidden shadow-sm relative bg-slate-50/50 dark:bg-slate-950/20 backdrop-blur-md",
-            wrapperThemeClass
+            wrapperThemeClass,
           )}
         >
           <ReactFlow
@@ -667,7 +671,9 @@ export const FamilyTreeBuilder: React.FC = () => {
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
           <DialogContent className="sm:max-w-[425px] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl shadow-xl">
             <DialogHeader>
-              <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">Edit Family Member</DialogTitle>
+              <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
+                Edit Family Member
+              </DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-2">
               <div className="space-y-1">
@@ -697,7 +703,10 @@ export const FamilyTreeBuilder: React.FC = () => {
                   placeholder="Father, Cousin, Nana ji..."
                   value={editState?.relationLabel}
                   onChange={(e) =>
-                    setEditState((s) => ({ ...s, relationLabel: e.target.value }))
+                    setEditState((s) => ({
+                      ...s,
+                      relationLabel: e.target.value,
+                    }))
                   }
                 />
               </div>

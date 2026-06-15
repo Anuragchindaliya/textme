@@ -131,7 +131,7 @@ const AddRedirectUrl: React.FC = () => {
         </div>
         <div className="flex  h-screen">
           <div className="sm:w-3/6 px-4 w-full ">
-            <div  className=" flex items-center">
+            <div className=" flex items-center">
               <SidebarTrigger className=" " />
               <h1>Recently Createddsd</h1>
             </div>

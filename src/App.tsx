@@ -4,7 +4,10 @@ import { BrowserRouter } from "react-router-dom"
 import Router from "./Router"
 import TourManager from "./pages/DynamicForm/TourManager"
 import { useAppDispatch, useAppSelector } from "./app/hooks"
-import { selectIsTourActive, setIsTourActive } from "./features/dynamicForm/dynamicFormSlice";
+import {
+  selectIsTourActive,
+  setIsTourActive,
+} from "./features/dynamicForm/dynamicFormSlice"
 
 const App = () => {
   const dispatch = useAppDispatch()
@@ -14,7 +17,9 @@ const App = () => {
     <BrowserRouter>
       <TourManager
         isTourActive={isTourActive}
-        setIsTourActive={(value:boolean)=>dispatch(setIsTourActive({isTourActive:value}))}
+        setIsTourActive={(value: boolean) =>
+          dispatch(setIsTourActive({ isTourActive: value }))
+        }
       />
       <Router />
     </BrowserRouter>

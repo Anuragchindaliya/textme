@@ -92,7 +92,7 @@ const formSubmissionSchema = z.object({
 })
 type formSubmissionType = z.infer<typeof formSubmissionSchema>
 export const FormBuilderPage: React.FC = () => {
-  const [addFormJson, { isLoading: addingForm, data, isSuccess,reset }] =
+  const [addFormJson, { isLoading: addingForm, data, isSuccess, reset }] =
     useAddFormJsonMutation()
   const formBuilderRef = useRef<FormioFormBuilder>()
   const [showPreview, setShowPreview] = useState(false)
@@ -113,13 +113,13 @@ export const FormBuilderPage: React.FC = () => {
 
     return {}
   })
-  const [formKeyId,setFormKeyId]=useState("");
+  const [formKeyId, setFormKeyId] = useState("")
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    watch
+    watch,
   } = useForm<formSubmissionType>({
     resolver: zodResolver(formSubmissionSchema),
     defaultValues: {
@@ -161,7 +161,7 @@ export const FormBuilderPage: React.FC = () => {
 
     // navigate(`/form/${formId}`)
   }
-  
+
   useEffect(() => {
     localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(formJson))
   }, [formJson])
@@ -187,10 +187,7 @@ export const FormBuilderPage: React.FC = () => {
           </Link>
         </div>
       </div>
-      <Dialog
-        open={!!showPreview}
-        onOpenChange={handleClosePreviewModal}
-      >
+      <Dialog open={!!showPreview} onOpenChange={handleClosePreviewModal}>
         {/* <DialogTrigger>Open</DialogTrigger> */}
         <DialogContent
           className="bg-white sm:max-w-[80%] h-[70vh]"
@@ -210,7 +207,11 @@ export const FormBuilderPage: React.FC = () => {
               >
                 🔗 Preview Form
               </Link>
-              <Button variant={"success"} className="mx-auto mt-4" onClick={handleClosePreviewModal}>
+              <Button
+                variant={"success"}
+                className="mx-auto mt-4"
+                onClick={handleClosePreviewModal}
+              >
                 Ok, Close
               </Button>
             </div>
@@ -302,7 +303,11 @@ export const FormBuilderPage: React.FC = () => {
           direction="horizontal"
           className="flex gap-2 h-full "
         >
-          <ResizablePanel id="formbuilder" className="flex-[3]  h-full" minSize={70}>
+          <ResizablePanel
+            id="formbuilder"
+            className="flex-[3]  h-full"
+            minSize={70}
+          >
             <div className="text-white flex justify-between mb-2 ">
               <h2 className="text-gray-800 text-xl">Create a Form</h2>
               <div className="flex gap-2">
@@ -333,11 +338,9 @@ export const FormBuilderPage: React.FC = () => {
                 )}
               </div>
             </div>
-            <ScrollArea  className="h-full pb-2">
+            <ScrollArea className="h-full pb-2">
               <FormBuilder
                 key={formKey}
-
-
                 // @ts-ignore
                 form={formJson}
                 onChange={(e: FormType) => {
@@ -362,7 +365,11 @@ export const FormBuilderPage: React.FC = () => {
               />
             </ScrollArea>
           </ResizablePanel>
-          <ResizableHandle withHandle iconClass="bg-white" className="bg-gray-200" />
+          <ResizableHandle
+            withHandle
+            iconClass="bg-white"
+            className="bg-gray-200"
+          />
 
           <ResizablePanel
             minSize={15}
@@ -382,7 +389,6 @@ export const FormBuilderPage: React.FC = () => {
                   <TooltipContent>Copy JSON</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-
             </div>
             <div className=" flex-1 p-2 rounded  h-full ">
               <ScrollArea className="h-full pb-2">

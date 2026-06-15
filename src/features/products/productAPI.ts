@@ -11,8 +11,8 @@ export type Product = {
   Rating: string
   Reviews: string
   Feature_1: string
-  Feature_2: string;
-  Prod_link:string;
+  Feature_2: string
+  Prod_link: string
 }
 const res = {
   ID: "1",
@@ -37,7 +37,6 @@ export const govApi = textmeApi.injectEndpoints({
         method: "GET",
       }),
     }),
-
   }),
 })
 export const { useGetAllProductQuery } = govApi

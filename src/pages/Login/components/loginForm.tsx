@@ -74,18 +74,21 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const dispatch = useAppDispatch()
 
   const navigate = useNavigate()
-  const [loginManual, { isLoading }] = useLoginApiMutation();
+  const [loginManual, { isLoading }] = useLoginApiMutation()
   const onSubmit = async (data: UserLoginType) => {
     // setIsLoading(true)
     console.log({ data })
     try {
-      const result = await loginManual(data).unwrap();
-      console.log({result})
+      const result = await loginManual(data).unwrap()
+      console.log({ result })
 
       if (result?.statusCode === 200) {
-        const userInfo = {email:result.data?.user?.email,id:result.data?.user?.id}
+        const userInfo = {
+          email: result.data?.user?.email,
+          id: result.data?.user?.id,
+        }
         dispatch(setEmail(userInfo))
-        localStorage.setItem("userInfo",JSON.stringify(userInfo))
+        localStorage.setItem("userInfo", JSON.stringify(userInfo))
         navigate(ROUTES.DASHBOARD)
         return
       } else {
@@ -104,7 +107,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       //   title: "Login error",
       //   description: (
       //     <ul>
-      //       {error.message 
+      //       {error.message
       //       // || error.data.map((el: any) => {
       //       //     return <li>{el.message}</li>
       //       //   })
@@ -187,7 +190,10 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               </p>
             )}
           </div>
-          <button className={cn(theme.classes.buttonPrimary, "w-full mt-2 py-2.5")} disabled={isLoading}>
+          <button
+            className={cn(theme.classes.buttonPrimary, "w-full mt-2 py-2.5")}
+            disabled={isLoading}
+          >
             {isLoading && <Loader className="mr-2 h-4 w-4 animate-spin" />}
             Sign In with Email
           </button>
@@ -227,8 +233,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           }}
           disabled={isLoading || isGitHubLoading}
         >
-          <FcGoogle className="h-4 w-4" />{" "}
-          Google
+          <FcGoogle className="h-4 w-4" /> Google
         </button>
       </div>
     </div>

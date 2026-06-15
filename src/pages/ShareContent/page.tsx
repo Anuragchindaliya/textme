@@ -16,13 +16,16 @@ import {
   useGetContentDataQuery,
   // useGetNoteMutation,
   usePostNoteContentMutation,
-  usePostShareContentMutation
+  usePostShareContentMutation,
 } from "@/features/note/noteAPI"
 import { cn } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useSearchParams } from "react-router-dom"
-import { syntaxStyleName, themeOptionsConfig } from "../ReactFlow/stylesthemeCode"
+import {
+  syntaxStyleName,
+  themeOptionsConfig,
+} from "../ReactFlow/stylesthemeCode"
 // import "./styles.css"
 import NoteTitleInput from "../Notes/components/NoteTitleInput"
 import Sidebar from "../Notes/components/Sidebar"
@@ -31,8 +34,10 @@ import CodeEditor from "./components/CodeEditor"
 export default function ShareContent() {
   // const [noteContent, setNoteContent] = useState("")
   // const noteData = useGetNoteMutation({ fixedCacheKey: "get-note-data" })
-    const [selectedTheme, setSelectedTheme] = useState<any>(themeOptionsConfig[syntaxStyleName[0]]);
-  
+  const [selectedTheme, setSelectedTheme] = useState<any>(
+    themeOptionsConfig[syntaxStyleName[0]],
+  )
+
   const [searchParams] = useSearchParams()
 
   const noteTitle = searchParams.get("t")
@@ -54,7 +59,7 @@ export default function ShareContent() {
     setValue,
     resetField,
     watch,
-    reset
+    reset,
   } = useForm<ShareContentForm>({
     resolver: zodResolver(ShareContentFormSchema),
     values: {
@@ -64,7 +69,7 @@ export default function ShareContent() {
     },
   })
   const noteContent = watch("content")
-  console.log({ errors,noteContent,tab:watch("tab") })
+  console.log({ errors, noteContent, tab: watch("tab") })
   const onNoteContentSubmit = async (formData: ShareContentForm) => {
     console.log("formData", formData)
     // return;
@@ -82,7 +87,7 @@ export default function ShareContent() {
       })
     }
   }, [isSuccess])
-  
+
   useEffect(() => {
     const att = "data-section"
     document.body.setAttribute(att, "playground")
@@ -106,9 +111,7 @@ export default function ShareContent() {
         <Separator />
         <Tabs defaultValue="complete" className="flex-1">
           <div className="container h-full py-6">
-            <div
-              className="grid h-full items-stretch gap-6 "
-            >
+            <div className="grid h-full items-stretch gap-6 ">
               <form
                 className="md:order-1"
                 onSubmit={handleSubmit(onNoteContentSubmit)}
@@ -118,7 +121,12 @@ export default function ShareContent() {
                   className="mt-0 border-0 p-0 h-full"
                 >
                   <div className="flex h-full flex-col space-y-4">
-                    <CodeEditor setValue={setValue}  initialText={data?.[0]?.content || ""} initialTab={data?.[0]?.tab} key={data?.[0]?.content} />
+                    <CodeEditor
+                      setValue={setValue}
+                      initialText={data?.[0]?.content || ""}
+                      initialTab={data?.[0]?.tab}
+                      key={data?.[0]?.content}
+                    />
                     <div className="flex items-center space-x-2">
                       <Button
                         type="submit"
@@ -150,7 +158,6 @@ export default function ShareContent() {
                           {errors?.content.message}
                         </p>
                       )}
-
                     </div>
                   </div>
                 </TabsContent>

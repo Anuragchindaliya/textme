@@ -71,7 +71,9 @@ export function NavMain({
                 <NavLink
                   to={item.url}
                   className={({ isActive }) => {
-                    return `flex gap-2 rounded ${isActive ? "dark:bg-gray-900 bg-gray-100" : ""}`
+                    return `flex gap-2 rounded ${
+                      isActive ? "dark:bg-gray-900 bg-gray-100" : ""
+                    }`
                   }}
                 >
                   <SidebarMenuButton tooltip={item.title}>

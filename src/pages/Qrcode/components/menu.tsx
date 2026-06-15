@@ -17,7 +17,11 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar"
 
-export function Menu({onGrid}:{onGrid?:{checked:boolean,onClick:()=>void}}) {
+export function Menu({
+  onGrid,
+}: {
+  onGrid?: { checked: boolean; onClick: () => void }
+}) {
   return (
     <Menubar className="rounded-none border-b border-none px-2 lg:px-4">
       <MenubarMenu>
@@ -144,7 +148,12 @@ export function Menu({onGrid}:{onGrid?:{checked:boolean,onClick:()=>void}}) {
       <MenubarMenu>
         <MenubarTrigger>View</MenubarTrigger>
         <MenubarContent>
-          <MenubarCheckboxItem onClick={onGrid?.onClick} checked={onGrid?.checked}>Grid <MenubarShortcut>⌘G</MenubarShortcut></MenubarCheckboxItem>
+          <MenubarCheckboxItem
+            onClick={onGrid?.onClick}
+            checked={onGrid?.checked}
+          >
+            Grid <MenubarShortcut>⌘G</MenubarShortcut>
+          </MenubarCheckboxItem>
           <MenubarCheckboxItem>Show Playing Next</MenubarCheckboxItem>
           <MenubarCheckboxItem checked>Show Lyrics</MenubarCheckboxItem>
           <MenubarSeparator />

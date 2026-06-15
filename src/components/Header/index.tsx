@@ -9,12 +9,12 @@ const Header = () => {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <div className="flex items-center">
           <Sidebar />
-        <Link to="/" className="flex items-center">
-          {/* <Terminal /> */}
-          <span className="self-center text-xl  whitespace-nowrap dark:text-white">
-            Share text
-          </span>
-        </Link>
+          <Link to="/" className="flex items-center">
+            {/* <Terminal /> */}
+            <span className="self-center text-xl  whitespace-nowrap dark:text-white">
+              Share text
+            </span>
+          </Link>
         </div>
         <button
           data-collapse-toggle="navbar-default"

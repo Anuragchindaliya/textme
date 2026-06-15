@@ -31,14 +31,14 @@ const TaskList: React.FC<TaskListProps> = ({
   onToggleStatus,
 }) => {
   const sensors = useSensors(
-    useSensor(PointerSensor,{
+    useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 5
-      }
+        distance: 5,
+      },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   )
 
   return (
@@ -53,8 +53,8 @@ const TaskList: React.FC<TaskListProps> = ({
       >
         <ul className="space-y-4">
           {tasks.map((task) => (
-            <SortableItem key={task.id} id={task.id} >
-              <li  className="flex items-center justify-between px-4 py-2 rounded-lg shadow bg-white dark:bg-gray-800">
+            <SortableItem key={task.id} id={task.id}>
+              <li className="flex items-center justify-between px-4 py-2 rounded-lg shadow bg-white dark:bg-gray-800">
                 <span className="flex-1">{task.title}</span>
                 <ComboboxPopover
                   selectedStatus={task.status}

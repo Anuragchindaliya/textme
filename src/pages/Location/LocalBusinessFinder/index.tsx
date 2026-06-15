@@ -1,15 +1,16 @@
-import React from 'react'
-import MapComponent from './MapComponent'
-import Sidebar from '@/pages/Notes/components/Sidebar'
+import React from "react"
+import MapComponent from "./MapComponent"
+import Sidebar from "@/pages/Notes/components/Sidebar"
 
 const LocalBusinessFinder = () => {
-  return (<div className=' h-full flex flex-col'>
-    <div className='flex p-2 px-4 py-2 bg-gray-100'>
-      <Sidebar/>
-      <h1>Local Business Finder</h1>
+  return (
+    <div className=" h-full flex flex-col">
+      <div className="flex p-2 px-4 py-2 bg-gray-100">
+        <Sidebar />
+        <h1>Local Business Finder</h1>
+      </div>
+      <MapComponent />
     </div>
-    <MapComponent />
-  </div>
   )
 }
 

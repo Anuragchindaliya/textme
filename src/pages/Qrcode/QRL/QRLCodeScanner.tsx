@@ -20,7 +20,7 @@ import { QR_ROUTES } from "../QRSidebar"
 type PermissionStatus = "idle" | "granted" | "denied"
 const QRLCodeScanner: React.FC = () => {
   const [getUrlApi, { isLoading }] = useGetQrUrlMutation()
-  const [searchParams,setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const url = searchParams.get("url")
   console.log({ url })
   const [result, setResult] = useState<string | null>(null)
@@ -34,8 +34,12 @@ const QRLCodeScanner: React.FC = () => {
     // Cleanup on component unmount
     return () => {
       if (scannerRef.current) {
-        if (scannerRef.current.getState() === Html5QrcodeScannerState.SCANNING) {
-          scannerRef.current.stop().catch((err) => console.error("Error stopping scanner:", err))
+        if (
+          scannerRef.current.getState() === Html5QrcodeScannerState.SCANNING
+        ) {
+          scannerRef.current
+            .stop()
+            .catch((err) => console.error("Error stopping scanner:", err))
         }
       }
     }
@@ -77,7 +81,10 @@ const QRLCodeScanner: React.FC = () => {
   }
 
   const stopScanning = async () => {
-    if (scannerRef.current && scannerRef.current.getState() === Html5QrcodeScannerState.SCANNING) {
+    if (
+      scannerRef.current &&
+      scannerRef.current.getState() === Html5QrcodeScannerState.SCANNING
+    ) {
       try {
         await scannerRef.current.stop()
       } catch (error) {
@@ -152,11 +159,11 @@ const QRLCodeScanner: React.FC = () => {
           const result = (await getUrlApi(url)) as any
           console.log({ result })
           if (result?.data?.[0]) {
-            if(searchParams.has("url")){
+            if (searchParams.has("url")) {
               searchParams.delete("url")
               setSearchParams(searchParams)
             }
-            console.log(result?.data[0].url,"url")
+            console.log(result?.data[0].url, "url")
             window.open(result?.data[0].url, "_blank")
             return
           }
@@ -211,7 +218,9 @@ const QRLCodeScanner: React.FC = () => {
               <div className="mx-auto justify-center flex flex-col items-center">
                 <Camera className="w-32 h-32 text-gray-400" />
                 <p className="mt-2 text-gray-500 dark:text-gray-400">
-                  {result ? "Scan complete. Click Restart Scanning to scan again." : "Camera is ready. Click Start Scanning to begin."}
+                  {result
+                    ? "Scan complete. Click Restart Scanning to scan again."
+                    : "Camera is ready. Click Start Scanning to begin."}
                 </p>
               </div>
             )}

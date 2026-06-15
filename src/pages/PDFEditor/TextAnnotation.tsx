@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react"
 import {
   DndContext,
   useDraggable,
@@ -6,22 +6,27 @@ import {
   useSensors,
   PointerSensor,
   DragEndEvent,
-} from '@dnd-kit/core';
+} from "@dnd-kit/core"
 
 interface TextAnnotationProps {
-  id: string;
-  text: string;
-  position: { x: number; y: number };
-  onDragEnd: (position: { x: number; y: number }) => void;
+  id: string
+  text: string
+  position: { x: number; y: number }
+  onDragEnd: (position: { x: number; y: number }) => void
 }
 
-export const TextAnnotation: React.FC<TextAnnotationProps> = ({ id, text, position, onDragEnd }) => {
+export const TextAnnotation: React.FC<TextAnnotationProps> = ({
+  id,
+  text,
+  position,
+  onDragEnd,
+}) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
-  });
+  })
 
-  const x = transform?.x ?? 0;
-  const y = transform?.y ?? 0;
+  const x = transform?.x ?? 0
+  const y = transform?.y ?? 0
 
   return (
     <div
@@ -29,15 +34,15 @@ export const TextAnnotation: React.FC<TextAnnotationProps> = ({ id, text, positi
       {...listeners}
       {...attributes}
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: position.x + x,
         top: position.y + y,
-        cursor: 'grab',
-        color: 'red',
-        fontWeight: 'bold',
+        cursor: "grab",
+        color: "red",
+        fontWeight: "bold",
       }}
     >
       {text}
     </div>
-  );
-};
+  )
+}

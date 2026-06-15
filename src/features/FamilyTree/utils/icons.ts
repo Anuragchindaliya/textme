@@ -1,10 +1,4 @@
-import { 
-  Users, 
-  Baby, 
-  Heart, 
-  UserCircle2, 
-  UserCog 
-} from "lucide-react";
+import { Users, Baby, Heart, UserCircle2, UserCog } from "lucide-react"
 
 export function getRelationIcon(relation: string) {
   const map: Record<string, any> = {
@@ -15,7 +9,7 @@ export function getRelationIcon(relation: string) {
     Partner: Heart,
     Sibling: Users,
     Relative: UserCircle2,
-  };
+  }
 
-  return map[relation] || UserCircle2;
+  return map[relation] || UserCircle2
 }

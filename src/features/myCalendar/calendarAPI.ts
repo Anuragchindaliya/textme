@@ -54,8 +54,8 @@ export const calendarApi = textmeApi.injectEndpoints({
       }),
       invalidatesTags: ["AllEvents"],
     }),
-    deleteEvent: builder.mutation<{ deleted: number }, {id:string}>({
-      query: ({id}) => ({
+    deleteEvent: builder.mutation<{ deleted: number }, { id: string }>({
+      query: ({ id }) => ({
         url: `/id/${id}?sheet=calendar`,
         method: "DELETE",
       }),
@@ -76,6 +76,6 @@ export const {
   useCreateEventMutation,
   useGetEventDataQuery,
   useGetAllEventsQuery,
-  useDeleteEventMutation
+  useDeleteEventMutation,
   // usePostEditorFileContentMutation
 } = calendarApi

@@ -1,7 +1,7 @@
 import { LucideIcon } from "lucide-react"
 
 export type Status = {
-  id:string;
+  id: string
   value: string
   label: string
   icon?: LucideIcon
