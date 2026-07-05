@@ -11,7 +11,9 @@ import { UsageDashboard } from "./UsageDashboard"
 import { Message, UsageStats, UserSession, Product, MapData } from "./types"
 import { estimateTokens, parseSSEStream } from "./utils"
 
-const BACKEND_URL = "http://localhost:5001/api/ai/playground"
+// const BACKEND_URL = "http://localhost:5001/api/ai/playground"
+// https://cue-king-nodejs.onrender.com
+const BACKEND_URL = "https://cue-king-nodejs.onrender.com/api/ai/playground"
 
 export default function AiPlayground() {
   const { theme } = useTheme()
