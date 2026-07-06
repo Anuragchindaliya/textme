@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useTheme } from "next-themes"
 import { useGoogleLogin } from "@react-oauth/google"
 import { KeyRound, Eye, EyeOff, Sparkles, HelpCircle } from "lucide-react"
@@ -103,6 +103,45 @@ export default function AiPlayground() {
   // 5. Sidebar Toggle State
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [isStreaming, setIsStreaming] = useState(false)
+
+  // References for Abort Controller and Animation Frame
+  const abortControllerRef = useRef<AbortController | null>(null)
+  const animationFrameRef = useRef<number | null>(null)
+
+  // References for chunk buffering and dynamic typing animation
+  const streamBufferRef = useRef<string>("")
+  const renderingBufferRef = useRef<string>("")
+  const isStreamActiveRef = useRef<boolean>(false)
+  const latestMsgTypeRef = useRef<string>("text")
+  const latestMsgLanguageRef = useRef<string | undefined>(undefined)
+  const latestMsgProductsRef = useRef<Product[] | undefined>(undefined)
+  const latestMsgMapDataRef = useRef<MapData | undefined>(undefined)
+  const activeTokensRef = useRef<number>(0)
+  const currentAiMsgIdRef = useRef<string | null>(null)
+
+  // Clean up animation on unmount
+  useEffect(() => {
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+    }
+  }, [])
+
+  // Stop active streaming response
+  const handleStopStreaming = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+    isStreamActiveRef.current = false
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current)
+    }
+    setLoading(false)
+    setIsStreaming(false)
+    abortControllerRef.current = null
+  }
 
   // 6. Google Login Hook
   const googleLogin = useGoogleLogin({
@@ -169,7 +208,7 @@ export default function AiPlayground() {
     }
   }
 
-  // 9. Stream handler
+  // 9. Stream handler with requestAnimationFrame and AbortController
   const handleSendPrompt = async (promptText: string) => {
     if (!apiKey) return
 
@@ -185,6 +224,7 @@ export default function AiPlayground() {
 
     setMessages((prev) => [...prev, userMsg])
     setLoading(true)
+    setIsStreaming(false)
 
     setUsageStats((prev) => ({
       ...prev,
@@ -204,6 +244,104 @@ export default function AiPlayground() {
 
     setMessages((prev) => [...prev, initialAiMsg])
 
+    // Cancel any active stream/fetch
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
+    // Reset buffer tracking references
+    streamBufferRef.current = ""
+    renderingBufferRef.current = ""
+    isStreamActiveRef.current = true
+    latestMsgTypeRef.current = "text"
+    latestMsgLanguageRef.current = undefined
+    latestMsgProductsRef.current = undefined
+    latestMsgMapDataRef.current = undefined
+    activeTokensRef.current = 0
+    currentAiMsgIdRef.current = aiMsgId
+
+    // Define requestAnimationFrame typing loop
+    const animateRender = () => {
+      if (!isStreamActiveRef.current && renderingBufferRef.current.length === streamBufferRef.current.length) {
+        // Stream completed and all buffered chunks are typed out
+        setLoading(false)
+        setIsStreaming(false)
+        abortControllerRef.current = null
+        return
+      }
+
+      let hasTextChange = false
+
+      if (renderingBufferRef.current.length < streamBufferRef.current.length) {
+        const diff = streamBufferRef.current.length - renderingBufferRef.current.length
+        // Dynamic speed adjustments: type faster if we are lagging far behind the stream buffer
+        const step = Math.max(1, Math.ceil(diff / 6))
+        renderingBufferRef.current += streamBufferRef.current.slice(
+          renderingBufferRef.current.length,
+          renderingBufferRef.current.length + step
+        )
+        hasTextChange = true
+      }
+
+      // Sync state with buffer changes once per frame
+      setMessages((prev) => {
+        const idx = prev.findIndex((m) => m.id === aiMsgId)
+        if (idx === -1) return prev
+
+        const updated = [...prev]
+        const msg = { ...updated[idx] }
+
+        if (hasTextChange) {
+          msg.content = renderingBufferRef.current
+        }
+        msg.type = latestMsgTypeRef.current as any
+
+        if (latestMsgLanguageRef.current) {
+          msg.language = latestMsgLanguageRef.current
+        }
+        if (latestMsgProductsRef.current) {
+          msg.products = latestMsgProductsRef.current
+        }
+        if (latestMsgMapDataRef.current) {
+          msg.mapData = latestMsgMapDataRef.current
+        }
+
+        // Token increments match dynamically to visible text
+        const nextTokens = estimateTokens(renderingBufferRef.current)
+        const tokenDiff = nextTokens - activeTokensRef.current
+        activeTokensRef.current = nextTokens
+        msg.tokens = nextTokens
+
+        if (tokenDiff > 0) {
+          setUsageStats((prevStats) => ({
+            ...prevStats,
+            responseTokens: prevStats.responseTokens + tokenDiff,
+            totalTokens: prevStats.totalTokens + tokenDiff,
+          }))
+        }
+
+        updated[idx] = msg
+        return updated
+      })
+
+      // Request next frame if stream is active OR there is text still left in buffer
+      if (isStreamActiveRef.current || renderingBufferRef.current.length < streamBufferRef.current.length) {
+        animationFrameRef.current = requestAnimationFrame(animateRender)
+      } else {
+        setLoading(false)
+        setIsStreaming(false)
+        abortControllerRef.current = null
+      }
+    }
+
+    // Cancel any previous frames and start loop
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current)
+    }
+    animationFrameRef.current = requestAnimationFrame(animateRender)
+
     try {
       const headers: HeadersInit = {
         "Content-Type": "application/json",
@@ -217,6 +355,7 @@ export default function AiPlayground() {
         method: "POST",
         headers,
         body: JSON.stringify({ prompt: promptText }),
+        signal: controller.signal,
       })
 
       if (!response.ok) {
@@ -224,60 +363,42 @@ export default function AiPlayground() {
         throw new Error(errorText || `Request failed with status ${response.status}`)
       }
 
-      let accumulatedContent = ""
-      let activeTokens = 0
-
       await parseSSEStream(response, {
         onChunk: (chunk) => {
-          setMessages((prev) => {
-            const idx = prev.findIndex((m) => m.id === aiMsgId)
-            if (idx === -1) return prev
-
-            const updated = [...prev]
-            const msg = { ...updated[idx] }
-
-            if (chunk.type === "text") {
-              accumulatedContent += chunk.content
-              msg.content = accumulatedContent
-              msg.type = "text"
-            } else if (chunk.type === "code") {
-              accumulatedContent += chunk.content
-              msg.content = accumulatedContent
-              msg.type = "code"
-              msg.language = chunk.language
-            } else if (chunk.type === "product") {
-              msg.type = "product"
-              msg.products = chunk.data as Product[]
-            } else if (chunk.type === "map") {
-              msg.type = "map"
-              msg.mapData = {
-                coordinates: chunk.coordinates,
-                locationName: chunk.locationName,
-              } as MapData
+          setIsStreaming(true) // First chunk arrived, we are actively streaming!
+          
+          if (chunk.type === "text" || chunk.type === "code") {
+            streamBufferRef.current += chunk.content
+            latestMsgTypeRef.current = chunk.type
+            if (chunk.type === "code") {
+              latestMsgLanguageRef.current = chunk.language
             }
-
-            const nextTokens = estimateTokens(accumulatedContent)
-            const tokenDiff = nextTokens - activeTokens
-            activeTokens = nextTokens
-            msg.tokens = activeTokens
-
-            if (tokenDiff > 0) {
-              setUsageStats((prevStats) => ({
-                ...prevStats,
-                responseTokens: prevStats.responseTokens + tokenDiff,
-                totalTokens: prevStats.totalTokens + tokenDiff,
-              }))
-            }
-
-            updated[idx] = msg
-            return updated
-          })
+          } else if (chunk.type === "product") {
+            latestMsgTypeRef.current = "product"
+            latestMsgProductsRef.current = chunk.data as Product[]
+          } else if (chunk.type === "map") {
+            latestMsgTypeRef.current = "map"
+            latestMsgMapDataRef.current = {
+              coordinates: chunk.coordinates,
+              locationName: chunk.locationName,
+            } as MapData
+          }
         },
         onEnd: () => {
-          setLoading(false)
+          isStreamActiveRef.current = false
         },
         onError: (err) => {
+          if (err.name === "AbortError") {
+            isStreamActiveRef.current = false
+            return
+          }
           console.error("Streaming error details:", err)
+          isStreamActiveRef.current = false
+          
+          if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current)
+          }
+
           setMessages((prev) => {
             const idx = prev.findIndex((m) => m.id === aiMsgId)
             if (idx === -1) return prev
@@ -291,10 +412,24 @@ export default function AiPlayground() {
             return updated
           })
           setLoading(false)
+          setIsStreaming(false)
         },
       })
     } catch (err: any) {
+      if (err.name === "AbortError") {
+        isStreamActiveRef.current = false
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current)
+        }
+        setLoading(false)
+        setIsStreaming(false)
+        return
+      }
       console.error("Fetch/Stream API error:", err)
+      isStreamActiveRef.current = false
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
       setMessages((prev) => {
         const idx = prev.findIndex((m) => m.id === aiMsgId)
         if (idx === -1) return prev
@@ -308,6 +443,7 @@ export default function AiPlayground() {
         return updated
       })
       setLoading(false)
+      setIsStreaming(false)
     }
   }
 
@@ -455,7 +591,9 @@ export default function AiPlayground() {
             <ChatContainer
               messages={messages}
               loading={loading}
+              isStreaming={isStreaming}
               onSend={handleSendPrompt}
+              onStop={handleStopStreaming}
               clearChat={handleClearChat}
               saveHistory={saveHistory}
               onToggleSaveHistory={() => setSaveHistory(!saveHistory)}

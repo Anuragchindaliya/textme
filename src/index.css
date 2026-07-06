@@ -71,3 +71,56 @@ input:-webkit-autofill {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+/* Gemini/ChatGPT UI custom animation effects */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.gemini-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(66, 133, 244, 0.12) 0%,
+    rgba(155, 81, 224, 0.12) 25%,
+    rgba(234, 67, 53, 0.12) 50%,
+    rgba(155, 81, 224, 0.12) 75%,
+    rgba(66, 133, 244, 0.12) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite linear;
+}
+
+.dark .gemini-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(66, 133, 244, 0.22) 0%,
+    rgba(155, 81, 224, 0.22) 25%,
+    rgba(234, 67, 53, 0.22) 50%,
+    rgba(155, 81, 224, 0.22) 75%,
+    rgba(66, 133, 244, 0.22) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite linear;
+}
+
+/* Tooltip animations */
+@keyframes tooltip-fade-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 4px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+.tooltip-animate {
+  animation: tooltip-fade-in 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+

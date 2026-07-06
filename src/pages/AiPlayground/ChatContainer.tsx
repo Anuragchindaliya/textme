@@ -8,10 +8,12 @@ import {
   Download,
   KeyRound,
   Loader,
+  Loader2,
   MapPin,
   Mic,
   MicOff,
   Sparkles,
+  Square,
   Trash2,
   Volume2,
   VolumeX,
@@ -24,11 +26,12 @@ import { FcGoogle } from "react-icons/fc"
 
 import { Message, UserSession, Product, MapData } from "./types"
 import { isNearBottom, scrollToBottom } from "./utils"
-
 interface ChatContainerProps {
   messages: Message[]
   loading: boolean
+  isStreaming: boolean
   onSend: (text: string) => void
+  onStop: () => void
   clearChat: () => void
   saveHistory: boolean
   onToggleSaveHistory: () => void
@@ -42,7 +45,9 @@ interface ChatContainerProps {
 export const ChatContainer: React.FC<ChatContainerProps> = ({
   messages,
   loading,
+  isStreaming,
   onSend,
+  onStop,
   clearChat,
   saveHistory,
   onToggleSaveHistory,
@@ -353,12 +358,11 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
                       <div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>
                     ) : (
                       <div className="space-y-4">
-                        {/* Inline loading dots inside the AI message bubble itself (No Double Bubbles) */}
                         {!msg.content && !msg.products && !msg.mapData && msg.type !== "error" ? (
-                          <div className="flex items-center gap-1.5 py-1.5">
-                            <span className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 animate-bounce [animation-delay:-0.3s]" />
-                            <span className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 animate-bounce [animation-delay:-0.15s]" />
-                            <span className="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-500 animate-bounce" />
+                          <div className="flex flex-col gap-2.5 w-full py-2.5 max-w-[280px]">
+                            <div className="h-3 w-full rounded-full gemini-shimmer animate-pulse" />
+                            <div className="h-3 w-11/12 rounded-full gemini-shimmer animate-pulse" />
+                            <div className="h-3 w-3/4 rounded-full gemini-shimmer animate-pulse" />
                           </div>
                         ) : (
                           <>
@@ -698,21 +702,36 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({
             placeholder={isRecording ? "Listening... Speak now" : "Type your message to Gemini..."}
             className="flex-1 max-h-36 min-h-[44px] h-11 p-2 bg-transparent text-slate-900 dark:text-slate-200 text-sm outline-none resize-none scrollbar-none leading-relaxed placeholder-slate-450 dark:placeholder-slate-500"
           />
-          <button
-            onClick={handleSend}
-            disabled={loading || !input.trim()}
-            className={`p-2.5 rounded-xl transition-all duration-300 flex items-center justify-center ${
-              !input.trim() || loading
-                ? "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/10 hover:scale-105 active:scale-95"
-            }`}
-          >
-            {loading ? (
-              <Loader className="w-4 h-4 animate-spin" />
-            ) : (
+          {loading ? (
+            <div className="relative group/tooltip flex items-center justify-center">
+              <button
+                type="button"
+                onClick={onStop}
+                className="p-2.5 rounded-xl transition-all duration-300 flex items-center justify-center bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-350 dark:hover:bg-slate-700 hover:scale-105 active:scale-95 shadow-md"
+              >
+                {isStreaming ? (
+                  <Square className="w-3.5 h-3.5 fill-current" />
+                ) : (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-650 dark:text-blue-400" />
+                )}
+              </button>
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1.5 text-[10px] font-bold text-white bg-slate-900 dark:bg-slate-800 border border-slate-750 dark:border-slate-700 rounded-lg shadow-lg opacity-0 scale-95 group-hover/tooltip:opacity-100 group-hover/tooltip:scale-100 pointer-events-none transition-all duration-150 tooltip-animate whitespace-nowrap z-30">
+                Stop generating
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={handleSend}
+              disabled={!input.trim()}
+              className={`p-2.5 rounded-xl transition-all duration-300 flex items-center justify-center ${
+                !input.trim()
+                  ? "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/10 hover:scale-105 active:scale-95"
+              }`}
+            >
               <CornerDownLeft className="w-4 h-4" />
-            )}
-          </button>
+            </button>
+          )}
         </div>
       </div>
 
