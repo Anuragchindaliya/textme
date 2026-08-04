@@ -12,6 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { useSearchParams } from "react-router-dom"
+import CodeScreenshotGenerator from "./CodeScreenshotGenerator"
 
 // Monaco editor must be dynamically loaded
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
@@ -38,7 +40,9 @@ export default function CodeEditor({
   setValue,
 }: CodeEditorProps) {
   console.log("CodeEditor props:", { setValue })
-  const [tab, setTab] = useState(initialTab)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const urlTab = searchParams.get("tab")
+  const [tab, setTab] = useState(urlTab || initialTab || "text")
   const [language, setLanguage] = useState("javascript")
   const [textContent, setTextContent] = useState(initialText)
   // const [codeContent, setCodeContent] = useState("// Write your code here");
@@ -52,6 +56,9 @@ export default function CodeEditor({
       shouldDirty: true,
       shouldTouch: true,
     })
+    const newParams = new URLSearchParams(window.location.search)
+    newParams.set("tab", newTab)
+    setSearchParams(newParams, { replace: true })
   }
 
   return (
@@ -60,6 +67,7 @@ export default function CodeEditor({
         <TabsList>
           <TabsTrigger value="text">Text</TabsTrigger>
           <TabsTrigger value="code">Code</TabsTrigger>
+          <TabsTrigger value="screenshot">Screenshot Generator</TabsTrigger>
         </TabsList>
 
         <TabsContent value="text">
@@ -102,6 +110,15 @@ export default function CodeEditor({
               }}
             />
           </div>
+        </TabsContent>
+
+        <TabsContent value="screenshot">
+          <CodeScreenshotGenerator
+            code={textContent}
+            language={language}
+            onCodeChange={handleTextChange}
+            onLanguageChange={setLanguage}
+          />
         </TabsContent>
       </Tabs>
     </div>
